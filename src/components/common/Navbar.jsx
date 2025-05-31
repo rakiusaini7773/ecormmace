@@ -1,11 +1,19 @@
+
+
+
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Menu, X, Search, User, Heart, ShoppingCart } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-
   const toggleMenu = () => setIsOpen(!isOpen);
+
+  const cartCount = useSelector((state) => state.cart.items.length);
+  const likeCount = useSelector((state) => state.like.likedItems.length);
+  const navigate = useNavigate();
 
   const linkClass =
     "text-gray-500 hover:text-black hover:underline text-sm font-medium tracking-wider transition";
@@ -21,9 +29,10 @@ const Navbar = () => {
         </NavLink>
 
         {/* Desktop Menu */}
+
         <div className="hidden lg:flex items-center space-x-6">
-          {["/",  "/product" ,"/about", "/blog",].map((path, i) => {
-            const labels = ["HOME",  "Products" , "ABOUT", "BLOG",];
+          {["/", "/product", "/about", "/blog",].map((path, i) => {
+            const labels = ["HOME", "Products", "ABOUT", "BLOG",];
             return (
               <NavLink
                 key={path}
@@ -42,8 +51,31 @@ const Navbar = () => {
         <div className="flex items-center space-x-4">
           <Search className="w-5 h-5 cursor-pointer" />
           <User className="w-5 h-5 cursor-pointer" />
-          <Heart className="w-5 h-5 cursor-pointer" />
-          <ShoppingCart className="w-5 h-5 cursor-pointer" />
+          <div
+            className="relative cursor-pointer"
+            onClick={() => navigate("/like")}>
+            <Heart className="w-5 h-5 cursor-pointer" />
+            {likeCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full px-1.5">
+                {likeCount}
+              </span>
+            )}
+          </div>
+
+
+          {/* Shopping Cart with count */}
+          <div
+            className="relative cursor-pointer"
+            onClick={() => navigate("/cart")}
+          >
+            <ShoppingCart className="w-5 h-5" />
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full px-1.5">
+                {cartCount}
+              </span>
+            )}
+          </div>
+
           {/* Hamburger */}
           <button className="lg:hidden" onClick={toggleMenu}>
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -54,8 +86,8 @@ const Navbar = () => {
       {/* Mobile Menu */}
       {isOpen && (
         <div className="lg:hidden flex flex-col space-y-3 mt-3 text-sm font-medium tracking-wider">
-          {["/",  "/skincare" ,"/about", "/blog",].map((path, i) => {
-            const labels = ["HOME",  "SKINCARE" ,"ABOUT", "BLOG",];
+          {["/", "/skincare", "/about", "/blog"].map((path, i) => {
+            const labels = ["HOME", "SKINCARE", "ABOUT", "BLOG"];
             return (
               <NavLink
                 key={path}
@@ -75,3 +107,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
