@@ -148,6 +148,7 @@ const FilteredProductList = () => {
         },
     ];
 
+
   const [filteredProducts, setFilteredProducts] = useState(allProducts);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedPriceRange, setSelectedPriceRange] = useState("");

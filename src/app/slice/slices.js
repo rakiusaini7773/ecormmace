@@ -21,6 +21,26 @@ const saveCartToStorage = (items) => {
   }
 };
 
+// ✅ Helper function to load liked items from localStorage
+const loadLikeFromStorage = () => {
+  try {
+    const data = localStorage.getItem("likes");
+    return data ? JSON.parse(data) : [];
+  } catch (err) {
+    console.error("Failed to load likes from localStorage", err);
+    return [];
+  }
+};
+
+// ✅ Helper function to save liked items to localStorage
+const saveLikeToStorage = (items) => {
+  try {
+    localStorage.setItem("likes", JSON.stringify(items));
+  } catch (err) {
+    console.error("Failed to save likes to localStorage", err);
+  }
+};
+
 // ✅ cartSlice
 const cartSlice = createSlice({
   name: "cart",
@@ -47,21 +67,23 @@ const cartSlice = createSlice({
 const likeSlice = createSlice({
   name: "like",
   initialState: {
-    likedItems: [],
+    likedItems: loadLikeFromStorage(),
   },
   reducers: {
     addToLike: (state, action) => {
-      // Avoid duplicate likes
       const exists = state.likedItems.find(item => item.id === action.payload.id);
       if (!exists) {
         state.likedItems.push(action.payload);
+        saveLikeToStorage(state.likedItems);
       }
     },
     removeFromLike: (state, action) => {
       state.likedItems = state.likedItems.filter(item => item.id !== action.payload);
+      saveLikeToStorage(state.likedItems);
     },
     clearLike: (state) => {
       state.likedItems = [];
+      localStorage.removeItem("likes");
     },
   },
 });
