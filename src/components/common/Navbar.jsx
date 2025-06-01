@@ -89,8 +89,8 @@ const Navbar = () => {
       {/* Mobile Menu */}
       {isOpen && (
         <div className="lg:hidden flex flex-col space-y-3 mt-3 text-sm font-medium tracking-wider">
-          {["/", "/skincare", "/about", "/blog"].map((path, i) => {
-            const labels = ["HOME", "SKINCARE", "ABOUT", "BLOG"];
+          {["/", "/product", "/about", "/blog"].map((path, i) => {
+            const labels = ["HOME", "product", "ABOUT", "BLOG"];
             return (
               <NavLink
                 key={path}
