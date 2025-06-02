@@ -143,8 +143,14 @@ const FilteredProductList = () => {
               </Link>
 
               <h3 className="text-lg font-medium">{product.name}</h3>
-              <p className="text-gray-700 font-semibold">₹{product.price}</p>
+              {/* <p className="text-gray-700 font-semibold">₹{product.price}</p> */}
+              <p className="text-2xl mt-4 font-extrabold text-gray-900">
+                ₹{product.discountPrice.toLocaleString("en-IN")}
+                <span className="line-through text-gray-400 text-base ml-3">
+                  ₹{product.price.toLocaleString("en-IN")}
+                </span>
 
+              </p>
               <div
                 className="flex items-center gap-1 text-yellow-500 mt-1 relative group"
                 onMouseEnter={() => setHoveredReviewId(product.id)}
@@ -180,7 +186,6 @@ const FilteredProductList = () => {
                       })}
                   </div>
                 )}
-
               </div>
 
               <button
