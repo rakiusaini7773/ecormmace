@@ -2,6 +2,8 @@ import React from 'react'
 import SunscreenSlider from '../components/SunscreenSlider'
 import Navbar from '../components/common/Navbar'
 import ProductListing from '../components/ProductListing'
+import LatestPosts from '../LandingPage/LatestPosts'
+import Footer from '../components/common/Footer'
 
 export const Product = () => {
   return (
@@ -12,6 +14,8 @@ export const Product = () => {
       </div>
       <ProductListing />
 
+      <LatestPosts />
+      <Footer />
     </div>
   )
 }

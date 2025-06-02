@@ -9,8 +9,8 @@ import { Link } from "react-router-dom";
 const FilteredProductList = () => {
   const dispatch = useDispatch();
   const likedItems = useSelector((state) => state.like.likedItems);
-
-  const [filteredProducts, setFilteredProducts] = useState(allProducts);
+console.log('allProducts', allProducts);
+  const [filteredProducts, setFilteredProducts] = useState(allProducts || []);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedPriceRange, setSelectedPriceRange] = useState("");
   const [hoveredReviewId, setHoveredReviewId] = useState(null);
