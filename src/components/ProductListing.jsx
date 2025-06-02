@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 const FilteredProductList = () => {
   const dispatch = useDispatch();
   const likedItems = useSelector((state) => state.like.likedItems);
-console.log('allProducts', allProducts);
+  console.log('allProducts', allProducts);
   const [filteredProducts, setFilteredProducts] = useState(allProducts || []);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedPriceRange, setSelectedPriceRange] = useState("");
@@ -160,16 +160,27 @@ console.log('allProducts', allProducts);
                 </span>
 
                 {hoveredReviewId === product.id && (
-                  <div className="absolute top-full left-0 z-10 mt-2 bg-white shadow-lg p-2 rounded border w-48 text-xs">
+                  <div className="absolute top-full left-0 z-10 mt-2 bg-white shadow-lg p-3 rounded border w-60 text-xs">
                     {Object.entries(breakdown)
                       .sort((a, b) => b[0] - a[0])
-                      .map(([star, count]) => (
-                        <div key={star} className="flex justify-between">
-                          <span>{star} star</span> <span>{count}</span>
-                        </div>
-                      ))}
+                      .map(([star, count]) => {
+                        const percentage = Math.round((count / product.reviews) * 100);
+                        return (
+                          <div key={star} className="flex items-center gap-2 mb-1">
+                            <span className="w-10">{star} star</span>
+                            <div className="flex-1 bg-gray-200 rounded h-3 relative">
+                              <div
+                                className="absolute top-0 left-0 bg-orange-400 h-3 rounded"
+                                style={{ width: `${percentage}%` }}
+                              ></div>
+                            </div>
+                            <span className="w-8 text-right">{percentage}%</span>
+                          </div>
+                        );
+                      })}
                   </div>
                 )}
+
               </div>
 
               <button
