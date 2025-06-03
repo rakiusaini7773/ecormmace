@@ -1,3 +1,7 @@
+
+
+
+
 import React from "react";
 import { FaTag } from "react-icons/fa";
 
@@ -50,59 +54,68 @@ const products = [
 
 const DetanSpotlight = () => {
   return (
-    <section className="py-12  ">
-      <div className="">
-        <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+    <section className="py-12">
+      {/* Large screens: grid layout */}
+      <div className="hidden lg:grid gap-8 grid-cols-4">
+        {products.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
+
+      {/* Mobile and tablet: horizontal scroll */}
+      <div className="lg:hidden overflow-x-auto">
+        <div className="flex gap-6 w-max px-4">
           {products.map((product) => (
-            <div
-              key={product.id}
-              className="rounded-2xl overflow-hidden flex flex-col transition "
-            >
-              <div className="relative  flex justify-center items-center h-72">
-                {product.label && (
-                  <div className="absolute top-4 left-16 bg-white text-[11px] font-bold text-[#d83c6e] px-3 py-1 ">
-                    {product.label}
-                  </div>
-                )}
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="h-[332px] w-[332px] object-contain rounded-md"
-                />
-              </div>
-
-              <div className="p-10 flex flex-col ">
-                <div className="text-sm text-gray-700 mb-1">
-                  <span className="text-yellow-500">⭐</span> {product.rating}
-                </div>
-
-                <h3 className="font-semibold text-lg">{product.name}</h3>
-                <p className="text-sm text-gray-600 border-b border-black pb-8 ">{product.description}</p>
-
-                <div className="mt-4 flex justify-between items-center gap-4">
-                  <div>
-                    <p className="font-bold text-black text-lg">{product.price}</p>
-                    <p className="text-sm text-gray-600 flex items-center gap-1">
-                      <FaTag /> {product.coupon}
-                    </p>
-                  </div>
-
-                  <button className="bg-black text-white py-2 px-4 rounded hover:bg-gray-800 transition w-auto">
-                    Add
-                  </button>
-                </div>
-
-
-              </div>
-
+            <div key={product.id} className="min-w-[300px]">
+              <ProductCard product={product} />
             </div>
           ))}
         </div>
       </div>
-
-      
     </section>
   );
 };
+
+// Reusable product card
+const ProductCard = ({ product }) => (
+  <div className="rounded-2xl overflow-hidden flex flex-col transition bg-white shadow-sm">
+    <div className="relative flex justify-center items-center h-72">
+      {product.label && (
+        <div className="absolute top-4 left-4 bg-white text-[11px] font-bold text-[#d83c6e] px-3 py-1">
+          {product.label}
+        </div>
+      )}
+      <img
+        src={product.image}
+        alt={product.name}
+        className="h-[332px] w-[332px] object-contain rounded-md"
+      />
+    </div>
+
+    <div className="p-6 flex flex-col">
+      <div className="text-sm text-gray-700 mb-1">
+        <span className="text-yellow-500">⭐</span> {product.rating}
+      </div>
+
+      <h3 className="font-semibold text-lg">{product.name}</h3>
+      <p className="text-sm text-gray-600 border-b border-black pb-4">
+        {product.description}
+      </p>
+
+      <div className="mt-4 flex justify-between items-center gap-4">
+        <div>
+          <p className="font-bold text-black text-lg">{product.price}</p>
+          <p className="text-sm text-gray-600 flex items-center gap-1">
+            <FaTag /> {product.coupon}
+          </p>
+        </div>
+
+        <button className="bg-black text-white py-2 px-4 rounded hover:bg-gray-800 transition w-auto">
+          Add
+        </button>
+      </div>
+    </div>
+  </div>
+);
 
 export default DetanSpotlight;
