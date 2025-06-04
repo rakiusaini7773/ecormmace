@@ -42,7 +42,9 @@ const Navbar = () => {
 
         {/* Desktop Menu */}
         <div className="hidden lg:flex items-center space-x-6">
-          {["/", "/product", "/about", "/blog"].map((path, i) => {
+          {["/", 
+          // "/product", "/about", "/blog"
+        ].map((path, i) => {
             const labels = ["HOME", "Products", "ABOUT", "BLOG"];
             return (
               <NavLink
@@ -104,7 +106,9 @@ const Navbar = () => {
             </IconButton>
           </div>
           <div className="flex flex-col space-y-4">
-            {["/", "/product", "/about", "/blog"].map((path, i) => {
+            {["/",
+            //  "/product", "/about", "/blog"
+            ].map((path, i) => {
               const labels = ["HOME", "Products", "ABOUT", "BLOG"];
               return (
                 <NavLink
