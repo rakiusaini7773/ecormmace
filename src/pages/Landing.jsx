@@ -9,6 +9,7 @@ import ProductPlaybook from '../LandingPage/ProductPlaybook'
 import LatestPosts from '../LandingPage/LatestPosts'
 import AppPromoBanner from '../LandingPage/AppPromoBanner'
 import Footer from '../components/common/Footer'
+import SunscreenSelector from '../components/SunscreenSelector'
 
 export const Landing = () => {
   return (
@@ -30,6 +31,7 @@ export const Landing = () => {
           <img src="https://foxtale.in/cdn/shop/files/DESKTOP_-_2025-04-16T115525.012.jpg?v=1744784845&width=1600" alt="Detan Spotlight" className='w-full h-auto' />
         </div>
         <BodycareSpotlight />
+        <SunscreenSelector />
         <div className='flex justify-center items-center  p-12'> 
           <img src="https://foxtale.in/cdn/shop/files/DESKTOP_-_2025-05-07T193624.258.jpg?v=1746626805&width=1600" alt="Detan Spotlight" className='w-full h-auto' />
         </div>

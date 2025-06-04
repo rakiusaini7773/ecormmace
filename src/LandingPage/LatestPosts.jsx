@@ -34,14 +34,15 @@ const LatestPosts = () => {
   return (
     <section className="py-12 px-4 md:px-8 lg:px-16">
       {/* Heading + Button */}
-      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between items-center mb-10">
-        <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-5 text-start w-full lg:w-auto">
+      <div className="flex justify-between items-start mb-5 px-4 lg:px-0 w-full max-w-md sm:max-w-7xl mx-auto">
+        <h2 className="text-xl md:text-xl lg:text-xl font-bold text-gray-900 text-start w-full lg:w-auto">
           Latest Posts
         </h2>
-        <button className="bg-pink-100 text-pink-600 px-6 py-3 rounded-md text-base font-semibold hover:bg-pink-200">
+        <button className="bg-pink-100 text-pink-600 px-6 py-3 rounded-md text-base font-semibold hover:bg-pink-200 w-36 lg:w-auto">
           View All
         </button>
       </div>
+
 
       {/* Desktop grid layout */}
       <div className="hidden lg:grid grid-cols-3 gap-8 max-w-7xl mx-auto">

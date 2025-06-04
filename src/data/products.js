@@ -380,6 +380,9 @@ const allProducts = [
     }
   ]
 },
+];
+export default allProducts;
+
 
 // {
 //   id: 8,
@@ -805,7 +808,3 @@ const allProducts = [
 //     }
 //   ]
 // }
-
-
-];
-export default allProducts;
