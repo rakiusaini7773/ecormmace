@@ -109,7 +109,9 @@ const Navbar = () => {
             {["/",
             //  "/product", "/about", "/blog"
             ].map((path, i) => {
-              const labels = ["HOME", "Products", "ABOUT", "BLOG"];
+              const labels = ["HOME", 
+                "Products", "ABOUT", "BLOG"
+              ];
               return (
                 <NavLink
                   key={path}
