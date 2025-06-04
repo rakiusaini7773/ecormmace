@@ -1,126 +1,266 @@
+
+
+
+// import React from 'react';
+// import { FaStar, FaClock, FaWater, FaCircle, FaHeart, FaPlus, FaShieldAlt } from 'react-icons/fa';
+
+// const products = [
+//   {
+//     id: 1,
+//     title: 'High-Performing',
+//     subtitle: 'Visible results from the 1st use',
+//     bgColor: '#c4a6ff',
+//     imgSrc: 'https://foxtale.in/cdn/shop/files/1_793e50d8-a306-4ab3-8bbd-721810d04a4d.gif?v=1721909956&width=300',
+//     alt: 'Face application',
+//     points: [
+//       {
+//         icon: <FaStar className="text-black text-[24px]" />,
+//         text: "Skincare shows results when you're consistent. Visible improvement every day improves consistency.",
+//       },
+//       {
+//         icon: <FaClock className="text-black text-[24px]" />,
+//         text: "Our fast-acting formulas and unique ingredient story ensure visible improvement from the very first use.",
+//       },
+//     ],
+//   },
+//   {
+//     id: 2,
+//     title: 'Innovative',
+//     subtitle: 'Unique Dermal Delivery Systems',
+//     bgColor: '#dac7ff',
+//     imgSrc: 'https://foxtale.in/cdn/shop/files/2.gif?v=1721909910&width=300',
+//     alt: 'Skin layers',
+//     points: [
+//       {
+//         icon: <FaWater className="text-black text-[24px]" />,
+//         text: 'Different concerns show up in different layers of skin.',
+//       },
+//       {
+//         icon: <FaCircle className="text-black text-[24px]" />,
+//         text: 'Our unique Active Delivery Systems ensure the actives reach the necessary layers and tackle skin concerns like increased melanin production, dehydration, collagen loss, and wrinkles.',
+//       },
+//     ],
+//   },
+//   {
+//     id: 3,
+//     title: 'Safe',
+//     subtitle: 'Boosted Skin Health Enhancers',
+//     bgColor: '#ebe3ff',
+//     imgSrc: 'https://foxtale.in/cdn/shop/files/3.gif?v=1721909952&width=300',
+//     alt: 'Safe skincare',
+//     points: [
+//       {
+//         icon: <FaHeart className="text-black text-[24px]" />,
+//         text: 'Healthy Skin = Glowing Skin',
+//       },
+//       {
+//         icon: <FaPlus className="text-black text-[24px]" />,
+//         text: 'Our products are formulated with skin health enhancers that complement actives for targeted solutions.',
+//       },
+//       {
+//         icon: <FaShieldAlt className="text-black text-[24px]" />,
+//         text: "They increase skin's moisture levels and support barrier function to give you a lit-from-within glow.",
+//       },
+//     ],
+//   },
+// ];
+
+// const ProductPlaybook = () => {
+//   return (
+//     <section className="px-4 md:px-8 lg:px-16 py-12 bg-white text-gray-800 m-6 max-w-7xl mx-auto">
+//       <h2 className="text-xl md:text-3xl lg:text-4xl font-bold mb-10 text-center lg:text-left">
+//         Our Product Playbook
+//       </h2>
+
+//       {/* Large screens: grid layout */}
+//       <div className="hidden lg:grid gap-10 grid-cols-3">
+//         {products.map(({ id, title, subtitle, bgColor, imgSrc, alt, points }) => (
+//           <div
+//             key={id}
+//             className="rounded-2xl text-center shadow-md p-[24px_28px_0px]"
+//             style={{ backgroundColor: bgColor }}
+//           >
+//             <h3 className="text-4xl font-[500] mb-3">{title}</h3>
+//             <p className="text-2xl font-bold mb-5">{subtitle}</p>
+//             <img
+//               src={imgSrc}
+//               alt={alt}
+//               className="mx-auto mb-5 w-52 h-40 object-cover rounded-full"
+//             />
+//             <div className="flex flex-col items-start gap-6 text-left text-sm md:text-base lg:text-lg">
+//               {points.map(({ icon, text }, idx) => (
+//                 <div key={idx} className="flex items-start gap-4">
+//                   <div>{icon}</div>
+//                   <div className="text-[17px] font-[500]">{text}</div>
+//                 </div>
+//               ))}
+//             </div>
+//           </div>
+//         ))}
+//       </div>
+
+//       {/* Mobile and tablet: horizontal scroll */}
+//       <div className="lg:hidden overflow-x-auto hidden-scrollbar">
+//         <div className="flex gap-6 w-max px-4">
+//           {products.map(({ id, title, subtitle, bgColor, imgSrc, alt, points }) => (
+//             <div
+//               key={id}
+//               className="min-w-[300px] rounded-2xl text-center shadow-md p-[24px_28px_0px]"
+//               style={{ backgroundColor: bgColor }}
+//             >
+//               <h3 className="text-4xl font-[500] mb-3">{title}</h3>
+//               <p className="text-2xl font-bold mb-5">{subtitle}</p>
+//               <img
+//                 src={imgSrc}
+//                 alt={alt}
+//                 className="mx-auto mb-5 w-52 h-40 object-cover rounded-full"
+//               />
+//               <div className="flex flex-col items-start gap-6 text-left text-sm md:text-base lg:text-lg">
+//                 {points.map(({ icon, text }, idx) => (
+//                   <div key={idx} className="flex items-start gap-4">
+//                     <div>{icon}</div>
+//                     <div className="text-[17px] font-[500]">{text}</div>
+//                   </div>
+//                 ))}
+//               </div>
+//             </div>
+//           ))}
+//         </div>
+//       </div>
+//     </section>
+//   );
+// };
+
+// export default ProductPlaybook;
+
+
 import React from 'react';
 import { FaStar, FaClock, FaWater, FaCircle, FaHeart, FaPlus, FaShieldAlt } from 'react-icons/fa';
 
+const products = [
+    {
+        id: 1,
+        title: 'High-Performing',
+        subtitle: 'Visible results from the 1st use',
+        bgColor: '#c4a6ff',
+        imgSrc: 'https://foxtale.in/cdn/shop/files/1_793e50d8-a306-4ab3-8bbd-721810d04a4d.gif?v=1721909956&width=300',
+        alt: 'Face application',
+        points: [
+            {
+                icon: <FaStar className="text-black text-[24px]" />,
+                text: "Skincare shows results when you're consistent. Visible improvement every day improves consistency.",
+            },
+            {
+                icon: <FaClock className="text-black text-[24px]" />,
+                text: "Our fast-acting formulas and unique ingredient story ensure visible improvement from the very first use.",
+            },
+        ],
+    },
+    {
+        id: 2,
+        title: 'Innovative',
+        subtitle: 'Unique Dermal Delivery Systems',
+        bgColor: '#dac7ff',
+        imgSrc: 'https://foxtale.in/cdn/shop/files/2.gif?v=1721909910&width=300',
+        alt: 'Skin layers',
+        points: [
+            {
+                icon: <FaWater className="text-black text-[24px]" />,
+                text: 'Different concerns show up in different layers of skin.',
+            },
+            {
+                icon: <FaCircle className="text-black text-[24px]" />,
+                text: 'Our unique Active Delivery Systems ensure the actives reach the necessary layers and tackle skin concerns like increased melanin production, dehydration, collagen loss, and wrinkles.',
+            },
+        ],
+    },
+    {
+        id: 3,
+        title: 'Safe',
+        subtitle: 'Boosted Skin Health Enhancers',
+        bgColor: '#ebe3ff',
+        imgSrc: 'https://foxtale.in/cdn/shop/files/3.gif?v=1721909952&width=300',
+        alt: 'Safe skincare',
+        points: [
+            {
+                icon: <FaHeart className="text-black text-[24px]" />,
+                text: 'Healthy Skin = Glowing Skin',
+            },
+            {
+                icon: <FaPlus className="text-black text-[24px]" />,
+                text: 'Our products are formulated with skin health enhancers that complement actives for targeted solutions.',
+            },
+            {
+                icon: <FaShieldAlt className="text-black text-[24px]" />,
+                text: "They increase skin's moisture levels and support barrier function to give you a lit-from-within glow.",
+            },
+        ],
+    },
+];
+
 const ProductPlaybook = () => {
     return (
-        <div className="px-4 md:px-8 lg:px-16 py-12 bg-white text-gray-800">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-10 pl-64">
+        <section className="px-4 md:px-8 lg:px-16 py-12 bg-white text-gray-800 m-6 max-w-7xl mx-auto">
+            <h2 className="text-xl md:text-2xl lg:text-2xl font-bold mb-5 max-w-xs mx-auto sm:mx-0 text-start whitespace-nowrap">
                 Our Product Playbook
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-7xl mx-auto">
-
-                {/* High-Performing */}
-                <div className="bg-[#c4a6ff] rounded-2xl  text-center shadow-md p-[24px_28px_0px]">
-                    <h3 className="text-4xl  font-[500] mb-3">High-Performing</h3>
-                    <p className="text-2xl  font-bold mb-5">Visible results from the 1st use</p>
-                    <img
-                        src="https://foxtale.in/cdn/shop/files/1_793e50d8-a306-4ab3-8bbd-721810d04a4d.gif?v=1721909956&width=300"
-                        alt="Face application"
-                        className="mx-auto mb-5 w-52 h-40 object-cover rounded-full"
-                    />
-                    <div className="flex flex-col items-start gap-6 text-left text-sm md:text-base lg:text-lg">
-                        {/* Star Icon Block */}
-                        <div className="flex items-start gap-4">
-                            <div>
-                                <FaStar className="text-black text-[24px]" />
-                            </div>
-                            <div className='text-[17px] font-[500] '>
-                                Skincare shows results when you're consistent. Visible improvement every day improves consistency.
-                            </div>
-                        </div>
-
-                        {/* Clock Icon Block */}
-                        <div className="flex items-start gap-4">
-                            <div>
-                                <FaClock className="text-black text-[24px]" />
-                            </div>
-                            <div  className='text-[17px] font-[500] '>
-                                Our fast-acting formulas and unique ingredient story ensure visible improvement from the very first use.
-                            </div>
+            {/* Large screens: grid layout */}
+            <div className="hidden lg:grid gap-10 grid-cols-3">
+                {products.map(({ id, title, subtitle, bgColor, imgSrc, alt, points }) => (
+                    <div
+                        key={id}
+                        className="rounded-2xl text-center shadow-md p-[24px_28px_0px]"
+                        style={{ backgroundColor: bgColor }}
+                    >
+                        <h3 className="text-4xl font-[500] mb-3">{title}</h3>
+                        <p className="text-2xl font-bold mb-5">{subtitle}</p>
+                        <img
+                            src={imgSrc}
+                            alt={alt}
+                            className="mx-auto mb-5 w-52 h-40 object-cover rounded-full"
+                        />
+                        <div className="flex flex-col items-start gap-6 text-left text-sm md:text-base lg:text-lg">
+                            {points.map(({ icon, text }, idx) => (
+                                <div key={idx} className="flex items-start gap-4">
+                                    <div>{icon}</div>
+                                    <div className="text-[17px] font-[500]">{text}</div>
+                                </div>
+                            ))}
                         </div>
                     </div>
-
-                </div>
-
-                {/* Innovative */}
-                <div className="bg-[#dac7ff] rounded-2xl p-6 md:p-8 lg:p-10 text-center shadow-md">
-                    <h3 className="text-4xl  font-[500] mb-3">Innovative</h3>
-                    <p className="text-2xl  font-bold mb-5">Unique Dermal Delivery Systems</p>
-                    <img
-                        src="https://foxtale.in/cdn/shop/files/2.gif?v=1721909910&width=300"
-                        alt="Skin layers"
-                        className="mx-auto mb-5 w-52 h-40 object-cover rounded-full"
-                    />
-                    <div className="flex flex-col items-start gap-6 text-left text-sm md:text-base lg:text-lg">
-                        {/* FaWater Block */}
-                        <div className="flex items-start gap-4">
-                            <div>
-                                <FaWater className="text-black text-[24px]" />
-                            </div>
-                            <div className='text-[17px] font-[500] '>
-                                Different concerns show up in different layers of skin.
-                            </div>
-                        </div>
-
-                        {/* FaCircle Block */}
-                        <div className="flex items-start gap-4">
-                            <div>
-                                <FaCircle className="text-black text-[24px]" />
-                            </div>
-                            <div  className='text-[17px] font-[500] '>
-                                Our unique Active Delivery Systems ensure the actives reach the necessary layers and tackle skin concerns like increased melanin production, dehydration, collagen loss, and wrinkles.
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                {/* Safe */}
-                <div className="bg-[#ebe3ff] rounded-2xl p-6 md:p-8 lg:p-10 text-center shadow-md">
-                    <h3 className="text-4xl  font-[500] mb-3">Safe</h3>
-                    <p className="text-2xl  font-bold mb-5">Boosted Skin Health Enhancers</p>
-                    <img
-                        src="https://foxtale.in/cdn/shop/files/3.gif?v=1721909952&width=300"
-                        alt="Safe skincare"
-                        className="mx-auto mb-5 w-52 h-40 object-cover rounded-full"
-                    />
-                    <div className="flex flex-col items-start gap-6 text-left text-sm md:text-base lg:text-lg">
-                        {/* FaHeart Block */}
-                        <div className="flex items-start gap-4">
-                            <div>
-                                <FaHeart className="text-black text-[24px]" />
-                            </div>
-                            <div>
-                                Healthy Skin = Glowing Skin
-                            </div>
-                        </div>
-
-                        {/* FaPlus Block */}
-                        <div className="flex items-start gap-4">
-                            <div>
-                                <FaPlus className="text-black text-[24px]" />
-                            </div>
-                            <div  className='text-[17px] font-[500] '>
-                                Our products are formulated with skin health enhancers that complement actives for targeted solutions.
-                            </div>
-                        </div>
-
-                        {/* FaShieldAlt Block */}
-                        <div className="flex items-start gap-4">
-                            <div>
-                                <FaShieldAlt className="text-black text-[24px]" />
-                            </div>
-                            <div  className='text-[17px] font-[500] '>
-                                They increase skin's moisture levels and support barrier function to give you a lit-from-within glow.
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
+                ))}
             </div>
-        </div>
+
+            {/* Mobile and tablet: horizontal scroll */}
+            <div className="lg:hidden overflow-x-auto hidden-scrollbar">
+                <div className="flex gap-6 w-min px-4">
+                    {products.map(({ id, title, subtitle, bgColor, imgSrc, alt, points }) => (
+                        <div
+                            key={id}
+                            className="min-w-[320px] rounded-2xl text-center shadow-md p-[24px_28px_0px]"
+                            style={{ backgroundColor: bgColor }}
+                        >
+                            <h3 className="text-3xl font-[500] mb-3">{title}</h3>
+                            <p className="text-xl font-bold mb-5">{subtitle}</p>
+                            <img
+                                src={imgSrc}
+                                alt={alt}
+                                className="mx-auto mb-5 w-52 h-40 object-cover rounded-full"
+                            />
+                            <div className="flex flex-col items-start gap-4 text-left text-sm md:text-base">
+                                {points.map(({ icon, text }, idx) => (
+                                    <div key={idx} className="flex items-start gap-3">
+                                        <div>{icon}</div>
+                                        <div className="text-[15px] font-[500]">{text}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
     );
 };
 

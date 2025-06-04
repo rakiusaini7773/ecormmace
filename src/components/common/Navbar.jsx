@@ -1,25 +1,29 @@
-import { useState, useEffect } from "react";
-import { useNavigate, NavLink } from "react-router-dom";
-import { Menu, X, Search, User, Heart, ShoppingCart } from "lucide-react";
+import { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import {
+  Menu,
+  X,
+  Search,
+  User,
+  Heart,
+  ShoppingCart,
+} from "lucide-react";
 import { useSelector } from "react-redux";
-import { Drawer } from "@mui/material";
+import { Drawer, IconButton } from "@mui/material";
 import CartDrawer from "../CartDrawer";
-import LikeDrawer from "../LikeDrawer"; // You should create this
+import LikeDrawer from "../LikeDrawer";
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const toggleMenu = () => setIsOpen(!isOpen);
-
-  const cartCount = useSelector((state) => state.cart.items.length);
-  const likeCount = useSelector((state) => state.like.likedItems.length);
-  const navigate = useNavigate();
-
+  const [isMenuDrawerOpen, setIsMenuDrawerOpen] = useState(false);
   const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
   const [isLikeDrawerOpen, setIsLikeDrawerOpen] = useState(false);
 
+  const cartCount = useSelector((state) => state.cart.items.length);
+  const likeCount = useSelector((state) => state.like.likedItems.length);
+
+  const toggleMenuDrawer = () => setIsMenuDrawerOpen(!isMenuDrawerOpen);
   const openCartDrawer = () => setIsCartDrawerOpen(true);
   const closeCartDrawer = () => setIsCartDrawerOpen(false);
-
   const openLikeDrawer = () => setIsLikeDrawerOpen(true);
   const closeLikeDrawer = () => setIsLikeDrawerOpen(false);
 
@@ -59,7 +63,7 @@ const Navbar = () => {
           <Search className="w-5 h-5 cursor-pointer" />
           <User className="w-5 h-5 cursor-pointer" />
 
-          {/* Like Icon with Badge and Drawer */}
+          {/* Like Icon */}
           <div className="relative cursor-pointer" onClick={openLikeDrawer}>
             <Heart className="w-5 h-5" />
             {likeCount > 0 && (
@@ -69,7 +73,7 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Cart Icon with Badge and Drawer */}
+          {/* Cart Icon */}
           <div className="relative cursor-pointer" onClick={openCartDrawer}>
             <ShoppingCart className="w-5 h-5" />
             {cartCount > 0 && (
@@ -79,38 +83,52 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Hamburger */}
-          <button className="lg:hidden" onClick={toggleMenu}>
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {/* Hamburger for mobile */}
+          <button className="lg:hidden" onClick={toggleMenuDrawer}>
+            {isMenuDrawerOpen ? (
+              <X className="w-6 h-6 " />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      {isOpen && (
-        <div className="lg:hidden flex flex-col space-y-3 mt-3 text-sm font-medium tracking-wider">
-          {["/", "/product", "/about", "/blog"].map((path, i) => {
-            const labels = ["HOME", "product", "ABOUT", "BLOG"];
-            return (
-              <NavLink
-                key={path}
-                to={path}
-                className={({ isActive }) =>
-                  `${linkClass} ${isActive ? activeClass : ""}`
-                }
-              >
-                {labels[i]}
-              </NavLink>
-            );
-          })}
+      {/* Mobile Menu Drawer */}
+      <Drawer anchor="left" open={isMenuDrawerOpen} onClose={toggleMenuDrawer}>
+        <div className="w-72 p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-lg font-bold">Menu</h2>
+            <IconButton onClick={toggleMenuDrawer}>
+              <X className="w-5 h-5" />
+            </IconButton>
+          </div>
+          <div className="flex flex-col space-y-4">
+            {["/", "/product", "/about", "/blog"].map((path, i) => {
+              const labels = ["HOME", "Products", "ABOUT", "BLOG"];
+              return (
+                <NavLink
+                  key={path}
+                  to={path}
+                  className={({ isActive }) =>
+                    `${linkClass} ${isActive ? activeClass : ""}`
+                  }
+                  onClick={toggleMenuDrawer}
+                >
+                  {labels[i]}
+                </NavLink>
+              );
+            })}
+          </div>
         </div>
-      )}
+      </Drawer>
 
-      {/* Drawers */}
+      {/* Cart Drawer */}
       <Drawer anchor="right" open={isCartDrawerOpen} onClose={closeCartDrawer}>
         <CartDrawer />
       </Drawer>
 
+      {/* Like Drawer */}
       <Drawer anchor="right" open={isLikeDrawerOpen} onClose={closeLikeDrawer}>
         <LikeDrawer />
       </Drawer>

@@ -54,7 +54,7 @@ const products = [
 
 const DetanSpotlight = () => {
   return (
-    <section className="py-12">
+    <section className="py-12 m-6">
       {/* Large screens: grid layout */}
       <div className="hidden lg:grid gap-8 grid-cols-4">
         {products.map((product) => (
@@ -63,7 +63,7 @@ const DetanSpotlight = () => {
       </div>
 
       {/* Mobile and tablet: horizontal scroll */}
-      <div className="lg:hidden overflow-x-auto">
+      <div className="lg:hidden overflow-x-auto hidden-scrollbar">
         <div className="flex gap-6 w-max px-4">
           {products.map((product) => (
             <div key={product.id} className="min-w-[300px]">
@@ -88,7 +88,7 @@ const ProductCard = ({ product }) => (
       <img
         src={product.image}
         alt={product.name}
-        className="h-[332px] w-[332px] object-contain rounded-md"
+        className="h-[332px] w-[332px] object-cover rounded-md"
       />
     </div>
 
