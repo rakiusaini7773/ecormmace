@@ -1,7 +1,3 @@
-
-
-
-
 import React from "react";
 import { FaTag } from "react-icons/fa";
 
@@ -55,18 +51,18 @@ const products = [
 const DetanSpotlight = () => {
   return (
     <section className="py-12 m-6">
-      {/* Large screens: grid layout */}
-      <div className="hidden lg:grid gap-8 grid-cols-4">
+      {/* xl and above: grid with 4 columns */}
+      <div className="hidden xl:grid gap-8 grid-cols-4 justify-items-center">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
 
-      {/* Mobile and tablet: horizontal scroll */}
-      <div className="lg:hidden overflow-x-auto hidden-scrollbar">
-        <div className="flex gap-6 w-max px-4">
+      {/* All screens below xl: horizontal scroll */}
+      <div className="xl:hidden overflow-x-auto hidden-scrollbar">
+        <div className="flex gap-6 px-4">
           {products.map((product) => (
-            <div key={product.id} className="min-w-[300px]">
+            <div key={product.id} className="min-w-[300px] max-w-[320px]">
               <ProductCard product={product} />
             </div>
           ))}
@@ -76,23 +72,22 @@ const DetanSpotlight = () => {
   );
 };
 
-// Reusable product card
 const ProductCard = ({ product }) => (
-  <div className="rounded-2xl overflow-hidden flex flex-col transition ">
-    <div className="relative flex justify-center items-center h-72">
+  <div className="w-full max-w-[320px] mx-auto rounded-2xl overflow-hidden flex flex-col transition bg-white shadow-sm">
+    <div className="relative flex justify-center items-center">
       {product.label && (
-        <div className="absolute top-4 left-20 bg-white text-[11px] font-bold text-[#d83c6e] px-1 py-1  rounded">
+        <div className="absolute top-2 left-4 bg-white text-[11px] font-bold text-[#d83c6e] px-2 py-1">
           {product.label}
         </div>
       )}
       <img
         src={product.image}
         alt={product.name}
-        className="h-[332px] w-[332px] object-cover rounded-md"
+        className="h-[250px] w-full object-cover rounded-md"
       />
     </div>
 
-    <div className="p-6 flex flex-col">
+    <div className="p-4 flex flex-col">
       <div className="text-sm text-gray-700 mb-1">
         <span className="text-yellow-500">⭐</span> {product.rating}
       </div>
