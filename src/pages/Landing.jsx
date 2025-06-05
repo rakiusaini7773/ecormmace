@@ -10,10 +10,11 @@ import LatestPosts from '../LandingPage/LatestPosts'
 import AppPromoBanner from '../LandingPage/AppPromoBanner'
 import Footer from '../components/common/Footer'
 import SunscreenSelector from '../components/SunscreenSelector'
+import LatestLaunches from '../components/LatestLaunches'
 
 export const Landing = () => {
   return (
-   <div >
+    <div >
       <Navbar />
       <div className='bg-[#dadaf3]'>
         <TantrumSlider />
@@ -27,23 +28,29 @@ export const Landing = () => {
         </div>
       </div>
       <div>
-        <div className="flex justify-center items-center  p-12">
-          <img src="https://foxtale.in/cdn/shop/files/DESKTOP_-_2025-04-16T115525.012.jpg?v=1744784845&width=1600" alt="Detan Spotlight" className='w-full h-auto' />
-        </div>
-        <BodycareSpotlight />
-        <SunscreenSelector />
-        <div className='flex justify-center items-center  p-12'> 
-          <img src="https://foxtale.in/cdn/shop/files/DESKTOP_-_2025-05-07T193624.258.jpg?v=1746626805&width=1600" alt="Detan Spotlight" className='w-full h-auto' />
+        <div className="flex justify-center items-center p-0 lg:p-12">
+          <img
+            src="https://foxtale.in/cdn/shop/files/DESKTOP_-_2025-04-16T115525.012.jpg?v=1744784845&width=1600"
+            alt="Detan Spotlight"
+            className="sm:w-full h-auto"
+          />
         </div>
 
+
+        <BodycareSpotlight />
+        <SunscreenSelector />
+        <div className='flex justify-center items-center p-0 lg:p-12'>
+          <img src="https://foxtale.in/cdn/shop/files/DESKTOP_-_2025-05-07T193624.258.jpg?v=1746626805&width=1600" alt="Detan Spotlight" className='w-full h-auto' />
+        </div>
+       <LatestLaunches />
       </div>
 
       <SkinHelpSection />
-      <FoxtaleHighlight />  
-       <ProductPlaybook />
-       <LatestPosts />
-       <AppPromoBanner />
-       <Footer />
+      <FoxtaleHighlight />
+      <ProductPlaybook />
+      <LatestPosts />
+      <AppPromoBanner />
+      <Footer />
 
     </div>
   )

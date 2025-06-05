@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { Slider, Typography, Box } from "@mui/material";
-
+import { AiOutlinePlus } from "react-icons/ai";
 const skinTypes = ["Oily", "Normal", "Dry"];
 
 const products = [
@@ -25,19 +25,23 @@ const SunscreenSelector = () => {
   const scrollRef = useRef(null);
   const isManualScroll = useRef(false); // prevent loop feedback
 
+  // Scroll container so selected card is centered
   const scrollToCard = (index) => {
     const container = scrollRef.current;
     if (container) {
       const card = container.children[index];
       if (card) {
-        const scrollLeft = card.offsetLeft - container.offsetLeft;
+        // Calculate scroll so card center aligns with container center
+        const containerCenter = container.offsetWidth / 2;
+        const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+        const scrollLeft = cardCenter - containerCenter;
+
         isManualScroll.current = true;
         container.scrollTo({ left: scrollLeft, behavior: "smooth" });
 
-        // Allow some time for scroll to finish before re-enabling detection
         setTimeout(() => {
           isManualScroll.current = false;
-        }, 500);
+        }, 600);
       }
     }
   };
@@ -73,11 +77,9 @@ const SunscreenSelector = () => {
   };
 
   return (
-    <section className="lg:hidden px-2 py-4">
-      <h2 className="text-lg font-semibold mb-1">
-        Pick your perfect sunscreen
-      </h2>
-      <p className="text-gray-500 mb-3 text-sm">
+    <section className="lg:hidden py-6 px-4"> {/* Added padding */}
+      <h2 className="text-lg font-semibold mb-2">Pick your perfect sunscreen</h2>
+      <p className="text-gray-500 mb-5 text-sm">
         Meet the SPF match for your skin type.
       </p>
 
@@ -85,32 +87,44 @@ const SunscreenSelector = () => {
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className="flex overflow-x-auto gap-3 pb-4 scroll-smooth hidden-scrollbar"
+        className="flex overflow-x-auto gap-6 pb-6 scroll-smooth scrollbar-hide hidden-scrollbar" // increased gap, padding bottom for spacing
       >
         {products.map((product, index) => (
           <div
             key={product.id}
-            className={`min-w-[240px] h-[280px] relative flex-shrink-0 bg-white transition-transform duration-300 ease-in-out rounded-md shadow ${value === index ? "scale-105" : "scale-100"
+            className={`min-w-[260px] h-[300px] relative flex-shrink-0 bg-white transition-transform duration-300 ease-in-out rounded-md shadow-md ${value === index ? "scale-110" : "scale-95" // increased scale on selected
               }`}
+            style={{ transformOrigin: "center bottom" }} // scale from bottom center for nicer effect
           >
-            <div className="relative w-full h-60 p-2 z-10">
+            <div className="relative w-full h-72 p-3 z-10">
               <img
                 src={product.image}
                 alt={`Product ${product.id}`}
                 className="w-full h-full object-contain rounded-md"
               />
               {value === index && (
-                <button
-                  className="absolute right-1 bottom-1 bg-black text-white py-1 px-4 rounded-full text-xs animate-pulse"
+
+
+                <div
+                  className=" animate-pulse absolute right-2 bottom-0 bg-black text-white text-xs rounded-md flex items-center justify-center gap-2"
                   style={{
+                    width: "113.76px",
+                    height: "52.8px",
+                    padding: "14px 24px 14px 20px",
+                    fontSize: "16px", // Increases "Add" text size
                     zIndex: 20,
                     transformOrigin: "right top",
                     animationDuration: "1.5s",
                     animationIterationCount: "infinite",
                   }}
                 >
-                  + Add
-                </button>
+                  <AiOutlinePlus className="text-xl" />
+                  Add
+                </div>
+
+
+
+
               )}
             </div>
           </div>
@@ -119,7 +133,7 @@ const SunscreenSelector = () => {
 
       {/* Skin Type Slider */}
       <Box sx={{ width: "100%", px: 1 }}>
-        <Typography align="center" fontWeight={600} mb={0.5}>
+        <Typography align="center" fontWeight={600} mb={1}>
           Skin type
         </Typography>
 
@@ -132,15 +146,15 @@ const SunscreenSelector = () => {
           marks={skinTypes.map((_, i) => ({ value: i, label: "" }))}
           sx={{
             color: "transparent",
-            height: 6,
+            height: 8,
             "& .MuiSlider-thumb": {
               backgroundColor: "orange",
               border: "3px solid white",
-              width: 18,
-              height: 18,
-              boxShadow: "0 0 0 3px rgba(255, 165, 0, 0.3)",
+              width: 22,
+              height: 22,
+              boxShadow: "0 0 0 4px rgba(255, 165, 0, 0.3)",
               "&:hover": {
-                boxShadow: "0 0 0 5px rgba(255, 165, 0, 0.4)",
+                boxShadow: "0 0 0 6px rgba(255, 165, 0, 0.4)",
               },
             },
             "& .MuiSlider-track": {
@@ -152,10 +166,10 @@ const SunscreenSelector = () => {
             },
             "& .MuiSlider-mark": {
               backgroundColor: "#ccc",
-              height: 10,
-              width: 10,
+              height: 12,
+              width: 12,
               borderRadius: "50%",
-              marginTop: "-2px",
+              marginTop: "-3px",
             },
           }}
         />

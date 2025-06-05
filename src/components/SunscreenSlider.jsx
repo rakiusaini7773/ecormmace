@@ -6,9 +6,9 @@ import "slick-carousel/slick/slick-theme.css";
 
 const SunscreenSlider = () => {
  const slides = [
-    'https://thefaceshop.in/cdn/shop/files/2000_x_400_5819bea4-7433-4420-955f-a14d90c91185.jpg?v=1746192180&width=2000', 
-    'https://thefaceshop.in/cdn/shop/files/2000_x_400.png?v=1744799774&width=2000',
-    'https://thefaceshop.in/cdn/shop/files/2000_x_400_2_42781772-4500-4857-8550-dff62b7ec3b4.jpg?v=1747116071&width=2000',
+    'https://foxtale.in/cdn/shop/files/DESKTOP_-_2025-05-31T230421.523.jpg?v=1748712886&width=2200', 
+    'https://foxtale.in/cdn/shop/files/DESKTOP_-_2025-06-04T144804.130.jpg?v=1749028703&width=2200',
+    'https://foxtale.in/cdn/shop/files/DESKTOP_-_2025-06-04T122816.951.jpg?v=1749020325&width=2200',
   ];
 
   const settings = {

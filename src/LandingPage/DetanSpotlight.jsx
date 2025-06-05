@@ -78,10 +78,10 @@ const DetanSpotlight = () => {
 
 // Reusable product card
 const ProductCard = ({ product }) => (
-  <div className="rounded-2xl overflow-hidden flex flex-col transition bg-white shadow-sm">
+  <div className="rounded-2xl overflow-hidden flex flex-col transition ">
     <div className="relative flex justify-center items-center h-72">
       {product.label && (
-        <div className="absolute top-4 left-4 bg-white text-[11px] font-bold text-[#d83c6e] px-3 py-1">
+        <div className="absolute top-4 left-20 bg-white text-[11px] font-bold text-[#d83c6e] px-1 py-1  rounded">
           {product.label}
         </div>
       )}

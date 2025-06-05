@@ -52,7 +52,8 @@ const allProducts = [
         comment: "Perfect for my morning routine. The glow is subtle but visible.",
         date: "2025-02-28"
       }
-    ]
+    ],
+    isNewLaunch: true
   },
  {
   id: 2,
@@ -107,7 +108,8 @@ const allProducts = [
       comment: "Good serum for nightly use. Noticeable improvement in skin texture.",
       date: "2025-02-15"
     }
-  ]
+  ],
+  isNewLaunch: true
 },
 
 {
@@ -162,7 +164,8 @@ const allProducts = [
       comment: "Good face wash for everyday use. Doesn’t irritate my sensitive skin.",
       date: "2025-03-30"
     }
-  ]
+  ],
+  isNewLaunch: true
 },
 {
   id: 4,
@@ -216,7 +219,8 @@ const allProducts = [
       comment: "Good product, lightweight and pleasant to use daily.",
       date: "2025-03-15"
     }
-  ]
+  ],
+   isNewLaunch: false,
 },
 
 {
@@ -271,7 +275,8 @@ const allProducts = [
       comment: "Nice moisturizer, keeps my skin soft throughout the day.",
       date: "2025-02-12"
     }
-  ]
+  ],
+   isNewLaunch: false
 },
 
 {
@@ -325,7 +330,8 @@ const allProducts = [
       comment: "Lightweight and effective. I use it daily after washing face.",
       date: "2025-02-10"
     }
-  ]
+  ],
+   isNewLaunch: false
 },
 {
   id: 7,
@@ -378,7 +384,8 @@ const allProducts = [
       comment: "Nice product, I see reduced fine lines on my forehead.",
       date: "2025-03-12"
     }
-  ]
+  ],
+   isNewLaunch: true
 },
 ];
 export default allProducts;
