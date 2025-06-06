@@ -1,7 +1,5 @@
 
-
-
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaTag } from "react-icons/fa";
 import CustomButton from "../components/common/CustomButton";
 
@@ -53,12 +51,24 @@ const products = [
 ];
 
 const DetanSpotlight = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect viewport width for mobile
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <section className="py-10 px-4 xl:px-20">
       {/* Grid view for desktop */}
       <div className="hidden xl:grid gap-8 grid-cols-4 justify-items-center">
         {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCard key={product.id} product={product} isMobile={isMobile} />
         ))}
       </div>
 
@@ -66,8 +76,11 @@ const DetanSpotlight = () => {
       <div className="xl:hidden overflow-x-auto hidden-scrollbar">
         <div className="flex gap-4">
           {products.map((product) => (
-            <div key={product.id} className="min-w-[70%] max-w-[80%] flex-shrink-0">
-              <ProductCard product={product} />
+            <div
+              key={product.id}
+              className="min-w-[55%] max-w-[30%] flex-shrink-0 "
+            >
+              <ProductCard product={product} isMobile={isMobile} />
             </div>
           ))}
         </div>
@@ -75,8 +88,9 @@ const DetanSpotlight = () => {
     </section>
   );
 };
-const ProductCard = ({ product }) => (
-  <div className="rounded-2xl overflow-hidden flex flex-col w-full  ">
+
+const ProductCard = ({ product, isMobile }) => (
+  <div className="rounded-2xl overflow-hidden flex flex-col w-full">
     {/* Product Image with Label */}
     <div className="relative w-full">
       {product.label && (
@@ -88,11 +102,16 @@ const ProductCard = ({ product }) => (
         src={product.image}
         alt={product.name}
         className="w-full h-auto object-cover"
+       style={isMobile ? { width: "100%",  borderRadius: "21px" } : {}}
+
       />
     </div>
 
     {/* Product Details */}
-    <div className="flex flex-col  pt-4 pb-5 text-[#4b4b4b] font-[Poppins]">
+    <div
+      className="flex flex-col pt-4 pb-5 text-[#4b4b4b] font-[Poppins]"
+      style={isMobile ? { paddingLeft: "5px" } : {}}
+    >
       {/* Rating */}
       <div className="flex items-center mb-1 text-[14px]">
         <span className="text-[#ffd166] text-[16px]">⭐</span>
@@ -105,14 +124,14 @@ const ProductCard = ({ product }) => (
       </h3>
 
       {/* Description */}
-      <p className="text-[13px] leading-snug mb-3">
-        {product.description}
-      </p>
+      <p className="text-[13px] leading-snug mb-3">{product.description}</p>
 
       {/* Divider and Bottom Section */}
       <div className="border-t border-black pt-4 flex justify-between items-end">
         <div>
-          <p className="text-black text-[16px] font-semibold">{product.price}</p>
+          <p className="text-black text-[16px] font-semibold">
+            {product.price}
+          </p>
           <p className="flex items-center gap-1 text-[13px] mt-[2px]">
             <FaTag size={12} /> {product.coupon}
           </p>
@@ -125,7 +144,6 @@ const ProductCard = ({ product }) => (
     </div>
   </div>
 );
-
 
 
 export default DetanSpotlight;

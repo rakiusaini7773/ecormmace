@@ -79,8 +79,8 @@ const skinConcerns = [
 
 const SkinHelpSection = () => {
   return (
-    <section className="py-12 m-6">
-      <h2 className="text-4xl md:text-5xl text-gray-900 mb-14">
+    <section className="py-5 m-6">
+      <h2 className="text-xl md:text-5xl text-gray-900 mb-14">
         What does your skin need help with?
       </h2>
 
