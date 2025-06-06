@@ -1,7 +1,7 @@
 const allProducts = [
   {
     id: 1,
-    name: "Gold Radiance Day Cream",
+    name: "Oil Balancing Moisturizer",
     category: "day",
     price: 1500,
     rating: 4.5,
@@ -15,9 +15,9 @@ const allProducts = [
     ],
     discountPrice: 1350,
     offerPercentage: 10,
-    availableOffers: ["Free No Shine Eco Sunscreen on ₹1999+"],
+    availableOffers: ["RAIN15"],
     technology: "Nano Ceramide Technology",
-    description: "Combines glow-boosting gold particles with nourishing ceramides for radiant skin.",
+    description: "8+ hours of oil control + pearlescent glow",
     benefits: [
       "Long-lasting hydration",
       "Dewy finish",
@@ -57,7 +57,7 @@ const allProducts = [
   },
  {
   id: 2,
-  name: "Hydra Glow Night Serum",
+  name: "Super Glow Moisturizer with Vitamin C",
   category: "night",
   price: 1800,
   rating: 4.7,
@@ -71,9 +71,9 @@ const allProducts = [
   ],
   discountPrice: 1620,
   offerPercentage: 10,
-  availableOffers: ["Free Travel Size Moisturizer on ₹1500+"],
+  availableOffers: ["RAIN15"],
   technology: "Hydro Boost Complex",
-  description: "Revitalizes skin overnight with deep hydration and nourishment.",
+  description: "Glowing skin from first use",
   benefits: [
     "Deep moisturizing",
     "Reduces fine lines",
@@ -114,7 +114,7 @@ const allProducts = [
 
 {
   id: 3,
-  name: "Pure Radiance Face Wash",
+  name: "Nourishing Moisturizer",
   category: "cleanser",
   price: 700,
   rating: 4.3,
@@ -127,9 +127,9 @@ const allProducts = [
   ],
   discountPrice: 630,
   offerPercentage: 10,
-  availableOffers: ["Buy 2 Get 1 Free"],
+  availableOffers: ["RAIN15"],
   technology: "Gentle Foam Cleanse",
-  description: "A refreshing and gentle cleanser that removes impurities without drying skin.",
+  description: "With Niacinamide & Hyaluronic Acid",
   benefits: [
     "Removes dirt and oil",
     "Gentle on sensitive skin",
@@ -169,7 +169,7 @@ const allProducts = [
 },
 {
   id: 4,
-  name: "Revitalizing Vitamin C Serum",
+  name: "Hydrating Moisturizer with Ceramide",
   category: "serum",
   price: 2200,
   rating: 4.8,
@@ -182,9 +182,9 @@ const allProducts = [
   ],
   discountPrice: 1980,
   offerPercentage: 10,
-  availableOffers: ["Get 15% off on your first purchase"],
+  availableOffers: ["RAIN15"],
   technology: "Stabilized Vitamin C Formula",
-  description: "Brightens skin tone and boosts collagen production for youthful skin.",
+  description: "Smoothens skin texture",
   benefits: [
     "Reduces dark spots",
     "Improves skin texture",
@@ -225,7 +225,7 @@ const allProducts = [
 
 {
   id: 5,
-  name: "Ultra Hydrating Moisturizer",
+  name: "Skin Repair Cream",
   category: "moisturizer",
   price: 1400,
   rating: 4.4,
@@ -238,9 +238,9 @@ const allProducts = [
   ],
   discountPrice: 1260,
   offerPercentage: 10,
-  availableOffers: ["Buy 1 Get 1 Half Price"],
+  availableOffers: ["RAIN15"],
   technology: "Deep Moisture Lock",
-  description: "Locks in moisture for 24 hours with a non-greasy formula.",
+  description: "Nourishes & repairs skin barrier",
   benefits: [
     "24-hour hydration",
     "Lightweight texture",
@@ -293,7 +293,7 @@ const allProducts = [
   ],
   discountPrice: 585,
   offerPercentage: 10,
-  availableOffers: ["Free face pack on ₹1000+"],
+  availableOffers: ["RAIN15"],
   technology: "Cooling & Hydrating Formula",
   description: "Soothes irritated skin with pure aloe vera and keeps skin refreshed.",
   benefits: [
@@ -348,7 +348,7 @@ const allProducts = [
   ],
   discountPrice: 1620,
   offerPercentage: 10,
-  availableOffers: ["Get 10% cashback on prepaid orders"],
+  availableOffers: ["RAIN15"],
   technology: "Deep Hydration Boost",
   description: "Provides intense hydration and plumps skin to reduce fine lines.",
   benefits: [

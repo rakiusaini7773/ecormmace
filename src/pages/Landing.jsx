@@ -19,7 +19,7 @@ export const Landing = () => {
       <div className='bg-[#dadaf3]'>
         <TantrumSlider />
         <div className='w-full h-auto relative'>
-          <div className='absolute top-0 left-[50%] transform -translate-x-1/2 -translate-y-1/2 bg-[#dadaf3] w-[300px] h-[100px] flex items-start justify-center text-xl font-bold text-[#fff] rounded-full '>
+          <div className='absolute -top-5 left-[50%] transform -translate-x-1/2 -translate-y-1/2 bg-[#dadaf3] w-[300px] h-[100px] flex items-start justify-center text-xl font-bold text-[#fff] rounded-full '>
             <div className='h-[50px] flex items-end justify-center  '>
               Oil-Control Spotlight
             </div>

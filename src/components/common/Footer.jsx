@@ -1,4 +1,9 @@
 import React, { useState } from "react";
+import {
+  MdOutlineKeyboardArrowDown,
+  MdOutlineKeyboardArrowUp,
+} from "react-icons/md";
+import { FaFacebookF, FaInstagram, FaYoutube } from "react-icons/fa";
 
 export default function Footer() {
   const [openSection, setOpenSection] = useState(null);
@@ -7,14 +12,13 @@ export default function Footer() {
     setOpenSection(openSection === section ? null : section);
   };
 
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-
   return (
     <footer className="bg-[#c4a6ff] text-black px-6 py-10 text-sm">
       {/* Newsletter */}
-      <div className="max-w-7xl mx-auto mb-8">
-        <p className="mb-3 text-center">
-          Stay up to date with our latest offers and product launches & be the first to get exclusive offers and sale information
+      <div className="max-w-7xl mx-auto mb-10">
+        <p className="mb-3 text-center text-sm sm:text-base">
+          Stay up to date with our latest offers and product launches & be the
+          first to get exclusive offers and sale information
         </p>
         <form className="flex flex-col sm:flex-row max-w-md mx-auto bg-white border border-black rounded-md overflow-hidden">
           <input
@@ -31,134 +35,175 @@ export default function Footer() {
         </form>
       </div>
 
-      {/* Grid layout on md+ screens, accordion layout on mobile */}
-      <div className="max-w-7xl mx-auto">
-        <div className="hidden md:grid grid-cols-1 md:grid-cols-4 gap-6">
-          {/* Order & Support */}
-          <div>
-            <h4 className="font-semibold mb-2">Order & Support</h4>
-            <ul>
-              <li><a href="#" className="hover:underline">Track My Order</a></li>
-            </ul>
-          </div>
-
-          {/* Information */}
-          <div>
-            <h4 className="font-semibold mb-2">Information</h4>
-            <ul>
-              <li><a href="#" className="hover:underline">Shipping & Returns</a></li>
-              <li><a href="#" className="hover:underline">Privacy Policy</a></li>
-              <li><a href="#" className="hover:underline">Terms of Service</a></li>
-            </ul>
-          </div>
-
-          {/* Contact Us */}
-          <div>
-            <h4 className="font-semibold mb-2">Contact Us</h4>
-            <ul>
-              <li><a href="#" className="hover:underline">Get in touch</a></li>
-              <li><a href="#" className="hover:underline">Store Locator</a></li>
-            </ul>
-          </div>
-
-          {/* Spacer (Column 4 is Newsletter shown above) */}
-          <div></div>
+      {/* Desktop View */}
+      <div className="hidden md:grid grid-cols-4 gap-6 max-w-7xl mx-auto text-sm">
+        <div>
+          <h4 className="font-semibold mb-2">Order & Support</h4>
+          <ul>
+            <li>
+              <a href="#" className="hover:underline">
+                Track My Order
+              </a>
+            </li>
+          </ul>
         </div>
-
-        {/* Accordion view for mobile only */}
-        <div className="md:hidden space-y-4">
-          {/* Section 1 */}
-          <div>
-            <button
-              onClick={() => toggleSection("order")}
-              className="w-full flex justify-between items-center font-semibold border-b border-black py-2"
-            >
-              Order & Support
-              <span>{openSection === "order" ? "−" : "+"}</span>
-            </button>
-            {openSection === "order" && (
-              <ul className="mt-2 pl-2 space-y-1">
-                <li><a href="#" className="hover:underline">Track My Order</a></li>
-              </ul>
-            )}
-          </div>
-
-          {/* Section 2 */}
-          <div>
-            <button
-              onClick={() => toggleSection("info")}
-              className="w-full flex justify-between items-center font-semibold border-b border-black py-2"
-            >
-              Information
-              <span>{openSection === "info" ? "−" : "+"}</span>
-            </button>
-            {openSection === "info" && (
-              <ul className="mt-2 pl-2 space-y-1">
-                <li><a href="#" className="hover:underline">Shipping & Returns</a></li>
-                <li><a href="#" className="hover:underline">Privacy Policy</a></li>
-                <li><a href="#" className="hover:underline">Terms of Service</a></li>
-              </ul>
-            )}
-          </div>
-
-          {/* Section 3 */}
-          <div>
-            <button
-              onClick={() => toggleSection("contact")}
-              className="w-full flex justify-between items-center font-semibold border-b border-black py-2"
-            >
-              Contact Us
-              <span>{openSection === "contact" ? "−" : "+"}</span>
-            </button>
-            {openSection === "contact" && (
-              <ul className="mt-2 pl-2 space-y-1">
-                <li><a href="#" className="hover:underline">Get in touch</a></li>
-                <li><a href="#" className="hover:underline">Store Locator</a></li>
-              </ul>
-            )}
-          </div>
+        <div>
+          <h4 className="font-semibold mb-2">Information</h4>
+          <ul>
+            <li>
+              <a href="#" className="hover:underline">
+                Shipping & Returns
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                Privacy Policy
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                Terms of Service
+              </a>
+            </li>
+          </ul>
         </div>
+        <div>
+          <h4 className="font-semibold mb-2">Contact Us</h4>
+          <ul>
+            <li>
+              <a href="#" className="hover:underline">
+                Get in touch
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                Store Locator
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div />
+      </div>
+
+      {/* Mobile Accordion View */}
+      <div className="md:hidden space-y-3 max-w-md mx-auto">
+        {[
+          {
+            title: "Order & Support",
+            id: "order",
+            links: [{ label: "Track My Order", href: "#" }],
+          },
+          {
+            title: "Information",
+            id: "info",
+            links: [
+              { label: "Shipping & Returns", href: "#" },
+              { label: "Privacy Policy", href: "#" },
+              { label: "Terms of Service", href: "#" },
+            ],
+          },
+          {
+            title: "Contact Us",
+            id: "contact",
+            links: [
+              { label: "Get in touch", href: "#" },
+              { label: "Store Locator", href: "#" },
+            ],
+          },
+        ].map((section) => (
+          <div key={section.id} className="pb-2 border-b border-black">
+            <button
+              onClick={() => toggleSection(section.id)}
+              className="w-full flex justify-between items-center font-semibold py-2"
+            >
+              {section.title}
+              {openSection === section.id ? (
+                <MdOutlineKeyboardArrowUp className="text-xl" />
+              ) : (
+                <MdOutlineKeyboardArrowDown className="text-xl" />
+              )}
+            </button>
+            {openSection === section.id && (
+              <ul className="mt-1 space-y-1 pl-1">
+                {section.links.map((link, i) => (
+                  <li key={i}>
+                    <a href={link.href} className="hover:underline">
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))}
       </div>
 
       {/* Divider */}
-      <div className="border-t border-black my-8 max-w-7xl mx-auto"></div>
+      <div className="border-t border-black my-10 max-w-7xl mx-auto" />
 
       {/* Caution Notice */}
-      <div className="text-center space-y-2 max-w-2xl mx-auto">
-        <h4 className="font-semibold">Caution Notice</h4>
-        <p>There's been an increase in scams through phone, SMS, WhatsApp, emails, and more.</p>
+      <div className="text-center space-y-2 max-w-xl mx-auto px-2 text-sm">
+        <h4 className="font-semibold text-base">Caution Notice</h4>
         <p>
-          <strong>Please Note:</strong> Foxtale <strong>never asks for payments</strong> for products or promotional activities outside our official platform.
-          <strong> We also do not ask for payments</strong> to join contests, lucky draws, or to get free gifts.
+          There's been an increase in scams through phone, SMS, WhatsApp,
+          emails, and more.
         </p>
         <p>
-          If you get any suspicious messages, please be careful. You can
-          <a href="mailto:info@foxtale.in" className="text-blue-600 underline"> contact our customer care</a> to check if it’s genuine.
+          <strong>Please Note:</strong> Foxtale{" "}
+          <strong>never asks for payments</strong> for products or promotional
+          activities outside our official platform.{" "}
+          <strong>We also do not ask for payments</strong> to join contests,
+          lucky draws, or to get free gifts.
         </p>
         <p>
-          <strong>Report Fraud:</strong> If you suspect a scam, report it on the
-          <a href="#" className="text-blue-600 underline"> Chakshu Portal</a> to the <strong>Department of Telecommunications (DOT)</strong>.
+          If you get any suspicious messages, please be careful. You can{" "}
+          <a
+            href="mailto:info@foxtale.in"
+            className="text-blue-700 underline font-medium"
+          >
+            contact our customer care
+          </a>{" "}
+          to check if it’s genuine.
+        </p>
+        <p>
+          <strong>Report Fraud:</strong> If you suspect a scam, report it on the{" "}
+          <a href="#" className="text-blue-700 underline font-medium">
+            Chakshu Portal
+          </a>{" "}
+          to the <strong>Department of Telecommunications (DOT)</strong>.
         </p>
         <p>Stay safe and protect your information.</p>
       </div>
 
       {/* Divider */}
-      <div className="border-t border-black my-8 max-w-7xl mx-auto"></div>
+      <div className="border-t border-black my-10 max-w-7xl mx-auto" />
 
-      {/* Social Icons */}
+      {/* Logo + Social Icons */}
       <div className="text-center space-y-4">
-        <div className="flex justify-center gap-4">
-          <a href="#"><i className="fab fa-facebook text-xl"></i></a>
-          <a href="#"><i className="fab fa-instagram text-xl"></i></a>
-          <a href="#"><i className="fab fa-youtube text-xl"></i></a>
+        <img
+          src="https://foxtale.in/logo.png"
+          alt="Foxtale Logo"
+          className="mx-auto h-10"
+        />
+        <div className="flex justify-center gap-6">
+          <a href="#" className="text-xl">
+            <FaFacebookF />
+          </a>
+          <a href="#" className="text-xl">
+            <FaInstagram />
+          </a>
+          <a href="#" className="text-xl">
+            <FaYoutube />
+          </a>
         </div>
       </div>
 
-      {/* Bottom Bar */}
-      <div className="mt-8 text-center text-xs">
+      {/* Bottom Note */}
+      <div className="mt-6 text-center text-xs">
         <p>&copy; 2025 Foxtale Cosmetics. All rights reserved.</p>
         <p className="mt-1">
-          Upto <strong>15% Off</strong> on all products <span className="text-purple-800">[Code: DETAN15]</span>
+          Upto <strong>15% Off</strong> on all products{" "}
+          <span className="text-purple-900">[Code: DETAN15]</span>
         </p>
       </div>
     </footer>

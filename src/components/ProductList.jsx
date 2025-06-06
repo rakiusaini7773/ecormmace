@@ -4,6 +4,8 @@ import { LuArrowDownUp } from "react-icons/lu";
 import { CiFilter } from "react-icons/ci";
 
 import { Drawer } from "@mui/material";
+import CustomButton from "./common/CustomButton";
+import { FaTag } from "react-icons/fa";
 
 const filters = {
   "Product Type": ["Moisturiser"],
@@ -145,7 +147,7 @@ const ProductListWithFilters = () => {
               onClick={() => setDrawerOpen(true)}
               className="p-2 rounded-full hover:bg-gray-100 transition lg:hidden"
             >
-              <CiFilter  size={18} className="text-gray-700" />
+              <CiFilter size={18} className="text-gray-700" />
             </button>
 
             {/* Sort Dropdown */}
@@ -179,14 +181,22 @@ const ProductListWithFilters = () => {
           </div>
         </div>
 
-        <div className="grid gap-6 grid-cols-2 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-2 sm:gap-4 lg:gap-4 grid-cols-2 sm:grid-cols-2 lg:grid-cols-3">
+
           {getSortedProducts().map((item) => (
             <div
               key={item.id}
-              className="bg-white  hover:shadow-xl overflow-hidden border"
+              className="bg-white hover:shadow-xl overflow-hidden"
+              style={{ border: '1px solid #e6e8ec', borderRadius: '18px' }}
+
             >
-              <div className="relative">
-                <img src={item.image} alt={item.name} className="w-96 h-auto object-cover" />
+              <div className="relative rounded-lg overflow-hidden">
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-full h-auto object-cover rounded-lg"
+                />
+                {console.log('isNewLaunch:', item.isNewLaunch)}
                 {item.isNewLaunch && (
                   <span className="absolute top-2 left-2 bg-pink-600 text-white text-xs font-bold px-2 py-1 rounded">
                     NEW LAUNCH
@@ -196,22 +206,56 @@ const ProductListWithFilters = () => {
                   ⭐ {item.rating}
                 </span>
               </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-900 text-md">{item.name}</h3>
-                <p className="text-sm text-gray-500 mb-3">{item.description?.slice(0, 50)}...</p>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-bold text-md">₹ {item.discountPrice || item.price}</p>
-                    <p className="text-xs text-red-500">{item.availableOffers?.[0]}</p>
-                  </div>
-                  <button className="bg-black text-white px-4 py-1 rounded hover:bg-gray-800 text-sm">
-                    ADD
-                  </button>
+
+              <div className="" style={{padding:"16px 24px 24px" , fontSize:"14px" , fontFamily:"Poppins" , color:"#878787"}} >
+                <div className="pb-3 border-b border-gray-300" style={{ padding: '0 0 7px' ,borderBottom: '1px solid #e6e8ec' , borderRadius: '1px'}}>
+                  <h3 className="font-semibold text-gray-900 text-md" style={{color:"#141416" , fontSize:"16px" , fontWeight:"600", letterSpacing:"0.3px" , lineHeight:"16px",
+                    marginBottom: '7px' , minHeight:"initial"
+                  }}>{item.name}</h3>
+                  <p className="text-sm text-gray-600 mt-1 mb-3"  style={{fontWeight:"400" , lineHeight:"20px",marginBottom: '0px', color:"#777e90"}}>
+                    {item.description?.slice(0, 50)}...
+                  </p>
                 </div>
+
+               
+
+                <div
+                  className="mt-4 flex justify-between items-start gap-4"
+                  style={{ padding: '9px 0 0 ' }}
+                >
+                  <div>
+                    <p
+                      className="text-black"
+                      style={{
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        lineHeight: '16px',
+                        paddingBottom: '4px',
+                      }}
+                    >
+                      {item.discountPrice || item.price}
+                    </p>
+                    <p
+                      className="flex items-center gap-1 text-gray-600"
+                      style={{ fontSize: '14px', color: '#878787' }}
+                    >
+                      <FaTag size={12} /> {item.availableOffers?.[0]}
+                    </p>
+                  </div>
+
+                  <div>
+                    <CustomButton>Add</CustomButton>
+                  </div>
+                </div>
+
+
               </div>
             </div>
           ))}
         </div>
+
+
+
       </main>
     </div>
   );

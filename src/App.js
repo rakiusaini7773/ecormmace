@@ -4,23 +4,31 @@ import { AllRoutes } from './routes/AllRoutes';
 import { Provider } from 'react-redux';
 import store from './app/store';
 
-import allProducts from './data/products'; 
+import allProducts from './data/products';
+
+// Utility to create a simple hash using JSON.stringify
+const generateProductHash = (data) => JSON.stringify(data);
 
 function App() {
   useEffect(() => {
-    const existingData = localStorage.getItem("products");
-    if (!existingData) {
+    const storedHash = localStorage.getItem("productsHash");
+    const currentHash = generateProductHash(allProducts);
+
+    if (storedHash !== currentHash) {
+      // Update localStorage with new product data
       localStorage.setItem("products", JSON.stringify(allProducts));
-      console.log("Products saved to localStorage");
+      localStorage.setItem("productsHash", currentHash);
+      console.log("Product data refreshed in localStorage");
+
+   
+      window.location.reload(); 
     }
   }, []);
 
   return (
-    <div>
-      <Provider store={store}>
-        <AllRoutes />
-      </Provider>
-    </div>
+    <Provider store={store}>
+      <AllRoutes />
+    </Provider>
   );
 }
 

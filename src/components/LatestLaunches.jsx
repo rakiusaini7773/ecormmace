@@ -33,18 +33,18 @@ const products = [
 
 const LatestLaunches = () => {
   return (
-    <section className="px-4 py-10 md:px-12 lg:px-20 bg-white">
+    <section className="px-4 py-10 md:px-12 lg:px-20 bg-white hidden-scrollbar">
       <div className="max-w-7xl mx-auto">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">
           Dive into our latest launches
         </h2>
 
-        {/* Grid layout for all screens, 2 columns on small devices */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+        {/* Horizontal scroll on mobile, grid on md+ */}
+        <div className="md:grid md:grid-cols-4 md:gap-6 overflow-x-auto flex md:flex-none gap-4 sm:gap-6 scroll-smooth hidden-scrollbar">
           {products.map((product) => (
             <div
               key={product.id}
-              className="relative rounded-xl overflow-hidden shadow-md group transition-transform hover:scale-105"
+              className="min-w-[250px] md:min-w-0 relative rounded-xl overflow-hidden shadow-md group transition-transform hover:scale-105"
             >
               <video
                 src={product.video}

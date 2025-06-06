@@ -1,5 +1,6 @@
 import React from "react";
 import { FaTag } from "react-icons/fa";
+import CustomButton from "../components/common/CustomButton";
 
 const products = [
     {
@@ -76,44 +77,63 @@ const BodycareSpotlight = () => {
 };
 
 const ProductCard = ({ product }) => (
-    <div className="rounded-2xl overflow-hidden flex flex-col transition bg-white shadow-sm">
-        <div className="relative flex justify-center items-center h-72">
-            {product.label && (
-                <div className="absolute top-4 left-4 bg-white text-[11px] font-bold text-[#d83c6e] px-3 py-1">
-                    {product.label}
-                </div>
-            )}
-            <img
-                src={product.image}
-                alt={product.name}
-                className="h-[332px] w-[332px] object-cover rounded-md"
-            />
+  <div className="rounded-2xl overflow-hidden flex flex-col transition  ">
+    <div className="relative flex justify-center items-center">
+      {product.label && (
+        <div className="absolute top-2 left-4 bg-white text-[11px] font-bold text-[#d83c6e] px-2 py-1">
+          {product.label}
         </div>
-
-        <div className="p-6 flex flex-col">
-            <div className="text-sm text-gray-700 mb-1">
-                <span className="text-yellow-500">⭐</span> {product.rating}
-            </div>
-
-            <h3 className="font-semibold text-lg">{product.name}</h3>
-            <p className="text-sm text-gray-600 border-b border-black pb-4">
-                {product.description}
-            </p>
-
-            <div className="mt-4 flex justify-between items-center gap-4">
-                <div>
-                    <p className="font-bold text-black text-lg">{product.price}</p>
-                    <p className="text-sm text-gray-600 flex items-center gap-1">
-                        <FaTag /> {product.coupon}
-                    </p>
-                </div>
-
-                <button className="bg-black text-white py-2 px-4 rounded hover:bg-gray-800 transition w-auto">
-                    Add
-                </button>
-            </div>
-        </div>
+      )}
+      <img
+        src={product.image}
+        alt={product.name}
+        className="h-auto w-full object-cover rounded-md"
+      />
     </div>
-);
 
+    <div className="flex flex-col px-0 pt-4 pb-0 font-[Poppins] text-[#878787] text-[14px]">
+      <div className="text-[14px]  mb-1">
+        <span className="text-[#ffd166] font-[16px]">⭐</span>
+        <span className=" text-[#000] font-semibold">{product.rating}</span>
+      </div>
+
+      <h3 className="font-semibold text-sm text-black">{product.name}</h3>
+      <p className=" text-gray-600 border-b border-black pb-4 " style={{ fontWeight: '400', fontSize: '14px' }}>
+        {product.description}
+      </p>
+
+      <div
+        className="mt-4 flex justify-between items-start gap-4"
+        style={{ paddingTop: '9px' }}
+      >
+        <div>
+          <p
+            className="text-black"
+            style={{
+              fontSize: '16px',
+              fontWeight: '600',
+              lineHeight: '16px',
+              paddingBottom: '4px',
+            }}
+          >
+            {product.price}
+          </p>
+          <p
+            className="flex items-center gap-1 text-gray-600"
+            style={{ fontSize: '14px', color: '#878787' }}
+          >
+            <FaTag size={12} /> {product.coupon}
+          </p>
+        </div>
+
+        <div>
+          <CustomButton>Add</CustomButton>
+        </div>
+      </div>
+
+    </div>
+
+
+  </div>
+);
 export default BodycareSpotlight;
