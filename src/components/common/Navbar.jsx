@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import {
   Menu,
   X,
@@ -42,10 +42,10 @@ const Navbar = () => {
 
         {/* Desktop Menu */}
         <div className="hidden lg:flex items-center space-x-6">
-          {["/", 
-          "/product", "/about", 
-          // "/blog"
-        ].map((path, i) => {
+          {["/",
+            "/product", "/about",
+            // "/blog"
+          ].map((path, i) => {
             const labels = ["HOME", "Products", "ABOUT", "BLOG"];
             return (
               <NavLink
@@ -64,7 +64,10 @@ const Navbar = () => {
         {/* Icons */}
         <div className="flex items-center space-x-4">
           <Search className="w-5 h-5 cursor-pointer" />
-          <User className="w-5 h-5 cursor-pointer" />
+
+          <Link to="/login">
+            <User className="w-5 h-5 cursor-pointer" />
+          </Link>
 
           {/* Like Icon */}
           <div className="relative cursor-pointer" onClick={openLikeDrawer}>
@@ -108,10 +111,10 @@ const Navbar = () => {
           </div>
           <div className="flex flex-col space-y-4">
             {["/",
-             "/product", "/about",
-            //  "/blog"
+              "/product", "/about",
+              //  "/blog"
             ].map((path, i) => {
-              const labels = ["HOME", 
+              const labels = ["HOME",
                 "Products", "ABOUT", "BLOG"
               ];
               return (

@@ -1,0 +1,7 @@
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
+const API_ENDPOINTS = {
+    LOGINUSER: process.env.REACT_APP_LOGIN_ENDPOINT,
+
+}
+export { API_BASE_URL, API_ENDPOINTS };
