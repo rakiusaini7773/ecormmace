@@ -1,52 +1,81 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 import { AiOutlineMail, AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 import LoginImage from "../images/LoginPage.png";
-
+import { API_ENDPOINTS } from "../networking/apiConfig";
+import BaseApiManager from "../networking/baseAPIManager";
 const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
 
     const formik = useFormik({
         initialValues: {
-            phone: "",
+            email: "",
             password: "",
         },
         validationSchema: Yup.object({
-            phone: Yup.string()
-                .matches(/^[0-9]{10}$/, "Enter valid 10-digit phone number")
-                .required("Phone number is required"),
+            email: Yup.string()
+                .email("Enter a valid email address")
+                .required("Email is required"),
             password: Yup.string()
                 .min(6, "Password must be at least 6 characters")
                 .required("Password is required"),
         }),
         onSubmit: async (values, { setSubmitting, setErrors }) => {
             try {
-                const res = await axios.post("http://localhost:5000/api/admin/login", values);
-                alert("Login successful!");
-                console.log(res.data);
+                const response = await BaseApiManager.post(API_ENDPOINTS.LOGINUSER, values);
+                console.log('response', response);
+
+                if (!response) {
+                    toast.error("Server error! Please try again.");
+                    return;
+                }
+                const token = response?.token;
+                let userRole = response?.userRole;
+                const userId = response?._id;
+
+                if (!token) {
+                    toast.error("Invalid response from server!");
+                    return;
+                }
+                sessionStorage.setItem("token", token);
+                sessionStorage.setItem("userRole", userRole);
+                toast.success("Login successful!");
+                setTimeout(() => {
+                    const routes = {
+                        admin: "/admin/banner",
+                    };
+
+                    navigate(routes[userRole]);
+                    window.location.reload(); // optional
+                }, 500);
             } catch (error) {
-                console.error("API Error:", error);
-                setErrors({ password: "Invalid phone number or password" });
+                console.error("Login Error:", error?.response || error);
+                setErrors({ password: "Invalid email or password" });
+                toast.error(error?.response?.data?.message || "Login failed! Please try again.");
             } finally {
                 setSubmitting(false);
             }
-        }
+        },
     });
 
     return (
-        <div className="relative min-h-screen overflow-hidden flex items-center justify-center bg-gradient-to-r from-[#FEF1FA] to-[#DD86C1]"
-        >
-            {/* Background Image - Wider and Shorter */}
-            <div className="absolute w-full md:w-2/3 h-[650px] md:h-[750px] left-4 md:left-0 ">
+        <div className="relative min-h-screen overflow-hidden flex items-center justify-center bg-gradient-to-r from-[#FEF1FA] to-[#DD86C1]">
+
+            <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
+
+            {/* Background Image */}
+            <div className="absolute w-full md:w-2/3 h-[650px] md:h-[750px] left-4 md:left-0">
                 <img
                     src={LoginImage}
                     alt="Foxtale Product"
                     className="w-full h-full object-cover"
                 />
             </div>
-
 
             {/* Login Form */}
             <div className="absolute top-1/2 right-4 md:right-0 transform -translate-y-1/2 bg-[#FEDCF3] p-6 md:p-10 rounded-lg shadow-2xl w-[90%] sm:w-[70%] md:w-[40%] z-10">
@@ -70,7 +99,6 @@ const LoginPage = () => {
                             className={`w-full px-4 py-2 pr-12 border rounded-md focus:outline-none ${formik.touched.email && formik.errors.email ? "border-red-500" : "border-gray-300"
                                 }`}
                         />
-                        {/* Icon fixed inside input box */}
                         <div className="absolute top-[25px] right-0 bg-[#FF7DDD] rounded-md w-10 h-10 flex items-center justify-center">
                             <AiOutlineMail className="text-white text-lg" />
                         </div>
@@ -97,7 +125,7 @@ const LoginPage = () => {
                         />
                         <div
                             onClick={() => setShowPassword(!showPassword)}
-                           className="absolute top-[25px] right-0 bg-[#FF7DDD] rounded-md w-10 h-10 flex items-center justify-center text-white"
+                            className="absolute top-[25px] right-0 bg-[#FF7DDD] rounded-md w-10 h-10 flex items-center justify-center text-white cursor-pointer"
                         >
                             {showPassword ? <AiFillEye /> : <AiFillEyeInvisible />}
                         </div>
@@ -106,12 +134,10 @@ const LoginPage = () => {
                         )}
                     </div>
 
-                    {/* Forgot Password */}
                     <div className="text-right text-sm text-pink-600 cursor-pointer hover:underline w-full max-w-sm">
                         Forgot Password?
                     </div>
 
-                    {/* Submit Button */}
                     <button
                         type="submit"
                         disabled={formik.isSubmitting}
@@ -120,19 +146,13 @@ const LoginPage = () => {
                         {formik.isSubmitting ? "Logging in..." : "Submit"}
                     </button>
 
-                    {/* Register Link */}
                     <p className="text-center text-sm mt-4">
                         Don’t have an account?
                         <span className="text-pink-600 ml-1 cursor-pointer hover:underline">Register</span>
                     </p>
                 </form>
-
             </div>
         </div>
-
-
-
-
     );
 };
 

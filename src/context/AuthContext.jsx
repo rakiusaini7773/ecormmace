@@ -9,13 +9,10 @@ export const AuthProvider = ({ children }) => {
 
   // Login function
   const login = (email, password) => {
-    if (email === "admin@example.com" && password === "admin123") {
+    if (email === "admin@site.com" && password === "admin123") {
       setUser({ email, role: "admin" });
       navigate("/admin/dashboard");
-    } else if (email === "sales@example.com" && password === "sales123") {
-      setUser({ email, role: "sales" });
-      navigate("/sales/dashboard");
-    } else {
+    }  else {
       alert("Invalid credentials!");
     }
   };

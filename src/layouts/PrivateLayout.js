@@ -1,7 +1,7 @@
 import React from 'react';
 // import { Outlet, useNavigate } from 'react-router-dom';
 import Header from '../Components/Header';
-import Sidebar from '../Components/Sidebar/Sidebar';
+import Sidebar from '../components/Sidebar/SideBar';
 
 const PrivateLayout = () => {
     // let token = sessionStorage.getItem("token")
@@ -13,7 +13,7 @@ const PrivateLayout = () => {
 
     return (
         <div>
-            <Header profileImage={"profileImage"} profileName={"profileName"} />
+            {/* <Header profileImage={"profileImage"} profileName={"profileName"} /> */}
             <Sidebar />
             <div>
                 {/* {isLogin ? <Outlet context={{ "onProfileUpdate" }} /> : navigate("/signin")} */}
