@@ -2,6 +2,8 @@ import React from "react";
 import Sidebar from "../components/Sidebar/SideBar";
 import SubHeader from "../components/common/SubHeader";
 import { Outlet } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Layout = () => {
   return (
@@ -17,6 +19,19 @@ const Layout = () => {
           <Outlet />
         </div>
       </div>
+
+      {/* Toast notifications - placed globally */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 };

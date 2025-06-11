@@ -1,7 +1,6 @@
 import React from "react";
 
 const Table = ({ columns, data, title }) => {
-  // Utility to style status
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
       case "active":
@@ -14,19 +13,18 @@ const Table = ({ columns, data, title }) => {
   };
 
   return (
-    <div className="w-full rounded-3xl shadow-2xl p-6 bg-white overflow-x-auto ">
+    <div className="w-full rounded-3xl shadow-2xl p-6 bg-white overflow-x-auto">
       {title && (
         <h2 className="text-xl font-semibold text-gray-800 mb-4">{title}</h2>
       )}
 
-      <table className="min-w-full bg-white ">
-        {/* Header */}
+      <table className="min-w-full bg-white">
         <thead className="bg-gray-100">
           <tr>
             {columns.map((col, index) => (
               <th
                 key={index}
-                className="px-4 py-3 text-left text-gray-500 font-semibold border-b "
+                className="px-4 py-3 text-left text-gray-500 font-semibold border-b"
               >
                 {col.header}
               </th>
@@ -34,7 +32,6 @@ const Table = ({ columns, data, title }) => {
           </tr>
         </thead>
 
-        {/* Body */}
         <tbody>
           {data.length > 0 ? (
             data.map((row, rowIndex) => (
@@ -55,9 +52,7 @@ const Table = ({ columns, data, title }) => {
                           {cellValue}
                         </span>
                       ) : col.accessor === "action" ? (
-                        <button className="bg-gray-800 text-white px-6 py-1.5 rounded-full hover:bg-gray-700 transition">
-                          View
-                        </button>
+                        cellValue
                       ) : col.render ? (
                         col.render(cellValue, row)
                       ) : (
