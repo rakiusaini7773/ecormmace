@@ -26,7 +26,7 @@ const Table = ({ columns, data, title }) => {
                 key={index}
                 className="px-4 py-3 text-left text-gray-500 font-semibold border-b"
               >
-                {col.header}
+                {col.Header}
               </th>
             ))}
           </tr>
@@ -40,23 +40,22 @@ const Table = ({ columns, data, title }) => {
                 className="border-b border-gray-200 hover:bg-gray-50 transition"
               >
                 {columns.map((col, colIndex) => {
-                  const cellValue = row[col.accessor];
+                  // Handle nested values like "category.name"
+                  const value = col.accessor.split('.').reduce((obj, key) => obj?.[key], row);
 
                   return (
                     <td
                       key={colIndex}
                       className="px-4 py-3 text-gray-800 font-medium align-middle"
                     >
-                      {col.accessor === "status" ? (
-                        <span className={`${getStatusColor(cellValue)} font-semibold`}>
-                          {cellValue}
+                      {col.Cell ? (
+                        col.Cell({ row: { original: row } })
+                      ) : col.accessor === "status" ? (
+                        <span className={`${getStatusColor(value)} font-semibold`}>
+                          {value}
                         </span>
-                      ) : col.accessor === "action" ? (
-                        cellValue
-                      ) : col.render ? (
-                        col.render(cellValue, row)
                       ) : (
-                        cellValue ?? "N/A"
+                        value ?? "N/A"
                       )}
                     </td>
                   );

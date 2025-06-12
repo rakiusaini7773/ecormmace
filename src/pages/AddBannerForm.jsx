@@ -12,40 +12,19 @@ const AddBannerForm = () => {
   const [bannerData, setBannerData] = useState([]);
   const [selectedBanner, setSelectedBanner] = useState(null);
 
-  const columns = [
-    { header: "Banner Title", accessor: "title" },
-    { header: "Link", accessor: "link" },
-    { header: "Status", accessor: "status" },
-    { header: "Action", accessor: "action" },
-  ];
-
   const fetchBanners = async () => {
     try {
       const response = await BaseApiManager.get(
         `${API_BASE_URL}${API_ENDPOINTS.GET_ALL_BANNERS}`
       );
 
-      const formatted = response.map((banner) => {
-        // Clean the path (convert \ to /, remove leading 'uploads/')
-        const cleanedPath = banner.image.replace(/\\/g, '/').replace(/^uploads\//, '');
-        const imageUrl = `${API_BASE_URL}/uploads/${cleanedPath}`;
-
-        return {
-          ...banner,
-          imageUrl,
-          status:
-            banner.status?.charAt(0).toUpperCase() +
-            banner.status?.slice(1).toLowerCase(),
-          action: (
-            <button
-              onClick={() => setSelectedBanner({ ...banner, imageUrl })}
-              className="bg-[#454545] text-white text-lg rounded-full px-6 py-2 w-[125px] h-[57px] flex items-center justify-center"
-            >
-              View
-            </button>
-          ),
-        };
-      });
+      const formatted = response.map((banner) => ({
+        ...banner,
+        imageUrl: banner.imageUrl,
+        status:
+          banner.status?.charAt(0).toUpperCase() +
+          banner.status?.slice(1).toLowerCase(),
+      }));
 
       setBannerData(formatted);
     } catch (error) {
@@ -93,6 +72,52 @@ const AddBannerForm = () => {
       }
     },
   });
+
+  const handleStatusChange = async (newStatus) => {
+    if (!selectedBanner) return;
+
+    try {
+      const endpoint = `${API_BASE_URL}${API_ENDPOINTS.UPDATE_BANNER_STATUS.replace(":id", selectedBanner._id)}`;
+
+      await BaseApiManager.patch(endpoint, { status: newStatus });
+
+      toast.success(`Status updated to ${newStatus}`);
+
+      setSelectedBanner((prev) => ({
+        ...prev,
+        status: newStatus,
+      }));
+
+      setBannerData((prevData) =>
+        prevData.map((banner) =>
+          banner._id === selectedBanner._id
+            ? { ...banner, status: newStatus }
+            : banner
+        )
+      );
+    } catch (error) {
+      console.error("Failed to update status:", error);
+      toast.error("Failed to update status");
+    }
+  };
+
+  const columns = [
+    { Header: "Banner Title", accessor: "title" },
+    { Header: "Link", accessor: "link" },
+    { Header: "Status", accessor: "status" },
+    {
+      Header: "Action",
+      accessor: "action",
+      Cell: ({ row }) => (
+        <button
+          onClick={() => setSelectedBanner(row.original)}
+          className="bg-[#454545] text-white text-sm rounded-full px-6 py-2 w-[125px] h-[45px] flex items-center justify-center"
+        >
+          View
+        </button>
+      ),
+    },
+  ];
 
   return (
     <div>
@@ -187,10 +212,10 @@ const AddBannerForm = () => {
       </div>
 
       <div className="mt-8">
-        <Table columns={columns} data={bannerData} title="All Banner" />
+        <Table columns={columns} data={bannerData} title="All Banners" />
       </div>
 
-      {/* Modal */}
+      {/* Modal for Banner Details */}
       {selectedBanner && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg max-w-3xl w-full relative">
@@ -200,17 +225,26 @@ const AddBannerForm = () => {
             >
               &times;
             </button>
+
             <h3 className="text-lg font-bold mb-4 text-center">View Banner</h3>
+
             <img
               src={selectedBanner.imageUrl}
               alt="Banner"
-              className="w-full object-cover rounded-lg mb-4"
+              className="w-full object-cover rounded-lg mb-4 max-h-64"
             />
+
             <div className="flex justify-center gap-4">
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-md">
+              <button
+                onClick={() => handleStatusChange("Active")}
+                className={`px-6 py-2 rounded-full text-white font-semibold ${selectedBanner.status === "Active" ? "bg-green-600" : "bg-gray-400"}`}
+              >
                 Active
               </button>
-              <button className="bg-red-400 text-white px-4 py-2 rounded-md">
+              <button
+                onClick={() => handleStatusChange("Inactive")}
+                className={`px-6 py-2 rounded-full text-white font-semibold ${selectedBanner.status === "Inactive" ? "bg-red-600" : "bg-gray-400"}`}
+              >
                 Inactive
               </button>
             </div>

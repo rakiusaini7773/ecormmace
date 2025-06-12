@@ -7,20 +7,26 @@ import "react-toastify/dist/ReactToastify.css";
 
 const Layout = () => {
   return (
-    <div className="main-container">
-      <div className="header">
+    <div className="flex flex-col min-h-screen">
+      {/* Header */}
+      <div className="w-full">
         <SubHeader />
       </div>
-      <div className="content flex">
-        <div className="sidebar">
+
+      {/* Content area */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar */}
+        <div className="w-64 bg-white shadow-md overflow-y-auto">
           <Sidebar />
         </div>
-        <div className="main-outlet flex-1 p-4 bg-[#F5F3F3]">
+
+        {/* Main content */}
+        <div className="flex-1 p-4 bg-[#F5F3F3] overflow-y-auto">
           <Outlet />
         </div>
       </div>
 
-      {/* Toast notifications - placed globally */}
+      {/* Toast */}
       <ToastContainer
         position="top-right"
         autoClose={3000}

@@ -9,6 +9,7 @@ import LoginPage from '../components/LoginPage';
 import Layout from './Layout';
 import AddBannerForm from '../pages/AddBannerForm';
 import AddCategoryForm from '../pages/AddCategoryForm';
+import AddProductForm from '../pages/AddProductForm';
 
 
 export const AllRoutes = () => {
@@ -21,6 +22,7 @@ export const AllRoutes = () => {
       <Route element={<Layout />}>
         <Route path="/admin/banner" element={<AddBannerForm />} />
          <Route path="/admin/categories" element={<AddCategoryForm />} />
+          <Route path="/admin/products" element={<AddProductForm />} />
       </Route>
     </Routes>
   );

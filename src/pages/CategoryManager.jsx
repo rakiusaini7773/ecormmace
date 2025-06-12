@@ -13,6 +13,7 @@ export default function CategoryManager() {
   const fetchCategories = async () => {
     try {
       const data = await BaseApiManager.get(API_ENDPOINTS.GET_ALL_CATEGORIES);
+      console.log('data',data)
       setCategories(data);
     } catch (error) {
       toast.error("Failed to load categories");
@@ -93,10 +94,10 @@ export default function CategoryManager() {
             </div>
 
             {/* Image */}
+            {console.log(' cat.iconUrl',cat.iconUrl)}
             <img
               src={
-                cat.iconUrl ||
-                `${API_BASE_URL.replace("/api", "")}/${cat.image?.replace(/\\/g, "/")}`
+                cat.imageUrl 
               }
               alt={cat.name}
               className="h-28 w-full object-contain mt-2 mb-4"

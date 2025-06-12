@@ -24,13 +24,17 @@ const BaseApiManager = {
   },
 
   post: async (endpoint, data, config = {}) => {
-    // Don't override Content-Type here, allow Axios to auto-set it (especially for FormData)
     const response = await API.post(endpoint, data, config);
     return response.data;
   },
 
   put: async (endpoint, data, config = {}) => {
     const response = await API.put(endpoint, data, config);
+    return response.data;
+  },
+
+  patch: async (endpoint, data, config = {}) => {
+    const response = await API.patch(endpoint, data, config);
     return response.data;
   },
 

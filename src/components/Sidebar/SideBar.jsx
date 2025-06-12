@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
@@ -8,13 +6,14 @@ import {
   ShoppingBag as ProductIcon,
   LayoutGrid as CategoryIcon,
   Newspaper as BlogIcon,
-   LogOut,
+  LogOut,
   Menu,
 } from "lucide-react";
 
 const Sidebar = () => {
   const [userRole, setUserRole] = useState("");
-  const [menuOpen, setMenuOpen] = useState(window.innerWidth >= 768); // Start open on large screens
+  const [menuOpen, setMenuOpen] = useState(window.innerWidth >= 768);
+  const [forceToggle, setForceToggle] = useState(window.innerWidth >= 768); // for manual toggle on small screens
 
   useEffect(() => {
     const role = sessionStorage.getItem("userRole");
@@ -22,9 +21,10 @@ const Sidebar = () => {
       setUserRole(role.toLowerCase());
     }
 
-    // Auto-collapse on small screens
     const handleResize = () => {
-      setMenuOpen(window.innerWidth >= 768);
+      const isLarge = window.innerWidth >= 768;
+      setMenuOpen(isLarge);
+      setForceToggle(isLarge);
     };
 
     window.addEventListener("resize", handleResize);
@@ -32,77 +32,71 @@ const Sidebar = () => {
   }, []);
 
   const toggleMenu = () => {
+    setForceToggle((prev) => !prev);
     setMenuOpen((prev) => !prev);
   };
 
-const menuItems = [
-  {
-    name: "Banner",
-    path: "/admin/banner",
-    icon: <BannerIcon className="w-5 h-5" />,
-    type: "admin",
-  },
-  {
-    name: "Offers Card",
-    path: "/admin/offers",
-    icon: <OffersIcon className="w-5 h-5" />,
-    type: "admin",
-  },
-  {
-    name: "Product",
-    path: "/admin/products",
-    icon: <ProductIcon className="w-5 h-5" />,
-    type: "admin",
-  },
-  {
-    name: "Category",
-    path: "/admin/categories",
-    icon: <CategoryIcon className="w-5 h-5" />,
-    type: "admin",
-  },
-  {
-    name: "Blogs",
-    path: "/admin/blogs",
-    icon: <BlogIcon className="w-5 h-5" />,
-    type: "admin",
-  },
-];
+  const menuItems = [
+    { name: "Banner", path: "/admin/banner", icon: <BannerIcon className="w-5 h-5" />, type: "admin" },
+    { name: "Offers Card", path: "/admin/offers", icon: <OffersIcon className="w-5 h-5" />, type: "admin" },
+    { name: "Product", path: "/admin/products", icon: <ProductIcon className="w-5 h-5" />, type: "admin" },
+    { name: "Category", path: "/admin/categories", icon: <CategoryIcon className="w-5 h-5" />, type: "admin" },
+    { name: "Blogs", path: "/admin/blogs", icon: <BlogIcon className="w-5 h-5" />, type: "admin" },
+  ];
+
+  const handleMouseEnter = () => {
+    if (!forceToggle && window.innerWidth >= 768) {
+      setMenuOpen(true);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!forceToggle && window.innerWidth >= 768) {
+      setMenuOpen(false);
+    }
+  };
 
   return (
     <div
-      className={`flex flex-col  ${
+      className={`flex flex-col ${
         menuOpen ? "w-64" : "w-20"
-      }  bg-[#FF7DDD] text-white relative rounded-b-4xl transition-all duration-300 `} style={{ height: "100vh" }}
+      } bg-[#FF7DDD] text-white relative transition-all duration-300 ease-in-out`}
+      style={{ height: "100%" }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
-   
-
-      <div
-        key={userRole}
-        className="sidebar-container flex flex-col flex-1 "
-      >
-        {/* Menu Items */}{" "}
-        <button onClick={toggleMenu} className="ml-4 md:hidden ">
+      {/* Toggle Button */}
+      <div className="p-4 md:hidden">
+        <button onClick={toggleMenu}>
           <Menu className="w-6 h-6 text-white" />
         </button>
-        <nav className="mt-6 sm:mt-10 space-y-2 sm:pl-6">
+      </div>
+
+      <div className="flex flex-col flex-1">
+        <nav className="mt-4 sm:mt-10 space-y-2 sm:pl-4">
           {menuItems
-            .filter((item) => item.type === userRole) // Show only items matching userRole
+            .filter((item) => item.type === userRole)
             .map((item, index) => (
               <NavLink
                 to={item.path}
                 key={index}
                 className={({ isActive }) =>
-                  `group relative flex items-center gap-4 p-3 rounded-l-full transition-all duration-300 ${
-                    isActive
-                      ? "bg-[#EFEFEF] text-orange-500 shadow-lg"
-                      : "text-white"
+                  `group relative flex items-center gap-4 p-3 rounded-l-full transition-all duration-300 hover:bg-white hover:text-[#FF7DDD] hover:scale-[1.02] ${
+                    isActive ? "bg-white text-[#FF7DDD]" : "text-white"
                   }`
                 }
               >
-                <div>{item.icon}</div>
+                <div className="relative group">
+                  {item.icon}
+                  {!menuOpen && (
+                    <span className="absolute left-full ml-2 top-1/2 -translate-y-1/2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap">
+                      {item.name}
+                    </span>
+                  )}
+                </div>
                 <span
-                  className={`text-base font-medium ${
-                    menuOpen ? "block" : "hidden"
+                  className={`text-base font-medium transition-all duration-200 ${
+                    menuOpen ? "opacity-100" : "opacity-0 w-0 overflow-hidden"
                   }`}
                 >
                   {item.name}
@@ -110,26 +104,20 @@ const menuItems = [
               </NavLink>
             ))}
         </nav>
-        {/* Logout Section */}
-        <div className="mb-6 space-y-2 sm:pl-6">
+
+        <div className="mt-auto mb-6 space-y-2 sm:pl-4">
           <NavLink
             to="/login"
             onClick={() => {
-              sessionStorage.removeItem("token"); // Remove token from sessionStorage
-              window.location.href = "/login"; // Redirect to login page
+              sessionStorage.removeItem("token");
+              window.location.href = "/login";
             }}
-            className={({ isActive }) =>
-              `group relative flex items-center gap-4 p-3 rounded-b-full transition-all duration-300 ${
-                isActive
-                  ? "bg-white text-black shadow-lg": "text-white  "
-                  
-              }`
-            }
+            className="group relative flex items-center gap-4 p-3 rounded-b-full transition-all duration-300 hover:bg-white hover:text-[#FF7DDD] hover:scale-[1.02] text-white"
           >
             <LogOut className="w-5 h-5" />
             <span
-              className={`text-base font-medium ${
-                menuOpen ? "block" : "hidden"
+              className={`text-base font-medium transition-all duration-200 ${
+                menuOpen ? "opacity-100" : "opacity-0 w-0 overflow-hidden"
               }`}
             >
               Logout
