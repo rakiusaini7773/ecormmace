@@ -1,6 +1,10 @@
+
+
+
 import React, { useState, useRef } from "react";
 import { Slider, Typography, Box } from "@mui/material";
 import { AiOutlinePlus } from "react-icons/ai";
+
 const skinTypes = ["Oily", "Normal", "Dry"];
 
 const products = [
@@ -23,15 +27,13 @@ const products = [
 const SunscreenSelector = () => {
   const [value, setValue] = useState(0);
   const scrollRef = useRef(null);
-  const isManualScroll = useRef(false); // prevent loop feedback
+  const isManualScroll = useRef(false);
 
-  // Scroll container so selected card is centered
   const scrollToCard = (index) => {
     const container = scrollRef.current;
     if (container) {
       const card = container.children[index];
       if (card) {
-        // Calculate scroll so card center aligns with container center
         const containerCenter = container.offsetWidth / 2;
         const cardCenter = card.offsetLeft + card.offsetWidth / 2;
         const scrollLeft = cardCenter - containerCenter;
@@ -77,7 +79,7 @@ const SunscreenSelector = () => {
   };
 
   return (
-    <section className="lg:hidden py-6 px-4"> {/* Added padding */}
+    <section className="lg:hidden py-6 px-4">
       <h2 className="text-lg font-semibold mb-2">Pick your perfect sunscreen</h2>
       <p className="text-gray-500 mb-5 text-sm">
         Meet the SPF match for your skin type.
@@ -87,44 +89,29 @@ const SunscreenSelector = () => {
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className="flex overflow-x-auto gap-6 pb-6 scroll-smooth scrollbar-hide hidden-scrollbar" // increased gap, padding bottom for spacing
+        className="flex overflow-x-auto whitespace-nowrap gap-6 pb-6 scroll-smooth hidden-scrollbar w-full"
       >
         {products.map((product, index) => (
           <div
             key={product.id}
-            className={`min-w-[260px] h-[300px] relative flex-shrink-0 bg-white transition-transform duration-300 ease-in-out rounded-md shadow-md ${value === index ? "scale-110" : "scale-95" // increased scale on selected
-              }`}
-            style={{ transformOrigin: "center bottom" }} // scale from bottom center for nicer effect
+            className={`relative bg-white min-w-[240px] h-[300px] flex-shrink-0 rounded-md shadow-md transition-all duration-500 ease-in-out transform ${
+              value === index ? "scale-105 translate-y-[-5px] opacity-100" : "scale-95 opacity-80"
+            }`}
           >
-            <div className="relative w-full h-72 p-3 z-10">
+            <div className="relative w-full h-full p-3">
               <img
                 src={product.image}
                 alt={`Product ${product.id}`}
                 className="w-full h-full object-contain rounded-md"
               />
               {value === index && (
-
-
                 <div
-                  className=" animate-pulse absolute right-2 bottom-0 bg-black text-white text-xs rounded-md flex items-center justify-center gap-2"
-                  style={{
-                    width: "113.76px",
-                    height: "52.8px",
-                    padding: "14px 24px 14px 20px",
-                    fontSize: "16px", // Increases "Add" text size
-                    zIndex: 20,
-                    transformOrigin: "right top",
-                    animationDuration: "1.5s",
-                    animationIterationCount: "infinite",
-                  }}
+                  className="absolute right-3 bottom-3 bg-black text-white text-sm rounded-md flex items-center justify-center gap-2 px-4 py-2 animate-pulse"
+                  style={{ zIndex: 20 }}
                 >
-                  <AiOutlinePlus className="text-xl" />
+                  <AiOutlinePlus className="text-lg" />
                   Add
                 </div>
-
-
-
-
               )}
             </div>
           </div>

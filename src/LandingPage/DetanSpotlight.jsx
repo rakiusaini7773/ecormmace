@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { FaTag } from "react-icons/fa";
 import CustomButton from "../components/common/CustomButton";
@@ -11,7 +10,7 @@ const products = [
       "https://foxtale.in/cdn/shop/files/1_70f32a6d-19bb-49ea-9940-8d522ba8df2c.jpg?v=1743841351&width=600",
     rating: 4.7,
     name: "Skin Radiance Mask",
-    description: "8+ hours of oil control + pearlescent glow",
+    description: "8+ hours of oil control + pearlescent",
     price: "₹ 545",
     coupon: "DETAN15",
   },
@@ -53,7 +52,6 @@ const products = [
 const DetanSpotlight = () => {
   const [isMobile, setIsMobile] = useState(false);
 
-  // Detect viewport width for mobile
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 640);
@@ -78,7 +76,7 @@ const DetanSpotlight = () => {
           {products.map((product) => (
             <div
               key={product.id}
-              className="min-w-[55%] max-w-[30%] flex-shrink-0 "
+              className="min-w-[55%] max-w-[30%] flex-shrink-0"
             >
               <ProductCard product={product} isMobile={isMobile} />
             </div>
@@ -91,19 +89,27 @@ const DetanSpotlight = () => {
 
 const ProductCard = ({ product, isMobile }) => (
   <div className="rounded-2xl overflow-hidden flex flex-col w-full">
-    {/* Product Image with Label */}
+    {/* Product Image with Label and Rating */}
     <div className="relative w-full">
+      {/* Label */}
       {product.label && (
-        <div className="absolute top-2 left-2 text-[11px] font-bold text-[#d83c6e] px-2 py-1 rounded bg-white">
+        <div className="absolute top-2 left-2 text-[11px] font-bold text-[#d83c6e] px-2 py-1 rounded bg-white z-10">
           {product.label}
         </div>
       )}
+
+      {/* Rating at bottom inside image */}
+      <div className="absolute bottom-2 left-2 flex items-center bg-white bg-opacity-90 px-2 py-[2px] rounded text-[13px] z-10">
+        <span className="text-[#ffd166] text-[14px]">⭐</span>
+        <span className="text-black font-semibold ml-1">{product.rating}</span>
+      </div>
+
+      {/* Product Image */}
       <img
         src={product.image}
         alt={product.name}
         className="w-full h-auto object-cover"
-       style={isMobile ? { width: "100%",  borderRadius: "21px" } : {}}
-
+        style={isMobile ? { width: "100%", borderRadius: "21px" } : {}}
       />
     </div>
 
@@ -112,12 +118,6 @@ const ProductCard = ({ product, isMobile }) => (
       className="flex flex-col pt-4 pb-5 text-[#4b4b4b] font-[Poppins]"
       style={isMobile ? { paddingLeft: "5px" } : {}}
     >
-      {/* Rating */}
-      <div className="flex items-center mb-1 text-[14px]">
-        <span className="text-[#ffd166] text-[16px]">⭐</span>
-        <span className="text-black font-semibold ml-1">{product.rating}</span>
-      </div>
-
       {/* Name */}
       <h3 className="font-semibold text-[15px] text-black leading-snug mb-1">
         {product.name}
@@ -144,6 +144,5 @@ const ProductCard = ({ product, isMobile }) => (
     </div>
   </div>
 );
-
 
 export default DetanSpotlight;

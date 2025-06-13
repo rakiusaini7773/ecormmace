@@ -55,7 +55,7 @@ const BodycareSpotlight = () => {
       </div>
 
       {/* Grid view for desktop */}
-      <div className="hidden lg:grid gap-8 grid-cols-3 justify-items-center max-w-7xl mx-auto hidden-scrollbar" >
+      <div className="hidden lg:grid gap-8 grid-cols-3 justify-items-center max-w-7xl mx-auto hidden-scrollbar">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
@@ -75,18 +75,24 @@ const BodycareSpotlight = () => {
   );
 };
 
-
-
-
 const ProductCard = ({ product }) => (
-  <div className="rounded-2xl overflow-hidden flex flex-col w-full  ">
-    {/* Product Image with Label */}
+  <div className="rounded-2xl overflow-hidden flex flex-col w-full">
+    {/* Product Image with Label and Rating */}
     <div className="relative w-full">
+      {/* Label */}
       {product.label && (
-        <div className="absolute top-2 left-2 text-[11px] font-bold text-[#d83c6e] px-2 py-1 rounded bg-white">
+        <div className="absolute top-2 left-2 text-[11px] font-bold text-[#d83c6e] px-2 py-1 rounded bg-white z-10">
           {product.label}
         </div>
       )}
+
+      {/* Rating (at bottom-left inside the image) */}
+      <div className="absolute bottom-2 left-2 flex items-center bg-white bg-opacity-90 px-2 py-[2px] rounded text-[13px] z-10">
+        <span className="text-[#ffd166] text-[14px]">⭐</span>
+        <span className="text-black font-semibold ml-1">{product.rating}</span>
+      </div>
+
+      {/* Product Image */}
       <img
         src={product.image}
         alt={product.name}
@@ -95,22 +101,14 @@ const ProductCard = ({ product }) => (
     </div>
 
     {/* Product Details */}
-    <div className="flex flex-col  pt-4 pb-5 text-[#4b4b4b] font-[Poppins]">
-      {/* Rating */}
-      <div className="flex items-center mb-1 text-[14px]">
-        <span className="text-[#ffd166] text-[16px]">⭐</span>
-        <span className="text-black font-semibold ml-1">{product.rating}</span>
-      </div>
-
+    <div className="flex flex-col pt-4 pb-5 text-[#4b4b4b] font-[Poppins]">
       {/* Name */}
       <h3 className="font-semibold text-[15px] text-black leading-snug mb-1">
         {product.name}
       </h3>
 
       {/* Description */}
-      <p className="text-[13px] leading-snug mb-3">
-        {product.description}
-      </p>
+      <p className="text-[13px] leading-snug mb-3">{product.description}</p>
 
       {/* Divider and Bottom Section */}
       <div className="border-t border-black pt-4 flex justify-between items-end">
@@ -128,4 +126,5 @@ const ProductCard = ({ product }) => (
     </div>
   </div>
 );
+
 export default BodycareSpotlight;

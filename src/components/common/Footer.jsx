@@ -147,68 +147,70 @@ export default function Footer() {
 
       {/* Divider visible only on large screens */}
       <div className="hidden md:block border-t border-black my-8 max-w-7xl mx-auto"></div>
+      <div className="px-8 sm:px-6 md:px-8">
+        {/* Caution Notice */}
+        <div className="text-center space-y-2 max-w-2xl mx-auto">
+          <h4 className="font-semibold py-4">Caution Notice</h4>
+          <p>
+            There's been an increase in scams through phone, SMS, WhatsApp,
+            emails, and more.
+          </p>
+          <p>
+            <strong>Please Note:</strong> Foxtale{" "}
+            <strong>never asks for payments</strong> for products or promotional
+            activities outside our official platform.
+            <strong> We also do not ask for payments</strong> to join contests,
+            lucky draws, or to get free gifts.
+          </p>
+          <p>
+            If you get any suspicious messages, please be careful. You can{" "}
+            <a
+              href="mailto:info@foxtale.in"
+              className="text-blue-600 underline"
+            >
+              contact our customer care
+            </a>{" "}
+            to check if it’s genuine.
+          </p>
+          <p>
+            <strong>Report Fraud:</strong> If you suspect a scam, report it on
+            the{" "}
+            <a href="#" className="text-blue-600 underline">
+              Chakshu Portal
+            </a>{" "}
+            to the <strong>Department of Telecommunications (DOT)</strong>.
+          </p>
+          <p>Stay safe and protect your information.</p>
+        </div>
 
-      {/* Caution Notice */}
-      <div className="text-center space-y-2 max-w-2xl mx-auto">
-        <h4 className="font-semibold">Caution Notice</h4>
-        <p>
-          There's been an increase in scams through phone, SMS, WhatsApp,
-          emails, and more.
-        </p>
-        <p>
-          <strong>Please Note:</strong> Foxtale{" "}
-          <strong>never asks for payments</strong> for products or promotional
-          activities outside our official platform.
-          <strong> We also do not ask for payments</strong> to join contests,
-          lucky draws, or to get free gifts.
-        </p>
-        <p>
-          If you get any suspicious messages, please be careful. You can{" "}
-          <a
-            href="mailto:info@foxtale.in"
-            className="text-blue-600 underline"
-          >
-            contact our customer care
-          </a>{" "}
-          to check if it’s genuine.
-        </p>
-        <p>
-          <strong>Report Fraud:</strong> If you suspect a scam, report it on
-          the{" "}
-          <a href="#" className="text-blue-600 underline">
-            Chakshu Portal
-          </a>{" "}
-          to the <strong>Department of Telecommunications (DOT)</strong>.
-        </p>
-        <p>Stay safe and protect your information.</p>
-      </div>
+        {/* Divider */}
+        <div className="border-t border-black my-8 max-w-7xl mx-auto"></div>
 
-      {/* Divider */}
-      <div className="border-t border-black my-8 max-w-7xl mx-auto"></div>
+        {/* Social Icons */}
+        <div className="text-center space-y-4">
+          <div className="flex justify-center gap-4">
+            <a href="#">
+              <i className="fab fa-facebook text-xl"></i>
+            </a>
+            <a href="#">
+              <i className="fab fa-instagram text-xl"></i>
+            </a>
+            <a href="#">
+              <i className="fab fa-youtube text-xl"></i>
+            </a>
+          </div>
+        </div>
 
-      {/* Social Icons */}
-      <div className="text-center space-y-4">
-        <div className="flex justify-center gap-4">
-          <a href="#">
-            <i className="fab fa-facebook text-xl"></i>
-          </a>
-          <a href="#">
-            <i className="fab fa-instagram text-xl"></i>
-          </a>
-          <a href="#">
-            <i className="fab fa-youtube text-xl"></i>
-          </a>
+        {/* Bottom Bar */}
+        <div className="mt-8 text-center text-xs">
+          <p>&copy; 2025 Foxtale Cosmetics. All rights reserved.</p>
+          <p className="mt-1">
+            Upto <strong>15% Off</strong> on all products{" "}
+            <span className="text-purple-800">[Code: DETAN15]</span>
+          </p>
         </div>
       </div>
 
-      {/* Bottom Bar */}
-      <div className="mt-8 text-center text-xs">
-        <p>&copy; 2025 Foxtale Cosmetics. All rights reserved.</p>
-        <p className="mt-1">
-          Upto <strong>15% Off</strong> on all products{" "}
-          <span className="text-purple-800">[Code: DETAN15]</span>
-        </p>
-      </div>
     </footer>
   );
 }
