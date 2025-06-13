@@ -1,9 +1,7 @@
-
-
-
 import React, { useState, useRef } from "react";
 import { Slider, Typography, Box } from "@mui/material";
 import { AiOutlinePlus } from "react-icons/ai";
+
 
 const skinTypes = ["Oily", "Normal", "Dry"];
 
@@ -79,9 +77,11 @@ const SunscreenSelector = () => {
   };
 
   return (
-    <section className="lg:hidden py-6 px-4">
-      <h2 className="text-lg font-semibold mb-2">Pick your perfect sunscreen</h2>
-      <p className="text-gray-500 mb-5 text-sm">
+    <section className="sunscreen-selector show-only-mobile300 py-4 px-3 w-full">
+      <h2 className="text-base font-semibold mb-2">
+        Pick your perfect sunscreen
+      </h2>
+      <p className="text-gray-500 mb-4 text-sm">
         Meet the SPF match for your skin type.
       </p>
 
@@ -89,16 +89,21 @@ const SunscreenSelector = () => {
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className="flex overflow-x-auto whitespace-nowrap gap-6 pb-6 scroll-smooth hidden-scrollbar w-full"
+        className="flex overflow-x-auto gap-3 pb-4 scroll-smooth hidden-scrollbar"
+        style={{
+          WebkitOverflowScrolling: "touch",
+        }}
       >
         {products.map((product, index) => (
           <div
             key={product.id}
-            className={`relative bg-white min-w-[240px] h-[300px] flex-shrink-0 rounded-md shadow-md transition-all duration-500 ease-in-out transform ${
-              value === index ? "scale-105 translate-y-[-5px] opacity-100" : "scale-95 opacity-80"
+            className={`relative bg-white min-w-[200px] max-w-[220px] h-[260px] flex-shrink-0 rounded-md shadow-md transition-all duration-500 ease-in-out transform ${
+              value === index
+                ? "scale-105 translate-y-[-4px] opacity-100"
+                : "scale-95 opacity-80"
             }`}
           >
-            <div className="relative w-full h-full p-3">
+            <div className="relative w-full h-full p-2">
               <img
                 src={product.image}
                 alt={`Product ${product.id}`}
@@ -106,7 +111,7 @@ const SunscreenSelector = () => {
               />
               {value === index && (
                 <div
-                  className="absolute right-3 bottom-3 bg-black text-white text-sm rounded-md flex items-center justify-center gap-2 px-4 py-2 animate-pulse"
+                  className="absolute right-2 bottom-2 bg-black text-white text-sm rounded-md flex items-center justify-center gap-1 px-3 py-1 "
                   style={{ zIndex: 20 }}
                 >
                   <AiOutlinePlus className="text-lg" />
@@ -161,7 +166,7 @@ const SunscreenSelector = () => {
           }}
         />
 
-        <Box className="flex justify-between text-xs mt-1 px-1">
+        <Box className="flex justify-between text-xs mt-1 px-2">
           {skinTypes.map((label, idx) => (
             <Typography
               key={idx}

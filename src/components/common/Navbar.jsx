@@ -57,7 +57,7 @@ const Navbar = () => {
         </div>
 
         {/* Right Icons */}
-        <div className="flex items-center space-x-4 ml-auto">
+        <div className="flex items-center space-x-2 ml-auto">
           <Search className="w-5 h-5 cursor-pointer" />
           <Link to="/login">
             <User className="w-5 h-5 cursor-pointer" />

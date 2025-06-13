@@ -31,3 +31,19 @@ code {
 }
 
 
+/* SunscreenSelector.css */
+
+@media (min-width: 400px) {
+  .show-only-mobile300 {
+    display: none !important;
+  }
+}
+
+.hidden-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hidden-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

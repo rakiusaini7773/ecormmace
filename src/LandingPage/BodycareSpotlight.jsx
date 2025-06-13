@@ -7,7 +7,7 @@ const products = [
     id: 1,
     label: "TOP RATED",
     image:
-      "https://foxtale.in/cdn/shop/files/1_16_22be3ab1-07e4-49ad-bed6-ea527b501b99.jpg?v=1743841022&width=600",
+      "https://foxtale.in/cdn/shop/files/1_16_22be3ab1-07e4-49ad-bed6-ea527b501b99.jpg?v=1743841022&width=400",
     rating: 4.8,
     name: "Exfoliating Body Wash",
     description: "Gently exfoliates tan away",
