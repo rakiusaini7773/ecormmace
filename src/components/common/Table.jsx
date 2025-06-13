@@ -2,7 +2,9 @@ import React from "react";
 
 const Table = ({ columns, data, title }) => {
   const getStatusColor = (status) => {
-    switch (status?.toLowerCase()) {
+    if (typeof status !== "string") return "text-gray-600";
+
+    switch (status.toLowerCase()) {
       case "active":
         return "text-blue-600";
       case "inactive":
@@ -41,7 +43,11 @@ const Table = ({ columns, data, title }) => {
               >
                 {columns.map((col, colIndex) => {
                   // Handle nested values like "category.name"
-                  const value = col.accessor.split('.').reduce((obj, key) => obj?.[key], row);
+                  const rawValue = col.accessor.split('.').reduce((obj, key) => obj?.[key], row);
+                  const value =
+                    col.accessor === "status"
+                      ? rawValue || row.sstatus // fallback to sstatus
+                      : rawValue;
 
                   return (
                     <td
