@@ -3,7 +3,6 @@ import React from "react";
 const Table = ({ columns, data, title }) => {
   const getStatusColor = (status) => {
     if (typeof status !== "string") return "text-gray-600";
-
     switch (status.toLowerCase()) {
       case "active":
         return "text-blue-600";
@@ -42,17 +41,13 @@ const Table = ({ columns, data, title }) => {
                 className="border-b border-gray-200 hover:bg-gray-50 transition"
               >
                 {columns.map((col, colIndex) => {
-                  // Handle nested values like "category.name"
                   const rawValue = col.accessor.split('.').reduce((obj, key) => obj?.[key], row);
-                  const value =
-                    col.accessor === "status"
-                      ? rawValue || row.sstatus // fallback to sstatus
-                      : rawValue;
+                  const value = col.accessor === "status" ? rawValue || row.sstatus : rawValue;
 
                   return (
                     <td
                       key={colIndex}
-                      className="px-4 py-3 text-gray-800 font-medium align-middle"
+                      className="px-4 py-3 text-gray-800 font-medium align-middle max-w-[200px] whitespace-normal break-words"
                     >
                       {col.Cell ? (
                         col.Cell({ row: { original: row } })

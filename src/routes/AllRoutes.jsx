@@ -16,6 +16,7 @@ import AddProductForm from '../pages/AddProductForm';
 // Layouts & Route Protection
 import Layout from './Layout';
 import ProtectedRoute from '../networking/ProtectedRoute';
+import AddBlogForm from '../pages/AddBlogForm';
 
 export const AllRoutes = () => {
   return (
@@ -33,6 +34,7 @@ export const AllRoutes = () => {
           <Route path="/admin/banner" element={<AddBannerForm />} />
           <Route path="/admin/categories" element={<AddCategoryForm />} />
           <Route path="/admin/products" element={<AddProductForm />} />
+           <Route path="/admin/blogs" element={<AddBlogForm />} />
         </Route>
       </Route>
     </Routes>
