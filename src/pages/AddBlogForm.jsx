@@ -7,6 +7,8 @@ import { API_ENDPOINTS } from '../networking/apiConfig';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Table from '../components/common/Table';
+import BlogModal from '../components/BlogModal';
+
 
 const blogSchema = Yup.object().shape({
   title: Yup.string().required('Title is required'),
@@ -21,6 +23,8 @@ const AddBlogForm = () => {
   const [imageName, setImageName] = useState('');
   const [categories, setCategories] = useState([]);
   const [blogs, setBlogs] = useState([]);
+  const [selectedBlog, setSelectedBlog] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const initialValues = {
     title: '',
@@ -48,7 +52,14 @@ const AddBlogForm = () => {
   const fetchBlogs = async () => {
     try {
       const response = await BaseApiManager.get(API_ENDPOINTS.GET_ALL_BLOGS);
-      setBlogs(response);
+      // Add full URL if necessary
+      const processed = response.map((blog) => ({
+        ...blog,
+        image: blog.image?.startsWith('http')
+          ? blog.image
+          : `${process.env.REACT_APP_BASE_URL}/uploads/${blog.image}`, // adjust this line if needed
+      }));
+      setBlogs(processed);
     } catch (error) {
       console.error('Error fetching blogs:', error);
       toast.error('Failed to load blogs');
@@ -97,10 +108,14 @@ const AddBlogForm = () => {
       ),
     },
     {
-      Header: "Actions",
-      accessor: "actions",
+      Header: 'Actions',
+      accessor: 'actions',
       Cell: ({ row }) => (
         <button
+          onClick={() => {
+            setSelectedBlog(row.original);
+            setIsModalOpen(true);
+          }}
           className="bg-[#454545] text-white text-sm rounded-full px-6 py-2 w-[125px] h-[45px] flex items-center justify-center"
         >
           View
@@ -116,7 +131,6 @@ const AddBlogForm = () => {
         <Formik initialValues={initialValues} validationSchema={blogSchema} onSubmit={handleSubmit}>
           {({ setFieldValue }) => (
             <Form className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Blog Title */}
               <div>
                 <label className="block text-sm mb-1">Blog Title</label>
                 <Field
@@ -127,7 +141,6 @@ const AddBlogForm = () => {
                 <ErrorMessage name="title" component="div" className="text-red-500 text-sm mt-1" />
               </div>
 
-              {/* Author */}
               <div>
                 <label className="block text-sm mb-1">Author Name</label>
                 <Field
@@ -138,7 +151,6 @@ const AddBlogForm = () => {
                 <ErrorMessage name="author" component="div" className="text-red-500 text-sm mt-1" />
               </div>
 
-              {/* Category */}
               <div>
                 <label className="block text-sm mb-1">Category</label>
                 <Field as="select" name="category" className="w-full border border-gray-300 rounded-md p-2">
@@ -152,7 +164,6 @@ const AddBlogForm = () => {
                 <ErrorMessage name="category" component="div" className="text-red-500 text-sm mt-1" />
               </div>
 
-              {/* Read More Link */}
               <div>
                 <label className="block text-sm mb-1">Read More Link (optional)</label>
                 <Field
@@ -162,7 +173,6 @@ const AddBlogForm = () => {
                 />
               </div>
 
-              {/* Blog Image */}
               <div>
                 <label className="block text-sm mb-1">Upload Blog Image</label>
                 <div className="flex items-center gap-2">
@@ -195,7 +205,6 @@ const AddBlogForm = () => {
                 <ErrorMessage name="image" component="div" className="text-red-500 text-sm mt-1" />
               </div>
 
-              {/* Description */}
               <div>
                 <label className="block text-sm mb-1">Short Description</label>
                 <Field
@@ -206,7 +215,6 @@ const AddBlogForm = () => {
                 <ErrorMessage name="description" component="div" className="text-red-500 text-sm mt-1" />
               </div>
 
-              {/* Submit */}
               <div className="md:col-span-2 flex justify-end mt-4">
                 <button
                   type="submit"
@@ -220,10 +228,16 @@ const AddBlogForm = () => {
         </Formik>
       </div>
 
-      {/* 🟢 Table of all blogs */}
       <div className="mt-10">
         <Table columns={columns} data={blogs} title="All Blogs" />
       </div>
+
+      {/* Blog Modal */}
+      <BlogModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        blog={selectedBlog}
+      />
     </>
   );
 };
