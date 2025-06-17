@@ -17,6 +17,8 @@ import AddProductForm from '../pages/AddProductForm';
 import Layout from './Layout';
 import ProtectedRoute from '../networking/ProtectedRoute';
 import AddBlogForm from '../pages/AddBlogForm';
+import Blog from '../pages/Blog';
+
 
 export const AllRoutes = () => {
   return (
@@ -26,7 +28,7 @@ export const AllRoutes = () => {
       <Route path="/product" element={<Product />} />
       <Route path="/product/:id" element={<ProductDetailPage />} />
       <Route path="/about" element={<About />} />
-      <Route path="/login" element={<LoginPage />} />
+      <Route path="/blogs" element={<Blog />} />
 
       {/* 🔐 Protected Admin Routes */}
       <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
