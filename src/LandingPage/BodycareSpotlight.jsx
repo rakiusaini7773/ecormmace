@@ -1,6 +1,8 @@
 import React from "react";
 import { FaTag } from "react-icons/fa";
 import CustomButton from "../components/common/CustomButton";
+import { addToCart } from "../redux/slices/cartSlice";
+import { useDispatch } from "react-redux";
 
 const products = [
   {
@@ -11,7 +13,7 @@ const products = [
     rating: 4.8,
     name: "Exfoliating Body Wash",
     description: "Gently exfoliates tan away",
-    price: "₹ 399",
+    price: "399",
     coupon: "BODY10",
   },
   {
@@ -22,7 +24,7 @@ const products = [
     rating: 4.8,
     name: "Brightening Body Wash",
     description: "Exfoliates tan & brightens skin",
-    price: "₹ 399",
+    price: "399",
     coupon: "BODY10",
   },
   {
@@ -33,12 +35,13 @@ const products = [
     rating: 4.7,
     name: "SPF 30 Detan Body Lotion",
     description: "With Vitamin C and Niacinamide",
-    price: "₹ 499",
+    price: "499",
     coupon: "BODY10",
   },
 ];
 
-const BodycareSpotlight = () => {
+const BodycareSpotlight = () => { 
+  const dispatch = useDispatch();
   return (
     <section className="py-10 px-4 xl:px-20">
       {/* Heading */}
@@ -57,7 +60,7 @@ const BodycareSpotlight = () => {
       {/* Grid view for desktop */}
       <div className="hidden lg:grid gap-8 grid-cols-3 justify-items-center max-w-7xl mx-auto hidden-scrollbar">
         {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCard key={product.id} product={product} dispatch={dispatch} />
         ))}
       </div>
 
@@ -66,7 +69,7 @@ const BodycareSpotlight = () => {
         <div className="flex gap-4">
           {products.map((product) => (
             <div key={product.id} className="min-w-[70%] max-w-[80%] flex-shrink-0">
-              <ProductCard product={product} />
+              <ProductCard product={product} dispatch={dispatch}/>
             </div>
           ))}
         </div>
@@ -75,7 +78,7 @@ const BodycareSpotlight = () => {
   );
 };
 
-const ProductCard = ({ product }) => (
+const ProductCard = ({ product ,  dispatch }) => (
   <div className="rounded-2xl overflow-hidden flex flex-col w-full">
     {/* Product Image with Label and Rating */}
     <div className="relative w-full">
@@ -113,13 +116,13 @@ const ProductCard = ({ product }) => (
       {/* Divider and Bottom Section */}
       <div className="border-t border-black pt-4 flex justify-between items-end">
         <div>
-          <p className="text-black text-[16px] font-semibold">{product.price}</p>
+          <p className="text-black text-[16px] font-semibold"> ₹ {product.price}</p>
           <p className="flex items-center gap-1 text-[13px] mt-[2px]">
             <FaTag size={12} /> {product.coupon}
           </p>
         </div>
 
-        <CustomButton className="bg-black text-white text-sm px-4 py-1 rounded">
+        <CustomButton onClick={() => dispatch(addToCart(product))} className="bg-black text-white text-sm px-4 py-1 rounded">
           Add
         </CustomButton>
       </div>

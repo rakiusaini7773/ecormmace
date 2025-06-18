@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { FaTag } from "react-icons/fa";
 import CustomButton from "../components/common/CustomButton";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../redux/slices/cartSlice";
 
 const products = [
   {
@@ -11,7 +13,7 @@ const products = [
     rating: 4.7,
     name: "Skin Radiance Mask",
     description: "8+ hours of oil control + pearlescent",
-    price: "₹ 545",
+    price: "545",
     coupon: "DETAN15",
   },
   {
@@ -22,7 +24,7 @@ const products = [
     rating: 4.8,
     name: "Super Glow Face Wash",
     description: "Daily tan remover that boosts glow",
-    price: "₹ 249",
+    price: "249",
     coupon: "DETAN15",
   },
   {
@@ -33,7 +35,7 @@ const products = [
     rating: 4.8,
     name: "SPF 50 Glow Sunscreen",
     description: "Prevents tan & boosts glow",
-    price: "₹ 349",
+    price: "349",
     coupon: "DETAN15",
   },
   {
@@ -44,12 +46,13 @@ const products = [
     rating: 4.8,
     name: "Exfoliating Body Wash",
     description: "Gently exfoliates tan away",
-    price: "₹ 399",
+    price: "399",
     coupon: "DETAN15",
   },
 ];
 
 const DetanSpotlight = () => {
+  const dispatch = useDispatch();
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -66,7 +69,7 @@ const DetanSpotlight = () => {
       {/* Grid view for desktop */}
       <div className="hidden xl:grid gap-8 grid-cols-4 justify-items-center">
         {products.map((product) => (
-          <ProductCard key={product.id} product={product} isMobile={isMobile} />
+          <ProductCard key={product.id} product={product} isMobile={isMobile} dispatch={dispatch} />
         ))}
       </div>
 
@@ -78,7 +81,7 @@ const DetanSpotlight = () => {
               key={product.id}
               className="min-w-[55%] max-w-[30%] flex-shrink-0"
             >
-              <ProductCard product={product} isMobile={isMobile} />
+              <ProductCard product={product} isMobile={isMobile} dispatch={dispatch} />
             </div>
           ))}
         </div>
@@ -87,7 +90,7 @@ const DetanSpotlight = () => {
   );
 };
 
-const ProductCard = ({ product, isMobile }) => (
+const ProductCard = ({ product, isMobile , dispatch}) => (
   <div className="rounded-2xl overflow-hidden flex flex-col w-full">
     {/* Product Image with Label and Rating */}
     <div className="relative w-full">
@@ -130,16 +133,14 @@ const ProductCard = ({ product, isMobile }) => (
       <div className="border-t border-black pt-4 flex justify-between items-end">
         <div>
           <p className="text-black text-[16px] font-semibold">
-            {product.price}
+             ₹ {product.price}
           </p>
           <p className="flex items-center gap-1 text-[13px] mt-[2px]">
             <FaTag size={12} /> {product.coupon}
           </p>
         </div>
 
-        <CustomButton className="bg-black text-white text-sm px-4 py-1 rounded">
-          Add
-        </CustomButton>
+        <CustomButton onClick={() => dispatch(addToCart(product))}>Add</CustomButton>
       </div>
     </div>
   </div>

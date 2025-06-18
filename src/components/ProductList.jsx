@@ -272,7 +272,7 @@ const ProductListWithFilters = () => {
                         paddingBottom: "4px",
                       }}
                     >
-                      {item.discountPrice || item.price}
+                      { item.price}
                     </p>
                     <p
                       className="flex items-center gap-1 text-gray-600"

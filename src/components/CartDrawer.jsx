@@ -48,7 +48,7 @@ const CartDrawer = () => {
   }, []);
 
   const totalCartPrice = groupedItems.reduce(
-    (sum, item) => sum + item.quantity * item.discountPrice,
+    (sum, item) => sum + item.quantity * item.price,
     0
   );
 
@@ -74,7 +74,7 @@ const CartDrawer = () => {
                 <p className="font-semibold text-gray-800">{item.name}</p>
                 <div className="text-sm text-gray-600 flex justify-between">
                   <span>Qty: {item.quantity}</span>
-                  <span>₹{item.quantity * item.discountPrice}</span>
+                  <span>₹{item.quantity * item.price}</span>
                 </div>
                 <button
                   className="text-red-500 text-sm mt-1 flex items-center gap-1 hover:underline"

@@ -112,7 +112,8 @@ const LatestLaunches = () => {
             </div>
 
             {/* Center active */}
-            <div className="w-full h-auto md:w-1/2 bg-white rounded-xl shadow-lg overflow-hidden flex flex-col md:flex-row">
+            <div className="w-full h-auto bg-white rounded-xl shadow-lg overflow-hidden flex flex-col md:flex-row">
+              {/* Video Section */}
               <video
                 src={products[selectedIndex].video}
                 autoPlay
@@ -121,26 +122,35 @@ const LatestLaunches = () => {
                 controls
                 className="w-full md:w-1/2 object-cover"
               />
-              <div className="p-2 md:w-1/2 flex flex-col justify-between">
-                <div>
+
+              {/* Details Section */}
+              <div className="p-4 w-full md:w-1/2 flex flex-col sm:flex-row md:flex-col justify-between">
+                {/* Product Text Info */}
+                <div className="flex-1">
                   <h3 className="text-lg font-semibold">{products[selectedIndex].title}</h3>
-                  <p className="text-xl font-bold ">{products[selectedIndex].price}</p>
-                  <ul className=" text-sm text-gray-600 space-y-1">
+                  <p className="text-xl font-bold">{products[selectedIndex].price}</p>
+                  <ul className="text-sm text-gray-600 space-y-1">
                     <li>✔ Oil-free gel formula</li>
                     <li>✔ Shine-free finish</li>
                     <li>✔ Evens skin tone</li>
                   </ul>
                 </div>
-                <div className="flex gap-3">
-                  <button className="border border-black px-4 py-2 text-sm rounded hover:bg-gray-100">
+
+                {/* Action Buttons */}
+                <div className="flex gap-3 mt-4 sm:mt-0 sm:ml-4 items-end">
+                  {/* Hidden on mobile */}
+                  <button className="border border-black px-4 py-2 text-sm rounded hover:bg-gray-100 hidden sm:block">
                     More info
                   </button>
-                  <button className="bg-black text-white px-4 py-2 text-sm rounded hover:bg-gray-800">
+
+                  {/* Add to Cart */}
+                  <button className="bg-black text-white px-4 py-2 text-sm rounded hover:bg-gray-800 whitespace-nowrap">
                     Add to cart 🛒
                   </button>
                 </div>
               </div>
             </div>
+
 
             {/* Right preview */}
             <div className="hidden md:block w-1/5 opacity-50">
