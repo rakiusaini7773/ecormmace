@@ -24,7 +24,7 @@ export default function CategoryManager() {
   const handleAddCategory = async (e) => {
     e.preventDefault();
     if (!name || !file) {
-      toast.error("Please provide name and image");
+      toast.error("Please provide name and image");                                                   
       return;
     }
 

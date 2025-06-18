@@ -112,7 +112,7 @@ const LatestLaunches = () => {
             </div>
 
             {/* Center active */}
-            <div className="w-full md:w-1/2 bg-white rounded-xl shadow-lg overflow-hidden flex flex-col md:flex-row">
+            <div className="w-full h-auto md:w-1/2 bg-white rounded-xl shadow-lg overflow-hidden flex flex-col md:flex-row">
               <video
                 src={products[selectedIndex].video}
                 autoPlay
@@ -121,17 +121,17 @@ const LatestLaunches = () => {
                 controls
                 className="w-full md:w-1/2 object-cover"
               />
-              <div className="p-4 md:w-1/2 flex flex-col justify-between">
+              <div className="p-2 md:w-1/2 flex flex-col justify-between">
                 <div>
                   <h3 className="text-lg font-semibold">{products[selectedIndex].title}</h3>
-                  <p className="text-xl font-bold mt-2">{products[selectedIndex].price}</p>
-                  <ul className="mt-4 text-sm text-gray-600 space-y-1">
+                  <p className="text-xl font-bold ">{products[selectedIndex].price}</p>
+                  <ul className=" text-sm text-gray-600 space-y-1">
                     <li>✔ Oil-free gel formula</li>
                     <li>✔ Shine-free finish</li>
                     <li>✔ Evens skin tone</li>
                   </ul>
                 </div>
-                <div className="flex gap-3 mt-6">
+                <div className="flex gap-3">
                   <button className="border border-black px-4 py-2 text-sm rounded hover:bg-gray-100">
                     More info
                   </button>

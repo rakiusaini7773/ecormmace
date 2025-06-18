@@ -1,98 +1,107 @@
+// src/pages/RegisterPage.js
+
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast, ToastContainer } from "react-toastify";
-import axios from "axios";
 import { AiOutlineMail, AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
-import LoginImage from "../images/LoginPage.png";
+import LoginImage from "../images/LoginPage.png"; // reuse same background
+import axios from "axios";
 import { API_ENDPOINTS } from "../networking/apiConfig";
 import BaseApiManager from "../networking/baseAPIManager";
+import { FaRegUser } from "react-icons/fa";
 
-const LoginPage = () => {
+const RegisterPage = () => {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
     const formik = useFormik({
         initialValues: {
+            name: "",
             email: "",
             password: "",
         },
         validationSchema: Yup.object({
-            email: Yup.string()
-                .email("Enter a valid email address")
-                .required("Email is required"),
-            password: Yup.string()
-                .min(6, "Password must be at least 6 characters")
-                .required("Password is required"),
+            name: Yup.string().required("First name is required"),
+            email: Yup.string().email("Enter a valid email").required("Email is required"),
+            password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
         }),
-        onSubmit: async (values, { setSubmitting, setErrors }) => {
+        onSubmit: async (values, { setSubmitting }) => {
             try {
-                const response = await BaseApiManager.post(API_ENDPOINTS.LOGINUSER, values);
-                console.log('response', response);
+                const response = await BaseApiManager.post(API_ENDPOINTS.REGISTERUSER, values);
 
-                if (!response) {
-                    toast.error("Server error! Please try again.");
-                    return;
+                if (response?.token) {
+                    toast.success("Registration successful!");
+                    setTimeout(() => {
+                        navigate("/login");
+                    }, 1000);
+                } else {
+                    toast.error("Registration failed. Try again.");
                 }
-
-                const token = response?.token;
-                const userRole = response?.user?.role || response?.userRole;
-                const userId = response?.user?.id || response?._id;
-
-                if (!token) {
-                    toast.error("Invalid response from server!");
-                    return;
-                }
-
-                sessionStorage.setItem("token", token);
-                sessionStorage.setItem("userRole", userRole);
-                sessionStorage.setItem("userId", userId);
-
-                toast.success("Login successful!");
-
-                setTimeout(() => {
-                    const routes = {
-                        admin: "/admin/banner",
-                        user: "/user/profile"
-                    };
-
-                    navigate(routes[userRole]);
-                    window.location.reload();
-                }, 500);
-
             } catch (error) {
-                console.error("Login Error:", error?.response || error);
-                setErrors({ password: "Invalid email or password" });
-                toast.error(error?.response?.data?.message || "Login failed! Please try again.");
+                const status = error?.response?.status;
+                const message = error?.response?.data?.message;
+
+                if (status === 409 && message === "Email already exists") {
+                    toast.info("Email already exists. Please login.");
+                    setTimeout(() => {
+                        navigate("/login");
+                    }, 1500);
+                } else {
+                    toast.error(message || "Registration failed!");
+                }
+
+                console.error("Register Error:", error);
             } finally {
                 setSubmitting(false);
             }
-        },
+        }
+
     });
 
     return (
         <div className="relative min-h-screen overflow-hidden flex items-center justify-center bg-gradient-to-r from-[#FEF1FA] to-[#DD86C1]">
-
             <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
 
             <div className="absolute w-full md:w-2/3 h-[650px] md:h-[750px] left-4 md:left-0">
-                <img
-                    src={LoginImage}
-                    alt="Foxtale Product"
-                    className="w-full h-full object-cover"
-                />
+                <img src={LoginImage} alt="Foxtale Product" className="w-full h-full object-cover" />
             </div>
 
             <div className="absolute top-1/2 right-4 md:right-0 transform -translate-y-1/2 bg-[#FEDCF3] p-6 md:p-10 rounded-lg shadow-2xl w-[90%] sm:w-[70%] md:w-[40%] z-10">
-                <h2 className="text-center text-2xl font-bold text-pink-700 mb-2">Welcome</h2>
-                <p className="text-center text-gray-500 text-sm mb-6">Login To Continue!</p>
+                <h2 className="text-center text-2xl font-bold text-pink-700 mb-2">Register</h2>
+                <p className="text-center text-gray-500 text-sm mb-6">Create a new account</p>
 
                 <form onSubmit={formik.handleSubmit} className="flex flex-col items-center space-y-5">
+                    {/* Name */}
                     <div className="relative w-full max-w-sm">
-                        <label htmlFor="email" className="block mb-1 text-sm font-medium text-gray-700">
-                            Email Address
+                        <label htmlFor="name" className="block mb-1 text-sm font-medium text-gray-700">
+                            Name
                         </label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            placeholder="Name"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.name}
+                            className={`w-full px-4 py-2 pr-12 border rounded-md focus:outline-none ${formik.touched.name && formik.errors.name ? "border-red-500" : "border-gray-300"
+                                }`}
+                        />
+                        <div className="absolute top-[25px] right-0 bg-[#FF7DDD] rounded-md w-10 h-10 flex items-center justify-center">
+                            <FaRegUser className="text-white text-lg" />
+                        </div>
+                        {formik.touched.name && formik.errors.name && (
+                            <p className="text-red-500 text-xs mt-1">{formik.errors.name}</p>
+                        )}
+                    </div>
+
+
+
+                    {/* Email */}
+                    <div className="relative w-full max-w-sm">
+                        <label htmlFor="email" className="block mb-1 text-sm font-medium text-gray-700">Email Address</label>
                         <input
                             type="email"
                             id="email"
@@ -111,10 +120,9 @@ const LoginPage = () => {
                         )}
                     </div>
 
+                    {/* Password */}
                     <div className="relative w-full max-w-sm">
-                        <label htmlFor="password" className="block mb-1 text-sm font-medium text-gray-700">
-                            Password
-                        </label>
+                        <label htmlFor="password" className="block mb-1 text-sm font-medium text-gray-700">Password</label>
                         <input
                             type={showPassword ? "text" : "password"}
                             id="password"
@@ -136,21 +144,17 @@ const LoginPage = () => {
                         )}
                     </div>
 
-                    <div className="text-right text-sm text-pink-600 cursor-pointer hover:underline w-full max-w-sm">
-                        Forgot Password?
-                    </div>
-
                     <button
                         type="submit"
                         disabled={formik.isSubmitting}
                         className="w-full max-w-sm bg-pink-500 hover:bg-pink-600 text-white py-2 rounded-md transition"
                     >
-                        {formik.isSubmitting ? "Logging in..." : "Submit"}
+                        {formik.isSubmitting ? "Registering..." : "Register"}
                     </button>
 
                     <p className="text-center text-sm mt-4">
-                        Don’t have an account?
-                        <span onClick={() => navigate("/register")} className="text-pink-600 ml-1 cursor-pointer hover:underline">Register</span>
+                        Already have an account?
+                        <span onClick={() => navigate("/login")} className="text-pink-600 ml-1 cursor-pointer hover:underline">Login</span>
                     </p>
                 </form>
             </div>
@@ -158,4 +162,4 @@ const LoginPage = () => {
     );
 };
 
-export default LoginPage;
+export default RegisterPage;

@@ -18,6 +18,7 @@ import Layout from './Layout';
 import ProtectedRoute from '../networking/ProtectedRoute';
 import AddBlogForm from '../pages/AddBlogForm';
 import Blog from '../pages/Blog';
+import RegisterPage from '../pages/RegisterPage';
 
 
 export const AllRoutes = () => {
@@ -29,6 +30,8 @@ export const AllRoutes = () => {
       <Route path="/product/:id" element={<ProductDetailPage />} />
       <Route path="/about" element={<About />} />
       <Route path="/blogs" element={<Blog />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
 
       {/* 🔐 Protected Admin Routes */}
       <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
@@ -36,7 +39,7 @@ export const AllRoutes = () => {
           <Route path="/admin/banner" element={<AddBannerForm />} />
           <Route path="/admin/categories" element={<AddCategoryForm />} />
           <Route path="/admin/products" element={<AddProductForm />} />
-           <Route path="/admin/blogs" element={<AddBlogForm />} />
+          <Route path="/admin/blogs" element={<AddBlogForm />} />
         </Route>
       </Route>
     </Routes>
