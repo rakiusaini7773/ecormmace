@@ -79,101 +79,100 @@ const LatestLaunches = () => {
         </div>
       </div>
 
-      {/* Modal with 3-panel preview */}
-      {selectedIndex !== null && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center p-4">
-          {/* Close */}
-          <button
-            onClick={closeModal}
-            className="absolute top-4 right-4 text-white text-xl bg-gray-800 rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-700 z-50"
-          >
-            ✕
-          </button>
+     {selectedIndex !== null && (
+  <div className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center px-4 py-6">
+    {/* Close Button */}
+    <button
+      onClick={closeModal}
+      className="absolute top-10 right-8 text-white text-xl bg-gray-800 rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-700 z-50"
+    >
+      ✕
+    </button>
 
-          {/* Left Arrow */}
-          <button
-            onClick={showPrev}
-            className="absolute left-4 text-white text-3xl bg-gray-800 rounded-full w-10 h-10 flex items-center justify-center hover:bg-gray-700 z-40"
-          >
-            ←
-          </button>
+    {/* Left Arrow */}
+    <button
+      onClick={showPrev}
+      className="absolute left-4 text-white text-3xl bg-gray-800 rounded-full w-10 h-10 flex items-center justify-center hover:bg-gray-700 z-40"
+    >
+      ←
+    </button>
 
-          <div className="flex items-center gap-4 overflow-hidden max-w-full w-full justify-center">
-            {/* Left preview */}
-            <div className="hidden md:block w-1/5 opacity-50">
-              <video
-                src={products[getPrevIndex()].video}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="rounded-lg"
-              />
-            </div>
+    {/* Main Content Wrapper */}
+    <div className="flex items-center justify-center gap-6 w-full max-w-7xl">
+      {/* Left Preview */}
+      <div className="hidden md:block w-1/5 opacity-50">
+        <video
+          src={products[getPrevIndex()].video}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-auto object-cover rounded-xl"
+        />
+      </div>
 
-            {/* Center active */}
-            <div className="w-full h-auto bg-white rounded-xl shadow-lg overflow-hidden flex flex-col md:flex-row">
-              {/* Video Section */}
-              <video
-                src={products[selectedIndex].video}
-                autoPlay
-                loop
-                muted
-                controls
-                className="w-full md:w-1/2 object-cover"
-              />
+      {/* Center Preview */}
+      <div className="flex flex-col md:flex-row w-full md:w-3/5 bg-white rounded-2xl shadow-lg overflow-hidden">
+        {/* Video */}
+        <video
+          src={products[selectedIndex].video}
+          autoPlay
+          loop
+          muted
+          controls
+          className="w-full md:w-1/2 h-auto md:h-auto object-cover"
+        />
 
-              {/* Details Section */}
-              <div className="p-4 w-full md:w-1/2 flex flex-col sm:flex-row md:flex-col justify-between">
-                {/* Product Text Info */}
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold">{products[selectedIndex].title}</h3>
-                  <p className="text-xl font-bold">{products[selectedIndex].price}</p>
-                  <ul className="text-sm text-gray-600 space-y-1">
-                    <li>✔ Oil-free gel formula</li>
-                    <li>✔ Shine-free finish</li>
-                    <li>✔ Evens skin tone</li>
-                  </ul>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex gap-3 mt-4 sm:mt-0 sm:ml-4 items-end">
-                  {/* Hidden on mobile */}
-                  <button className="border border-black px-4 py-2 text-sm rounded hover:bg-gray-100 hidden sm:block">
-                    More info
-                  </button>
-
-                  {/* Add to Cart */}
-                  <button className="bg-black text-white px-4 py-2 text-sm rounded hover:bg-gray-800 whitespace-nowrap">
-                    Add to cart 🛒
-                  </button>
-                </div>
-              </div>
-            </div>
-
-
-            {/* Right preview */}
-            <div className="hidden md:block w-1/5 opacity-50">
-              <video
-                src={products[getNextIndex()].video}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="rounded-lg"
-              />
-            </div>
+        {/* Product Info */}
+        <div className="p-4 md:p-6 flex flex-col justify-between w-full md:w-1/2 gap-4">
+          <div className="space-y-2">
+            <h3 className="text-2xl font-semibold text-gray-800">
+              {products[selectedIndex].title}
+            </h3>
+            <p className="text-xl font-bold text-gray-900">
+              ₹{products[selectedIndex].price}
+            </p>
+            <ul className="text-sm text-gray-600 list-disc list-inside space-y-1">
+              <li>Oil-free gel formula</li>
+              <li>Shine-free finish</li>
+              <li>Evens skin tone</li>
+            </ul>
           </div>
 
-          {/* Right Arrow */}
-          <button
-            onClick={showNext}
-            className="absolute right-4 text-white text-3xl bg-gray-800 rounded-full w-10 h-10 flex items-center justify-center hover:bg-gray-700 z-40"
-          >
-            →
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button className="border border-black px-4 py-2 text-sm rounded hover:bg-gray-100 hidden sm:block">
+              More info
+            </button>
+            <button className="bg-black text-white px-4 py-2 text-sm rounded hover:bg-gray-800">
+              Add to cart 🛒
+            </button>
+          </div>
         </div>
-      )}
+      </div>
+
+      {/* Right Preview */}
+      <div className="hidden md:block w-1/5 opacity-50">
+        <video
+          src={products[getNextIndex()].video}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-auto object-cover rounded-xl"
+        />
+      </div>
+    </div>
+
+    {/* Right Arrow */}
+    <button
+      onClick={showNext}
+      className="absolute right-4 text-white text-3xl bg-gray-800 rounded-full w-10 h-10 flex items-center justify-center hover:bg-gray-700 z-40"
+    >
+      →
+    </button>
+  </div>
+)}
+
     </section>
   );
 };
