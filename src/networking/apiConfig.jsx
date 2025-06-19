@@ -1,8 +1,14 @@
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
+// ✅ Only prepend base URL for login-related endpoints
+const withBase = (endpoint) => `${API_BASE_URL}${endpoint}`;
+
 const API_ENDPOINTS = {
-   REGISTERUSER: process.env.REACT_APP_REGISTER_ENDPOINT,
-  LOGINUSER: process.env.REACT_APP_LOGIN_ENDPOINT,
+  // ✅ Login endpoints with base
+  LOGINUSER: withBase("/user/login"),
+  LOGINADMIN: withBase("/admin/login"),
+  REGISTERUSER: withBase(process.env.REACT_APP_REGISTER_ENDPOINT),
+
   ADD_CATEGORY: process.env.REACT_APP_ADD_CATEGORY_ENDPOINT,
   GET_ALL_CATEGORIES: process.env.REACT_APP_GET_ALL_CATEGORIES_ENDPOINT,
   ADD_BANNER: process.env.REACT_APP_ADD_BANNER_ENDPOINT,
@@ -17,5 +23,3 @@ const API_ENDPOINTS = {
 };
 
 export { API_BASE_URL, API_ENDPOINTS };
-
-

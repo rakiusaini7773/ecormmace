@@ -4,11 +4,14 @@ import { toast } from "react-toastify";
 import BaseApiManager from "../networking/baseAPIManager";
 import { API_ENDPOINTS } from "../networking/apiConfig";
 import CategoryManager from "./CategoryManager";
+import Loader from "../components/common/Loading";
 
 export default function AddCategoryForm() {
   const fileInputRef = useRef(null);
   const [name, setName] = useState("");
   const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+
 
   const handleUploadClick = () => {
     fileInputRef.current.click();
@@ -27,19 +30,23 @@ export default function AddCategoryForm() {
     formData.append("image", file);
 
     try {
+       setLoading(true); // Start loading
       const response = await BaseApiManager.post(API_ENDPOINTS.ADD_CATEGORY, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
+      console.log('response',response )
 
-      toast.success(`Category "${response.name}" added successfully!`);
+  toast.success(`🎉 Category "${response?.category.name}" added successfully!`);
       setName("");
       setFile(null);
       fileInputRef.current.value = null;
     } catch (error) {
       toast.error("Failed to add category.");
-    }
+    }finally {
+    setLoading(false); // End loading
+  }
   };
 
   return (
@@ -107,6 +114,8 @@ export default function AddCategoryForm() {
       </form>
     </div>
     <CategoryManager/>
+
+    {loading && <Loader />}
     </>
    
   );

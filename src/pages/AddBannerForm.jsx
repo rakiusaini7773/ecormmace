@@ -5,12 +5,14 @@ import { toast } from "react-toastify";
 import Table from "../components/common/Table";
 import { API_BASE_URL, API_ENDPOINTS } from "../networking/apiConfig";
 import BaseApiManager from "../networking/baseAPIManager";
+import Loader from "../components/common/Loading";
 
 const AddBannerForm = () => {
   const [statusOptions, setStatusOptions] = useState([]);
   const [imageFile, setImageFile] = useState(null);
   const [bannerData, setBannerData] = useState([]);
   const [selectedBanner, setSelectedBanner] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const fetchBanners = async () => {
     try {
@@ -61,6 +63,7 @@ const AddBannerForm = () => {
       formData.append("image", values.image);
 
       try {
+        setLoading(true); // Start loading
         await BaseApiManager.post(API_ENDPOINTS.ADD_BANNER, formData);
         toast.success("Banner added successfully!");
         resetForm();
@@ -69,6 +72,8 @@ const AddBannerForm = () => {
       } catch (err) {
         console.error(err);
         toast.error("Failed to add banner");
+      } finally {
+        setLoading(false); // End loading
       }
     },
   });
@@ -251,6 +256,8 @@ const AddBannerForm = () => {
           </div>
         </div>
       )}
+
+      {loading && <Loader />}
     </div>
   );
 };

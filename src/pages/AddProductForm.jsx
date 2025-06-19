@@ -7,13 +7,14 @@ import BaseApiManager from "../networking/baseAPIManager";
 import { API_BASE_URL, API_ENDPOINTS } from "../networking/apiConfig";
 import Table from "../components/common/Table";
 import { Pencil } from "lucide-react";
+import Loader from "../components/common/Loading";
 
 const AddProductForm = () => {
     const imageInputRef = useRef(null);
     const videoInputRef = useRef(null);
-
+    const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState([]);
-    const [imageFile, setImageFile] = useState(null);
+    const [imageFiles, setImageFiles] = useState([]);
     const [videoFile, setVideoFile] = useState(null);
     const [productData, setProductData] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState(null);
@@ -24,7 +25,7 @@ const AddProductForm = () => {
             try {
                 const data = await BaseApiManager.get(API_ENDPOINTS.GET_ALL_CATEGORIES);
                 setCategories(data);
-            } catch (error) {
+            } catch {
                 toast.error("Unable to fetch product categories.");
             }
         };
@@ -35,7 +36,7 @@ const AddProductForm = () => {
         try {
             const data = await BaseApiManager.get(`${API_BASE_URL}${API_ENDPOINTS.GET_ALL_PRODUCTS}`);
             setProductData(data?.products || data || []);
-        } catch (error) {
+        } catch {
             toast.error("Failed to fetch product data.");
         }
     };
@@ -57,8 +58,12 @@ const AddProductForm = () => {
     });
 
     const handleSubmit = async (values, { resetForm }) => {
-        if (!imageFile || !videoFile) {
-            toast.error("Please upload both image and video");
+        if (imageFiles.length < 2) {
+            toast.error("Please upload at least 2 images.");
+            return;
+        }
+        if (!videoFile) {
+            toast.error("Please upload a product video.");
             return;
         }
 
@@ -66,21 +71,28 @@ const AddProductForm = () => {
         Object.entries(values).forEach(([key, value]) => {
             formData.append(key, value);
         });
-        formData.append("image", imageFile);
+
+        // ✅ Append each image with key 'image'
+        imageFiles.forEach((file) => {
+            formData.append("image", file);
+        });
+
         formData.append("video", videoFile);
 
         try {
+            setLoading(true); // show loader
             await BaseApiManager.post(`${API_BASE_URL}${API_ENDPOINTS.ADD_PRODUCT}`, formData);
             toast.success("Product added successfully!");
             resetForm();
-            setImageFile(null);
+            setImageFiles([]);
             setVideoFile(null);
             fetchProducts();
         } catch (error) {
             toast.error("Failed to add product.");
+        } finally {
+            setLoading(false); // hide loader
         }
     };
-
     const updateProductStatus = async (productId, newStatus) => {
         try {
             const url = `${API_BASE_URL}${API_ENDPOINTS.UPDATE_PRODUCT_STATUS.replace(":id", productId)}`;
@@ -158,13 +170,14 @@ const AddProductForm = () => {
                     </h2>
 
                     <div className="relative mb-6">
-                        {product.image && (
+                        {(product.image || product.imageUrls?.length > 0) && (
                             <img
-                                src={product.image}
+                                src={product.image || product.imageUrls[0]}
                                 alt="Product"
                                 className="w-full h-64 object-cover rounded-xl border border-gray-200"
                             />
                         )}
+
                         <button
                             onClick={triggerFileInput}
                             className="absolute -bottom-5 left-1/2 transform -translate-x-1/2 bg-black text-white p-3 rounded-full shadow-lg hover:bg-gray-800 transition"
@@ -236,20 +249,21 @@ const AddProductForm = () => {
                         <Form className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Image Upload */}
                             <div>
-                                <label className="block text-sm mb-1 font-medium">Upload Product Image</label>
+                                <label className="block text-sm font-medium mb-1">Upload Images (min 2)</label>
                                 <div className="flex items-center gap-2">
                                     <input
                                         ref={imageInputRef}
                                         type="file"
+                                        multiple
                                         hidden
                                         accept="image/*"
-                                        onChange={(e) => setImageFile(e.target.files[0])}
+                                        onChange={(e) => setImageFiles(Array.from(e.target.files))}
                                     />
                                     <input
                                         type="text"
                                         readOnly
-                                        value={imageFile?.name || ""}
-                                        placeholder="No image selected"
+                                        value={imageFiles.length > 0 ? `${imageFiles.length} image(s) selected` : ""}
+                                        placeholder="No images selected"
                                         className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50"
                                     />
                                     <button
@@ -264,7 +278,7 @@ const AddProductForm = () => {
 
                             {/* Video Upload */}
                             <div>
-                                <label className="block text-sm mb-1 font-medium">Upload Product Video</label>
+                                <label className="block text-sm font-medium mb-1">Upload Product Video</label>
                                 <div className="flex items-center gap-2">
                                     <input
                                         ref={videoInputRef}
@@ -424,8 +438,12 @@ const AddProductForm = () => {
                     handleImageChange={handleImageChange}
                 />
             )}
+
+            {loading && <Loader />}
         </>
     );
 };
 
 export default AddProductForm;
+
+

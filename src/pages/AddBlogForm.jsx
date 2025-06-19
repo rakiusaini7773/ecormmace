@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Table from '../components/common/Table';
 import BlogModal from '../components/BlogModal';
+import Loader from '../components/common/Loading';
 
 
 const blogSchema = Yup.object().shape({
@@ -19,6 +20,8 @@ const blogSchema = Yup.object().shape({
 });
 
 const AddBlogForm = () => {
+  const [loading, setLoading] = useState(false);
+
   const imageInputRef = useRef(null);
   const [imageName, setImageName] = useState('');
   const [categories, setCategories] = useState([]);
@@ -80,6 +83,7 @@ const AddBlogForm = () => {
     formData.append('image', values.image);
 
     try {
+       setLoading(true); // Start loading
       await BaseApiManager.post(API_ENDPOINTS.ADD_BLOG, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
@@ -91,7 +95,9 @@ const AddBlogForm = () => {
     } catch (error) {
       console.error('Error adding blog:', error);
       toast.error('Failed to add blog');
-    }
+    }finally {
+    setLoading(false); // End loading
+  }
   };
 
   const columns = [
@@ -238,6 +244,7 @@ const AddBlogForm = () => {
         onClose={() => setIsModalOpen(false)}
         blog={selectedBlog}
       />
+      {loading && <Loader />}
     </>
   );
 };

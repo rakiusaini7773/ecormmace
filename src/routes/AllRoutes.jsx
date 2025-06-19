@@ -12,14 +12,13 @@ import LoginPage from '../components/LoginPage';
 import AddBannerForm from '../pages/AddBannerForm';
 import AddCategoryForm from '../pages/AddCategoryForm';
 import AddProductForm from '../pages/AddProductForm';
+import AddBlogForm from '../pages/AddBlogForm';
 
 // Layouts & Route Protection
 import Layout from './Layout';
 import ProtectedRoute from '../networking/ProtectedRoute';
-import AddBlogForm from '../pages/AddBlogForm';
 import Blog from '../pages/Blog';
 import RegisterPage from '../pages/RegisterPage';
-
 
 export const AllRoutes = () => {
   return (
@@ -30,8 +29,11 @@ export const AllRoutes = () => {
       <Route path="/product/:id" element={<ProductDetailPage />} />
       <Route path="/about" element={<About />} />
       <Route path="/blogs" element={<Blog />} />
-      <Route path="/login" element={<LoginPage />} />
+      <Route path="/login" element={<LoginPage mode="user" />} />
       <Route path="/register" element={<RegisterPage />} />
+
+      {/* 🔑 Admin Login */}
+      <Route path="/admin/login" element={<LoginPage mode="admin" />} />
 
       {/* 🔐 Protected Admin Routes */}
       <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
