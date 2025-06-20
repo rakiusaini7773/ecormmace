@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 import BaseApiManager from '../networking/baseAPIManager';
 import { API_ENDPOINTS } from '../networking/apiConfig';
 import Navbar from '../components/common/Navbar';
@@ -11,12 +12,19 @@ const Blog = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [search, setSearch] = useState('');
 
-  // Fetch categories and blogs
+  const navigate = useNavigate();
+
+  const stripHtmlTags = (html) => {
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    return div.textContent || div.innerText || '';
+  };
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const response = await BaseApiManager.get(API_ENDPOINTS.GET_ALL_CATEGORIES);
-        const allCategories = [{ name: 'All' }, ...response]; // only use 'name'
+        const allCategories = [{ name: 'All' }, ...response];
         setCategories(allCategories);
       } catch (error) {
         console.error('Error fetching categories:', error);
@@ -40,7 +48,6 @@ const Blog = () => {
     fetchBlogs();
   }, []);
 
-  // Filter blogs when category or search changes
   useEffect(() => {
     let filtered = [...blogs];
 
@@ -59,81 +66,76 @@ const Blog = () => {
 
   return (
     <>
-    <Navbar/>
-    <div className="max-w-screen-xl mx-auto px-4 py-6">
-      {/* Breadcrumb */}
-      <div className="flex items-center space-x-2 text-sm mb-4">
-        <span>🏠</span>
-        <span>/</span>
-        <span className="text-gray-500">Blogs</span>
-      </div>
+      <Navbar />
+      <div className="max-w-screen-xl mx-auto px-4 py-6">
+        {/* Breadcrumb */}
+        <div className="flex items-center space-x-2 text-sm mb-4">
+          <span>🏠</span>
+          <span>/</span>
+          <span className="text-gray-500">Blogs</span>
+        </div>
 
-      {/* Category Tabs */}
-      <div className="flex flex-wrap gap-4 mb-6 border-b pb-2">
-        {categories.map(cat => (
-          <button
-            key={cat.name}
-            onClick={() => setSelectedCategory(cat.name)}
-            className={`px-3 py-1 rounded-full text-sm capitalize transition ${
-              selectedCategory === cat.name
-                ? 'bg-black text-white'
-                : 'text-gray-600 hover:bg-gray-100'
-            }`}
-          >
-            {cat.name}
-          </button>
-        ))}
-      </div>
-
-      {/* Search Bar */}
-      <div className="mb-6">
-        <input
-          type="text"
-          placeholder="Search by Title"
-          className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-        />
-      </div>
-
-      {/* Blog Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {filteredBlogs.length > 0 ? (
-          filteredBlogs.map(blog => (
-            <div
-              key={blog._id}
-              className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition"
+        {/* Category Tabs */}
+        <div className="flex flex-wrap gap-4 mb-6 border-b pb-2">
+          {categories.map(cat => (
+            <button
+              key={cat.name}
+              onClick={() => setSelectedCategory(cat.name)}
+              className={`px-3 py-1 rounded-full text-sm capitalize transition ${
+                selectedCategory === cat.name
+                  ? 'bg-black text-white'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
             >
-              <img
-                src={blog.imageUrl}
-                alt={blog.title}
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-4">
-                <h3 className="text-lg font-semibold mb-1">{blog.title}</h3>
-                <p className="text-sm text-gray-600 mb-1">By {blog.author}</p>
-                <p className="text-sm text-gray-500 mb-2">
-                  {blog.description?.slice(0, 100)}...
-                </p>
-                <p className="text-xs text-gray-400 capitalize mb-2">{blog.category}</p>
-                <a
-                  href={blog.readMoreLink || '#'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 text-sm font-medium inline-block"
-                >
-                  Read More +
-                </a>
+              {cat.name}
+            </button>
+          ))}
+        </div>
+
+        {/* Search */}
+        <div className="mb-6">
+          <input
+            type="text"
+            placeholder="Search by Title"
+            className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+        </div>
+
+        {/* Blog Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {filteredBlogs.length > 0 ? (
+            filteredBlogs.map(blog => (
+              <div
+                key={blog._id}
+                onClick={() => navigate(`/blogs/${blog._id}`, { state: blog })}
+                className="cursor-pointer border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition"
+              >
+                <img
+                  src={blog.imageUrl}
+                  alt={blog.title}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-4">
+                  <h3 className="text-lg font-semibold mb-1">{blog.title}</h3>
+                  <p className="text-sm text-gray-600 mb-1">By {blog.author}</p>
+                  <p className="text-sm text-gray-500 mb-2">
+                    {stripHtmlTags(blog.description).substring(0, 100)}...
+                  </p>
+                  <p className="text-xs text-gray-400 capitalize mb-2">{blog.category}</p>
+                  <span className="text-blue-600 text-sm font-medium inline-block">
+                    Read More +
+                  </span>
+                </div>
               </div>
-            </div>
-          ))
-        ) : (
-          <p className="text-gray-500">No blogs found.</p>
-        )}
+            ))
+          ) : (
+            <p className="text-gray-500">No blogs found.</p>
+          )}
+        </div>
       </div>
-    </div>
     </>
-    
   );
 };
 

@@ -19,6 +19,7 @@ import Layout from './Layout';
 import ProtectedRoute from '../networking/ProtectedRoute';
 import Blog from '../pages/Blog';
 import RegisterPage from '../pages/RegisterPage';
+import BlogDetail from '../pages/BlogDetail';
 
 export const AllRoutes = () => {
   return (
@@ -29,6 +30,7 @@ export const AllRoutes = () => {
       <Route path="/product/:id" element={<ProductDetailPage />} />
       <Route path="/about" element={<About />} />
       <Route path="/blogs" element={<Blog />} />
+       <Route path="/blogs/:id" element={<BlogDetail />} /> 
       <Route path="/login" element={<LoginPage mode="user" />} />
       <Route path="/register" element={<RegisterPage />} />
 
