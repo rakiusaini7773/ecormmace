@@ -16,12 +16,12 @@ const Layout = () => {
       {/* Content area */}
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <div className="w-64 bg-white shadow-md overflow-y-auto">
+        <div className="w-64 bg-white shadow-md ">
           <Sidebar />
         </div>
 
         {/* Main content */}
-        <div className="flex-1 p-4 bg-[#F5F3F3] overflow-y-auto">
+        <div className="flex-1 p-4 bg-[#F5F3F3] ">
           <Outlet />
         </div>
       </div>

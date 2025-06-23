@@ -20,6 +20,8 @@ import ProtectedRoute from '../networking/ProtectedRoute';
 import Blog from '../pages/Blog';
 import RegisterPage from '../pages/RegisterPage';
 import BlogDetail from '../pages/BlogDetail';
+import User from '../pages/User';
+import Offers from '../pages/Offers';
 
 export const AllRoutes = () => {
   return (
@@ -44,6 +46,8 @@ export const AllRoutes = () => {
           <Route path="/admin/categories" element={<AddCategoryForm />} />
           <Route path="/admin/products" element={<AddProductForm />} />
           <Route path="/admin/blogs" element={<AddBlogForm />} />
+           <Route path="/admin/user" element={<User />} />
+           <Route path="/admin/offers" element={<Offers />} />
         </Route>
       </Route>
     </Routes>

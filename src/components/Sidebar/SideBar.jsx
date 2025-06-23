@@ -9,6 +9,7 @@ import {
   LogOut,
   Menu,
 } from "lucide-react";
+import { HiOutlineUserCircle } from "react-icons/hi";
 
 const Sidebar = () => {
   const [userRole, setUserRole] = useState("");
@@ -39,9 +40,11 @@ const Sidebar = () => {
   const menuItems = [
     { name: "Banner", path: "/admin/banner", icon: <BannerIcon className="w-5 h-5" />, type: "admin" },
     { name: "Offers Card", path: "/admin/offers", icon: <OffersIcon className="w-5 h-5" />, type: "admin" },
+    { name: "User", path: "/admin/user", icon: <HiOutlineUserCircle  className="w-5 h-5" />, type: "admin" },
     { name: "Product", path: "/admin/products", icon: <ProductIcon className="w-5 h-5" />, type: "admin" },
     { name: "Category", path: "/admin/categories", icon: <CategoryIcon className="w-5 h-5" />, type: "admin" },
     { name: "Blogs", path: "/admin/blogs", icon: <BlogIcon className="w-5 h-5" />, type: "admin" },
+
   ];
 
   const handleMouseEnter = () => {
@@ -112,7 +115,7 @@ const Sidebar = () => {
               sessionStorage.removeItem("token");
               window.location.href = "/login";
             }}
-            className="group relative flex items-center gap-4 p-3 rounded-b-full transition-all duration-300 hover:bg-white hover:text-[#FF7DDD] hover:scale-[1.02] text-white"
+            className="group relative flex items-center gap-4 p-3 rounded-l-full transition-all duration-300  hover:bg-white hover:text-[#FF7DDD] hover:scale-[1.02] text-white"
           >
             <LogOut className="w-5 h-5" />
             <span

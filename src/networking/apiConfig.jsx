@@ -4,20 +4,30 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const withBase = (endpoint) => `${API_BASE_URL}${endpoint}`;
 
 const API_ENDPOINTS = {
-  // ✅ Login endpoints with base
+  // ✅ Auth
   LOGINUSER: withBase("/user/login"),
   LOGINADMIN: withBase("/admin/login"),
   REGISTERUSER: withBase(process.env.REACT_APP_REGISTER_ENDPOINT),
 
+  // ✅ Users
+  GET_ALL_USERS: withBase(process.env.REACT_APP_GET_ALL_USERS_ENDPOINT), 
+
+  // ✅ Categories
   ADD_CATEGORY: process.env.REACT_APP_ADD_CATEGORY_ENDPOINT,
   GET_ALL_CATEGORIES: process.env.REACT_APP_GET_ALL_CATEGORIES_ENDPOINT,
+
+  // ✅ Banners
   ADD_BANNER: process.env.REACT_APP_ADD_BANNER_ENDPOINT,
   GET_ALL_BANNERS: process.env.REACT_APP_GET_ALL_BANNERS_ENDPOINT,
   UPDATE_BANNER_STATUS: process.env.REACT_APP_UPDATE_BANNER_STATUS_ENDPOINT,
+
+  // ✅ Products
   ADD_PRODUCT: process.env.REACT_APP_ADD_PRODUCT_ENDPOINT,
   GET_ALL_PRODUCTS: process.env.REACT_APP_GET_ALL_PRODUCTS_ENDPOINT,
   UPDATE_PRODUCT_STATUS: process.env.REACT_APP_UPDATE_PRODUCT_STATUS_ENDPOINT,
   UPDATE_PRODUCT_IMAGE: process.env.REACT_APP_UPDATE_PRODUCT_IMAGE_ENDPOINT,
+
+  // ✅ Blogs
   ADD_BLOG: process.env.REACT_APP_ADD_BLOG_ENDPOINT,
   GET_ALL_BLOGS: process.env.REACT_APP_GET_ALL_BLOGS_ENDPOINT,
 };
