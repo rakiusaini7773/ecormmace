@@ -30,6 +30,9 @@ const API_ENDPOINTS = {
   // ✅ Blogs
   ADD_BLOG: process.env.REACT_APP_ADD_BLOG_ENDPOINT,
   GET_ALL_BLOGS: process.env.REACT_APP_GET_ALL_BLOGS_ENDPOINT,
+
+   // ✅ Offers
+  ADD_OFFER: process.env.REACT_APP_ADD_OFFER_ENDPOINT, 
 };
 
 export { API_BASE_URL, API_ENDPOINTS };
