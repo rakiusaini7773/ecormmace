@@ -1,606 +1,482 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Formik, Form, FieldArray, ErrorMessage, Field } from "formik";
-import * as Yup from "yup";
-import { toast } from "react-toastify";
-import { MdOutlineFileOpen } from "react-icons/md";
-import BaseApiManager from "../networking/baseAPIManager";
-import { API_BASE_URL, API_ENDPOINTS } from "../networking/apiConfig";
-import Loader from "../components/common/Loading";
-import { MdDelete, MdAdd } from "react-icons/md";
+import React, { useRef, useState } from 'react';
+import { Formik, Form, Field, FieldArray } from 'formik';
+import * as Yup from 'yup';
+import { MdOutlineFileOpen } from 'react-icons/md';
+import { FiPlus, FiX } from "react-icons/fi";
 
 const AddProductForm = () => {
     const imageInputRef = useRef(null);
     const videoInputRef = useRef(null);
-    const [loading, setLoading] = useState(false);
-    const [categories, setCategories] = useState([]);
-    const [imageFiles, setImageFiles] = useState([]);
+    const [imageFile, setImageFile] = useState(null);
     const [videoFile, setVideoFile] = useState(null);
-    const [productData, setProductData] = useState([]);
 
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const data = await BaseApiManager.get(API_ENDPOINTS.GET_ALL_CATEGORIES);
-                setCategories(data);
-            } catch {
-                toast.error("Unable to fetch product categories.");
-            }
-        };
-        fetchCategories();
-    }, []);
-
-    const fetchProducts = async () => {
-        try {
-            const data = await BaseApiManager.get(`${API_BASE_URL}${API_ENDPOINTS.GET_ALL_PRODUCTS}`);
-            setProductData(data?.products || data || []);
-        } catch {
-            toast.error("Failed to fetch product data.");
+    const initialValues = {
+        heading: '',
+        subHeading: '',
+        subDescription: '',
+        description: '',
+        price: '',
+        videoUrl: '',
+        tag: '',
+        offerCode: '',
+        rating: '',
+        status: 'Inactive',
+        category: '',
+        productImages: [],
+        helpsWith: [{ icon: '', text: '' }],
+        for: [{ icon: '', text: '' }],
+        ingredients: [{ name: '', type: '' }],
+        ingredientText: '',
+        forType: '',
+        offers: {
+            discountType: '',
+            discountValue: '',
+            couponType: '',
+            expiryDate: '',
+            source: ''
+        },
+        usageRestrictions: {
+            minSpend: '',
+            products: ''
+        },
+        usageLimits: {
+            perCoupon: '',
+            perUser: ''
         }
     };
-
-    useEffect(() => {
-        fetchProducts();
-    }, []);
+    // const { values } = useFormikContext();
 
     const validationSchema = Yup.object().shape({
-        heading: Yup.string().required("Heading is required"),
-        subHeading: Yup.string().required("Sub-heading is required"),
-        subDescription: Yup.string().required("Sub-description is required"),
-        tag: Yup.string().required("Tag is required"),
-        price: Yup.number().required("Price is required"),
-        offerCode: Yup.string().required("Offer code is required"),
-        rating: Yup.number().required("Rating is required").min(0).max(5),
-        status: Yup.string().required("Status is required"),
-        description: Yup.string().required("Description is required"),
-        category: Yup.string().required("Category is required"),
-        helpsWith: Yup.array().of(
-            Yup.object().shape({
-                icon: Yup.string().required("Icon is required"),
-                text: Yup.string().required("Text is required")
-            })
-        ),
-        ingredients: Yup.array().of(
-            Yup.object().shape({
-                name: Yup.string().required("Text is required"),
-                type: Yup.string().required("Type is required")
-            })
-        )
+        heading: Yup.string().required('Heading is required'),
+        price: Yup.number().required('Price is required'),
+        description: Yup.string().required('Description is required'),
+        status: Yup.string().required('Status is required'),
+        category: Yup.string().required('Category is required')
     });
 
-    const handleSubmit = async (values, { resetForm }) => {
-        if (imageFiles.length < 2) {
-            toast.error("Please upload at least 2 images.");
-            return;
-        }
-        if (!videoFile) {
-            toast.error("Please upload a product video.");
-            return;
+    const handleSubmit = (values) => {
+        const formData = new FormData();
+
+        if (Array.isArray(values.productImages)) {
+            values.productImages.forEach((file) => {
+                if (file instanceof File) {
+                    formData.append('productImages', file);
+                }
+            });
         }
 
-        const formData = new FormData();
-        const structuredFields = ['offers', 'usageRestrictions', 'usageLimits', 'helpsWith', 'ingredients'];
+        if (values.videoUrl instanceof File) {
+            formData.append('videoUrl', values.videoUrl);
+        }
 
         Object.entries(values).forEach(([key, value]) => {
-            if (structuredFields.includes(key)) {
-                formData.append(key, JSON.stringify(value));
-            } else {
-                formData.append(key, value);
-            }
+            if (key === 'productImages' || key === 'videoUrl') return;
+            formData.append(key, typeof value === 'object' ? JSON.stringify(value) : value);
         });
 
-        imageFiles.forEach((file) => {
-            formData.append("image", file);
-        });
-        formData.append("video", videoFile);
-
-        try {
-            setLoading(true);
-            await BaseApiManager.post(`${API_BASE_URL}${API_ENDPOINTS.ADD_PRODUCT}`, formData);
-            toast.success("Product added successfully!");
-            resetForm();
-            setImageFiles([]);
-            setVideoFile(null);
-            fetchProducts();
-        } catch (error) {
-            toast.error("Failed to add product.");
-        } finally {
-            setLoading(false);
+        console.log('FormData Preview:');
+        for (let [key, val] of formData.entries()) {
+            console.log(key, val);
         }
+
+        // Send to backend here
+        // axios.post('/api/products', formData)
     };
 
-
+    const handleImageUploadClick = () => imageInputRef.current?.click();
+    const handleVideoUploadClick = () => videoInputRef.current?.click();
 
     return (
-        <div className="p-6 bg-white rounded-2xl shadow-lg">
-            <h2 className="text-2xl font-semibold mb-6">Add New Product</h2>
-            <Formik
-                initialValues={{
-                    heading: '',
-                    subHeading: '',
-                    subDescription: '',
-                    tag: '',
-                    price: '',
-                    offerCode: '',
-                    rating: '',
-                    status: '',
-                    description: '',
-                    category: '',
-                    helpsWith: [{ icon: '', text: '' }],
-                    offers: { discountType: '', discountValue: '', couponType: '', expiryDate: '' },
-                    usageRestrictions: { minSpend: '', products: [] },
-                    usageLimits: { perCoupon: '', perUser: '' },
-                    for: [{ icon: '', text: '' }],
-                    ingredientText: '',
-                    forType: ''
-                }}
-                validationSchema={validationSchema}
-                onSubmit={handleSubmit}
-            >
-                {({ values, handleChange, handleBlur }) => (
-                    <Form className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {/* Upload Icon Input */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Upload Image (min 2)
-                            </label>
-                            <div className="flex items-center space-x-2">
-                                <input
-                                    type="file"
-                                    //   ref={fileInputRef}
-                                    className="hidden"
-                                    accept="image/*"
-                                //   onChange={(e) => setFile(e.target.files[0])}
-                                />
-                                <input
-                                    type="text"
-                                    readOnly
-                                    //   value={file?.name || ""}
-                                    placeholder="No file chosen"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 cursor-not-allowed"
-                                />
-                                <button
-                                    type="button"
-                                    //   onClick={handleUploadClick}
-                                    className="p-3 bg-[#454545] text-white rounded-md hover:bg-gray-700"
-                                    title="Upload"
-                                >
-                                    <MdOutlineFileOpen className="text-2xl" />
-                                </button>
+        <div className="p-6 bg-white shadow rounded">
+            <h2 className="text-xl font-semibold mb-4">Add New Product</h2>
+            <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
+                {({ values, setFieldValue }) => (
+                    <Form className="space-y-6">
+                        <div className="grid grid-cols-2 gap-4">
+                            {/* Image Upload */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Product Image</label>
+                                <div className="flex items-center space-x-2">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        ref={imageInputRef}
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            setImageFile(file);
+                                            setFieldValue('productImages', file ? [file] : []);
+                                        }}
+                                        className="hidden"
+                                    />
+                                    <input
+                                        type="text"
+                                        readOnly
+                                        value={imageFile?.name || ''}
+                                        placeholder="No file chosen"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 cursor-not-allowed"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={handleImageUploadClick}
+                                        className="p-3 bg-[#454545] text-white rounded-md hover:bg-gray-700"
+                                        title="Upload"
+                                    >
+                                        <MdOutlineFileOpen className="text-2xl" />
+                                    </button>
+                                </div>
                             </div>
+
+                            {/* Video Upload */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Product Video</label>
+                                <div className="flex items-center space-x-2">
+                                    <input
+                                        type="file"
+                                        accept="video/*"
+                                        ref={videoInputRef}
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            setVideoFile(file);
+                                            setFieldValue('videoUrl', file || '');
+                                        }}
+                                        className="hidden"
+                                    />
+                                    <input
+                                        type="text"
+                                        readOnly
+                                        value={videoFile?.name || ''}
+                                        placeholder="No file chosen"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 cursor-not-allowed"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={handleVideoUploadClick}
+                                        className="p-3 bg-[#454545] text-white rounded-md hover:bg-gray-700"
+                                        title="Upload"
+                                    >
+                                        <MdOutlineFileOpen className="text-2xl" />
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Form Fields */}
+                            <div className="flex flex-col">
+                                <label htmlFor="heading" className="text-sm font-medium text-gray-700 mb-1">Heading</label>
+                                <Field name="heading" placeholder="Enter heading" className="w-full px-4 py-2 border border-gray-300 rounded-md" />
+                            </div>
+
+                            <div className="flex flex-col">
+                                <label htmlFor="price" className="text-sm font-medium text-gray-700 mb-1">Price</label>
+                                <Field name="price" type="number" placeholder="Enter price" className="w-full px-4 py-2 border border-gray-300 rounded-md" />
+                            </div>
+
+                            <div className="flex flex-col">
+                                <label htmlFor="subHeading" className="text-sm font-medium text-gray-700 mb-1">Sub Heading</label>
+                                <Field name="subHeading" placeholder="Enter sub heading" className="w-full px-4 py-2 border border-gray-300 rounded-md" />
+                            </div>
+
+                            <div className="flex flex-col">
+                                <label htmlFor="subDescription" className="text-sm font-medium text-gray-700 mb-1">Sub Description</label>
+                                <Field name="subDescription" placeholder="Enter sub description" className="w-full px-4 py-2 border border-gray-300 rounded-md" />
+                            </div>
+
+                            <div className="flex flex-col">
+                                <label htmlFor="tag" className="text-sm font-medium text-gray-700 mb-1">Tag</label>
+                                <Field name="tag" placeholder="Enter tag" className="w-full px-4 py-2 border border-gray-300 rounded-md" />
+                            </div>
+
+                            {/* <div className="flex flex-col">
+                                <label htmlFor="offerCode" className="text-sm font-medium text-gray-700 mb-1">Offer Code</label>
+                                <Field name="offerCode" placeholder="Enter offer code" className="w-full px-4 py-2 border border-gray-300 rounded-md" />
+                            </div> */}
+
+
+
+                            <div className="flex flex-col">
+                                <label htmlFor="status" className="text-sm font-medium text-gray-700 mb-1">Status</label>
+                                <Field as="select" name="status" className="w-full px-4 py-2 border border-gray-300 rounded-md">
+                                    <option value="">Select status</option>
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                </Field>
+                            </div>
+
+                            <div className="flex flex-col">
+                                <label htmlFor="rating" className="text-sm font-medium text-gray-700 mb-1">Rating</label>
+                                <Field name="rating" type="number" step="0.1" placeholder="Enter rating" className="w-full px-4 py-2 border border-gray-300 rounded-md" />
+                            </div>
+
+                            <div className="flex flex-col">
+                                <label htmlFor="category" className="text-sm font-medium text-gray-700 mb-1">Category</label>
+                                <Field name="category" placeholder="Enter category" className="w-full px-4 py-2 border border-gray-300 rounded-md" />
+                            </div>
+                            <div className="flex flex-col col-span-2">
+                                <label htmlFor="description" className="text-sm font-medium text-gray-700 mb-1">Description</label>
+                                <Field as="textarea" name="description" placeholder="Enter description" rows={4} className="w-full px-4 py-2 border border-gray-300 rounded-md" />
+                            </div>
+
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Upload Video
-                            </label>
-                            <div className="flex items-center space-x-2">
-                                <input
-                                    type="file"
-                                    ref={videoInputRef}
-                                    className="hidden"
-                                    accept="video/*"
-                                    onChange={(e) => {
-                                        // Handle video file
-                                    }}
-                                />
-                                <input
-                                    type="text"
-                                    readOnly
-                                    // value={selectedVideoFile?.name || ""}
-                                    placeholder="No file chosen"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 cursor-not-allowed"
-                                />
-                                <button
-                                    type="button"
-                                    // onClick={handleVideoUploadClick}
-                                    className="p-3 bg-[#454545] text-white rounded-md hover:bg-gray-700"
-                                    title="Upload Video"
-                                >
-                                    <MdOutlineFileOpen className="text-2xl" />
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Basic Inputs (Heading to Category) */}
-                        <div className="mb-4">
-                            <label className="block mb-1 font-medium text-sm">Heading</label>
-                            <input
-                                name="heading"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                value={values.heading}
-                                placeholder="Enter product heading"
-                                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black"
-                            />
-                            <ErrorMessage name="heading" component="div" className="text-red-500 text-sm mt-1" />
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="block mb-1 font-medium text-sm">Sub Heading</label>
-                            <input
-                                name="subHeading"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                value={values.subHeading}
-                                placeholder="Enter sub heading"
-                                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black"
-                            />
-                            <ErrorMessage name="subHeading" component="div" className="text-red-500 text-sm mt-1" />
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="block mb-1 font-medium text-sm">Sub Description</label>
-                            <input
-                                name="subDescription"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                value={values.subDescription}
-                                placeholder="Enter sub description"
-                                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black"
-                            />
-                            <ErrorMessage name="subDescription" component="div" className="text-red-500 text-sm mt-1" />
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="block mb-1 font-medium text-sm">Tag</label>
-                            <input
-                                name="tag"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                value={values.tag}
-                                placeholder="Enter tag"
-                                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black"
-                            />
-                            <ErrorMessage name="tag" component="div" className="text-red-500 text-sm mt-1" />
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="block mb-1 font-medium text-sm">Price</label>
-                            <input
-                                type="number"
-                                name="price"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                value={values.price}
-                                placeholder="Enter price"
-                                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black"
-                            />
-                            <ErrorMessage name="price" component="div" className="text-red-500 text-sm mt-1" />
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="block mb-1 font-medium text-sm">Offer Code</label>
-                            <input
-                                name="offerCode"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                value={values.offerCode}
-                                placeholder="Enter offer code"
-                                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black"
-                            />
-                            <ErrorMessage name="offerCode" component="div" className="text-red-500 text-sm mt-1" />
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="block mb-1 font-medium text-sm">Rating</label>
-                            <input
-                                type="number"
-                                step="0.1"
-                                name="rating"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                value={values.rating}
-                                placeholder="Enter rating (0–5)"
-                                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black"
-                            />
-                            <ErrorMessage name="rating" component="div" className="text-red-500 text-sm mt-1" />
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="block mb-1 font-medium text-sm">Status</label>
-                            <select
-                                name="status"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                value={values.status}
-                                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black"
-                            >
-                                <option value="">-- Select Status --</option>
-                                <option value="Active">Active</option>
-                                <option value="Inactive">Inactive</option>
-                            </select>
-                            <ErrorMessage name="status" component="div" className="text-red-500 text-sm mt-1" />
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="block mb-1 font-medium text-sm">Category</label>
-                            <select
-                                name="category"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                value={values.category}
-                                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black"
-                            >
-                                <option value="">-- Select Category --</option>
-                                {categories.map((cat) => (
-                                    <option key={cat._id} value={cat._id}>{cat.name}</option>
-                                ))}
-                            </select>
-                            <ErrorMessage name="category" component="div" className="text-red-500 text-sm mt-1" />
-                        </div>
-
-                        {/* Helps With Section */}
-                        <div className="md:col-span-2 mb-4">
-                            <h2 className="text-lg font-semibold mb-2">Product Details</h2>
-
-                            <FieldArray name="for">
+                            <FieldArray name="helpsWith">
                                 {({ push, remove }) => (
-                                    <>
-                                        <div className="flex justify-between items-center mb-3">
-                                            <label className="text-lg font-semibold mt-4">Helps With </label>
-                                            <div className="flex gap-2">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => push({ icon: '', text: '' })}
-                                                    className="text-white bg-black px-3 py-1.5 rounded hover:bg-gray-800 flex items-center gap-1 text-sm"
-                                                >
-                                                    <MdAdd className="text-lg" /> Add
-                                                </button>
-                                                {values.for.length > 1 && (
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => remove(values.for.length - 1)}
-                                                        className="text-red-600 hover:text-red-800 flex items-center gap-1 text-sm"
-                                                    >
-                                                        <MdDelete className="text-xl" /> Remove
-                                                    </button>
-                                                )}
-                                            </div>
+                                    <div className="mb-6">
+                                        <h3 className="text-xl font-semibold mb-4 text-black">Product Details</h3>
+                                        <label className="block text-lg font-medium mb-2">Helps with</label>
+
+                                        {/* ➕ Add More Button */}
+                                        <div className="flex justify-end ">
+                                            <button
+                                                type="button"
+                                                onClick={() => push({ icon: '', text: '' })}
+                                                className="w-8 h-8 bg-[#333] text-white rounded-md flex items-center justify-center hover:bg-gray-700 transition"
+                                                title="Add More"
+                                            >
+                                                <FiPlus size={16} />
+                                            </button>
                                         </div>
 
-                                        {values.for.map((item, index) => (
-                                            <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
-                                                {/* Icon Upload Input */}
-                                                <div className="flex flex-col w-full">
-                                                    <label className="text-sm mb-1">Icon Upload</label>
-                                                    <div className="flex w-full">
+                                        {/* Dynamic Fields */}
+                                        {values.helpsWith.map((_, i) => (
+                                            <div
+                                                key={i}
+                                                className="grid grid-cols-12 gap-3 mb-4 items-end bg-white  rounded-md"
+                                            >
+                                                {/* Icon Upload */}
+                                                <div className="col-span-5">
+                                                    <label
+                                                        htmlFor={`helpsWith[${i}].icon`}
+                                                        className="block text-sm text-gray-800 mb-1"
+                                                    >
+                                                        Icon Upload
+                                                    </label>
+                                                    <div className="flex">
                                                         <input
-                                                            name={`for[${index}].icon`}
-                                                            placeholder="e.g. https://image.url"
-                                                            onChange={handleChange}
-                                                            onBlur={handleBlur}
-                                                            value={item.icon}
-                                                            className="w-full border px-4 py-2 rounded-md bg-gray-100"
+                                                            type="text"
+                                                            placeholder="e. g. 4.5"
+                                                            value={values.helpsWith[i].icon?.name || ''}
+                                                            readOnly
+                                                            className="w-full bg-gray-200 text-sm px-4 py-2 rounded-l-md border border-gray-300"
                                                         />
                                                         <button
                                                             type="button"
-                                                            title="Upload"
-                                                            className="ml-2 px-3 bg-gray-800 text-white rounded-md"
-                                                            onClick={() => {
-                                                                alert('Upload icon logic here');
-                                                            }}
+                                                            onClick={() => document.getElementById(`iconInput-${i}`).click()}
+                                                            className="bg-[#333] text-white px-3 rounded-r-md flex items-center justify-center"
                                                         >
-                                                            <MdOutlineFileOpen />
+                                                            <MdOutlineFileOpen className="text-lg" />
                                                         </button>
+                                                        <input
+                                                            id={`iconInput-${i}`}
+                                                            type="file"
+                                                            accept="image/*"
+                                                            hidden
+                                                            onChange={(e) => {
+                                                                const file = e.target.files?.[0];
+                                                                if (file) {
+                                                                    setFieldValue(`helpsWith[${i}].icon`, file);
+                                                                }
+                                                            }}
+                                                        />
                                                     </div>
                                                 </div>
 
-                                                {/* Text Input */}
-                                                <div className="flex flex-col w-full relative">
-                                                    <label className="text-sm mb-1">Text</label>
-                                                    <input
-                                                        name={`for[${index}].text`}
-                                                        placeholder="e.g. For all skin types"
-                                                        onChange={handleChange}
-                                                        onBlur={handleBlur}
-                                                        value={item.text}
-                                                        className="w-full border px-4 py-2 rounded-md bg-gray-100"
+                                                {/* Text Field */}
+                                                <div className="col-span-6">
+                                                    <label
+                                                        htmlFor={`helpsWith[${i}].text`}
+                                                        className="block text-sm text-gray-800 mb-1"
+                                                    >
+                                                        Text
+                                                    </label>
+                                                    <Field
+                                                        name={`helpsWith[${i}].text`}
+                                                        placeholder="e. g. RAIN87"
+                                                        className="w-full bg-gray-200 text-sm px-4 py-2 rounded-md border border-gray-300"
                                                     />
-                                                    <ErrorMessage
-                                                        name={`for[${index}].text`}
-                                                        component="div"
-                                                        className="text-red-500 text-sm mt-1"
-                                                    />
+                                                </div>
+
+                                                {/* ❌ Remove Button — on Right End of Row */}
+                                                <div className="col-span-1 flex items-end justify-end">
+                                                    {values.helpsWith.length > 1 && i === values.helpsWith.length - 1 && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => remove(i)}
+                                                            className="w-8 h-8 bg-red-600 text-white rounded-md flex items-center justify-center hover:bg-red-700"
+                                                            title="Remove"
+                                                        >
+                                                            <FiX size={16} />
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </div>
                                         ))}
-                                    </>
+                                    </div>
                                 )}
                             </FieldArray>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6  md:col-span-2 mb-4 ">
-                            {/* Ingredients Section */}
-                            <div className="w-full">
-                                <label className="text-lg font-semibold mt-1">Ingredients</label>
-                                <label className="block text-sm font-medium mt-4">Text</label>
-                                <input
-                                    type="text"
-                                    name="ingredientText"
-                                    placeholder="Type......"
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    value={values.ingredientText}
-                                    className="w-full border px-4 py-2 rounded-md bg-gray-100"
-                                />
-                                <ErrorMessage
-                                    name="ingredientText"
-                                    component="div"
-                                    className="text-red-500 text-sm mt-1"
-                                />
-                            </div>
 
-                            {/* For Section */}
-                            <div className="w-full">
-                                <label className="text-lg font-semibold mt-1">For</label>
-                                <label className="block text-sm font-medium mt-4">Text</label>
-                                <input
-                                    type="text"
-                                    name="forType"
-                                    placeholder="Type..."
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    value={values.forType}
-                                    className="w-full border px-4 py-2 rounded-md bg-gray-100"
-                                />
-                                <ErrorMessage
-                                    name="forType"
-                                    component="div"
-                                    className="text-red-500 text-sm mt-1"
-                                />
-                            </div>
-                        </div>
 
-                        <div className="space-y-8 md:col-span-2 mb-4 ">
-                            {/* General Section */}
-                            <h2 className="text-lg font-semibold">Offers</h2>
+
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            {/* INGREDIENTS */}
                             <div>
-                                {/* Offers Title */}
-
-                                <h3 className="text-md font-semibold mb-4">General</h3>
-
-                                {/* Row with two inputs side-by-side */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    {/* Discount Type Select */}
-                                    <div className="flex flex-col w-full max-w-7xl">
-                                        <label className="block text-sm font-medium mb-1">Discount Type</label>
-                                        <Field
-                                            as="select"
-                                            name="offers.discountType"
-                                            className="w-full border px-4 py-2 rounded-md bg-gray-100 text-sm appearance-none outline-none"
-                                        >
-                                            <option value="">Select discount type</option>
-                                            <option value="Percentage discount">Percentage discount</option>
-                                            <option value="Fixed cart discount">Fixed cart discount</option>
-                                        </Field>
-                                    </div>
-
-                                    {/* Coupon Type Input */}
-                                    <div className="flex flex-col w-full max-w-7xl">
-                                        <label className="block text-sm font-medium mb-1">Coupon Type</label>
-                                        <Field
-                                            type="text"
-                                            name="offers.couponType"
-                                            placeholder="0"
-                                            className="w-full border px-4 py-2 rounded-md bg-gray-100 text-sm"
-                                        />
-                                    </div>
+                                <label className="block text-lg font-semibold text-gray-900 mb-2">Ingredients</label>
+                                <div>
+                                    <label className="block text-sm text-gray-700 mb-1">Text</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Type........"
+                                        value={values.ingredients?.[0]?.type || ''}
+                                        onChange={(e) => {
+                                            const updated = [{ ...values.ingredients?.[0], type: e.target.value }];
+                                            setFieldValue('ingredients', updated);
+                                        }}
+                                        className="w-full px-4 py-2 bg-gray-200 rounded-md text-sm border border-gray-300 placeholder:text-gray-500"
+                                    />
                                 </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
-                                    {/* Coupon Expiry Date Field */}
-                                    <div className="flex flex-col w-full">
-                                        <label className="block text-sm font-medium mb-1">Coupon Expiry Date</label>
-                                        <Field
-                                            type="text"
-                                            name="offers.expiryDate"
-                                            placeholder="DD/MM/YYYY"
-                                            className="w-full h-11 border px-4 py-2 rounded-md bg-gray-100 text-sm"
-                                        />
-                                    </div>
-
-                                    {/* Offer Source Dropdown */}
-                                    <div className="flex flex-col w-full">
-                                        <label className="block text-sm font-medium mb-1">Offer Source</label>
-                                        <Field
-                                            as="select"
-                                            name="offers.source"
-                                            className="w-full h-11 border px-4 py-2 rounded-md bg-gray-100 text-sm appearance-none outline-none"
-                                        >
-                                            <option value="">Select source</option>
-                                            <option value="Website">Website</option>
-                                            <option value="App">App</option>
-                                            <option value="Referral">Referral</option>
-                                            <option value="Partnered">Partnered</option>
-                                        </Field>
-                                    </div>
-                                </div>
-
                             </div>
 
-                            {/* Usage Restriction Section */}
+                            {/* FOR */}
                             <div>
-                                <h3 className="text-md font-semibold mb-4">Usage Restriction</h3>
-                                <div className="flex flex-col md:flex-row md:flex-wrap gap-6">
-                                    <div className="w-full md:w-[48%]">
-                                        <label className="block text-sm mb-1">Minimum Spend</label>
-                                        <Field
-                                            type="text"
-                                            name="usageRestrictions.minSpend"
-                                            placeholder="No Minimum"
-                                            className="w-full border px-4 py-2 rounded-md bg-gray-100"
-                                        />
-                                    </div>
-                                    <div className="w-full md:w-[48%]">
-                                        <label className="block text-sm mb-1">Products</label>
-                                        <Field
-                                            as="select"
-                                            name="usageRestrictions.products"
-                                            className="w-full border px-4 py-2 rounded-md bg-gray-100 text-sm h-11 appearance-none"
-                                        >
-                                            <option value="">Select a product</option>
-                                            <option value="product1">Product 1</option>
-                                            <option value="product2">Product 2</option>
-                                            <option value="product3">Product 3</option>
-                                            {/* Add more products dynamically if needed */}
-                                        </Field>
-                                    </div>
-
+                                <label className="block text-lg font-semibold text-gray-900 mb-2">For</label>
+                                <div>
+                                    <label className="block text-sm text-gray-700 mb-1">Type</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Type..."
+                                        value={values.for?.[0]?.text || ''}
+                                        onChange={(e) => {
+                                            const updated = [{ ...values.for?.[0], text: e.target.value }];
+                                            setFieldValue('for', updated);
+                                        }}
+                                        className="w-full px-4 py-2 bg-gray-200 rounded-md text-sm border border-gray-300 placeholder:text-gray-500"
+                                    />
                                 </div>
                             </div>
+                        </div>
 
-                            {/* Usage Limits Section */}
+                        {/* Offers */}
+                        <div className="mb-6">
+                            <h3 className="text-xl font-semibold text-gray-900 mb-4">Offers</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                                {/* Discount Type */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Discount Type</label>
+                                    <Field
+                                        name="offers.discountType"
+                                        placeholder="e.g. Percentage / Flat"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 text-sm"
+                                    />
+                                </div>
+
+                                {/* Discount Value */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Discount Value</label>
+                                    <Field
+                                        name="offers.discountValue"
+                                        type="number"
+                                        placeholder="e.g. 20"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 text-sm"
+                                    />
+                                </div>
+
+                                {/* Coupon Type */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Coupon Type</label>
+                                    <Field
+                                        name="offers.couponType"
+                                        placeholder="e.g. New User / Seasonal"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 text-sm"
+                                    />
+                                </div>
+
+                                {/* Expiry Date */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
+                                    <Field
+                                        name="offers.expiryDate"
+                                        type="date"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 text-sm"
+                                    />
+                                </div>
+
+                                {/* Source */}
+                                <div className="md:col-span-2">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Source</label>
+                                    <Field
+                                        name="offers.source"
+                                        placeholder="e.g. App / Website"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 text-sm"
+                                    />
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                        {/* Restrictions and Limits */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            {/* Usage Restrictions */}
                             <div>
-                                <h3 className="text-md font-semibold mb-4">Usage Limits</h3>
-                                <div className="flex flex-col md:flex-row md:flex-wrap gap-6">
-                                    <div className="w-full md:w-[48%]">
-                                        <label className="block text-sm mb-1">Usage Limit Per Coupon</label>
-                                        <Field
-                                            type="text"
-                                            name="usageLimits.perCoupon"
-                                            placeholder="Unlimited usage"
-                                            className="w-full border px-4 py-2 rounded-md bg-gray-100"
-                                        />
-                                    </div>
-                                    <div className="w-full md:w-[48%]">
-                                        <label className="block text-sm mb-1">Usage Limit Per User</label>
-                                        <Field
-                                            type="text"
-                                            name="usageLimits.perUser"
-                                            placeholder="Unlimited usage"
-                                            className="w-full border px-4 py-2 rounded-md bg-gray-100"
-                                        />
-                                    </div>
+                                <h3 className="text-xl font-semibold text-gray-900 mb-4">Usage Restrictions</h3>
+
+                                {/* Minimum Spend */}
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Minimum Spend</label>
+                                    <Field
+                                        name="usageRestrictions.minSpend"
+                                        type="number"
+                                        placeholder="e.g. 500"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 text-sm"
+                                    />
+                                </div>
+
+                                {/* Applicable Products */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Applicable Products</label>
+                                    <Field
+                                        name="usageRestrictions.products"
+                                        placeholder="Enter applicable products"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 text-sm"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Usage Limits */}
+                            <div>
+                                <h3 className="text-xl font-semibold text-gray-900 mb-4">Usage Limits</h3>
+
+                                {/* Per Coupon Limit */}
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Per Coupon</label>
+                                    <Field
+                                        name="usageLimits.perCoupon"
+                                        type="number"
+                                        placeholder="e.g. 1"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 text-sm"
+                                    />
+                                </div>
+
+                                {/* Per User Limit */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Per User</label>
+                                    <Field
+                                        name="usageLimits.perUser"
+                                        type="number"
+                                        placeholder="e.g. 2"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 text-sm"
+                                    />
                                 </div>
                             </div>
                         </div>
 
-                        <div className="md:col-span-2 mb-4">
-                            <label className="block mb-1 font-medium text-sm">Description</label>
-                            <textarea
-                                name="description"
-                                rows="4"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                value={values.description}
-                                placeholder="Enter product description"
-                                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black"
-                            />
-                            <ErrorMessage name="description" component="div" className="text-red-500 text-sm mt-1" />
-                        </div>
 
-                        <div className="md:col-span-2 text-right mt-4">
-                            <button
-                                type="submit"
-                                className="bg-black text-white px-8 py-2 rounded-xl hover:bg-gray-800 transition"
-                            >
-                                Add Product
-                            </button>
-                        </div>
+                        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Add Product</button>
                     </Form>
                 )}
             </Formik>
-
-            {loading && <Loader />}
         </div>
     );
 };

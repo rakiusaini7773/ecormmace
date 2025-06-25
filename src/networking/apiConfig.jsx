@@ -33,6 +33,7 @@ const API_ENDPOINTS = {
 
    // ✅ Offers
   ADD_OFFER: process.env.REACT_APP_ADD_OFFER_ENDPOINT, 
+  GET_ALL_OFFERS: process.env.REACT_APP_GET_ALL_OFFERS_ENDPOINT,
 };
 
 export { API_BASE_URL, API_ENDPOINTS };
