@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Navbar from '../components/common/Navbar';
+import Footer from '../components/common/Footer';
 
 const BlogDetails = () => {
   const location = useLocation();
@@ -52,6 +53,7 @@ const BlogDetails = () => {
           dangerouslySetInnerHTML={{ __html: blog.description }}
         />
       </div>
+      <Footer/>
     </>
   );
 };

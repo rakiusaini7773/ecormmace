@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import BaseApiManager from '../networking/baseAPIManager';
 import { API_ENDPOINTS } from '../networking/apiConfig';
 import Navbar from '../components/common/Navbar';
+import Footer from '../components/common/Footer';
 
 const Blog = () => {
   const [blogs, setBlogs] = useState([]);
@@ -135,6 +136,7 @@ const Blog = () => {
           )}
         </div>
       </div>
+      <Footer/>
     </>
   );
 };
