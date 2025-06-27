@@ -7,28 +7,24 @@ import CustomButton from "./common/CustomButton";
 import { FaTag } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/slices/cartSlice";
+import BaseApiManager from "../networking/baseAPIManager";
+import { API_ENDPOINTS } from "../networking/apiConfig";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+
 const filters = {
   "Product Type": ["Moisturiser"],
   "Skin Type": ["Acne Prone", "All Skin Types", "Dry Skin", "Oily Skin"],
   "Skin Concerns": [
-    "Clogged Pores",
-    "Dark Spots",
-    "Dullness",
-    "Fine Lines",
-    "Hyperpigmentation",
-    "Large Pores",
-    "Redness",
-    "Uneven Skin Tone",
+    "Clogged Pores", "Dark Spots", "Dullness", "Fine Lines",
+    "Hyperpigmentation", "Large Pores", "Redness", "Uneven Skin Tone",
   ],
   Ingredients: ["Vitamin C", "Niacinamide", "Salicylic Acid", "Peptides"],
 };
 
 const sortOptions = [
-  "Featured",
-  "Best selling",
-  "Price, low to high",
-  "Price, high to low",
-  "Newest",
+  "Featured", "Best selling", "Price, low to high",
+  "Price, high to low", "Newest",
 ];
 
 const ProductListWithFilters = () => {
@@ -39,29 +35,45 @@ const ProductListWithFilters = () => {
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Track viewport width to detect mobile
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 640); // Tailwind "sm" breakpoint = 640px
+      setIsMobile(window.innerWidth < 640);
     };
-    handleResize(); // initial check
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("products")) || [];
-    setProducts(data);
+    const fetchProducts = async () => {
+      try {
+        const res = await BaseApiManager.get(API_ENDPOINTS.GET_ALL_PRODUCTS);
+        console.log('res', res)
+
+        setProducts(res);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        toast.error("Failed to fetch products");
+        setProducts([]);
+      }
+    };
+
+    fetchProducts();
   }, []);
 
   const toggleSection = (section) => {
     setOpenSections((prev) => {
-      const isCurrentlyOpen = !!prev[section];
-      return isCurrentlyOpen ? {} : { [section]: true };
+      const isOpen = !!prev[section];
+      return isOpen ? {} : { [section]: true };
     });
   };
 
   const getSortedProducts = () => {
+    if (!Array.isArray(products)) return [];
+
     const sorted = [...products];
     switch (sortOption) {
       case "Price, low to high":
@@ -71,7 +83,7 @@ const ProductListWithFilters = () => {
       case "Best selling":
         return sorted.sort((a, b) => b.rating - a.rating);
       case "Newest":
-        return sorted.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+        return sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       default:
         return sorted;
     }
@@ -85,13 +97,7 @@ const ProductListWithFilters = () => {
           onClick={() => toggleSection(section)}
         >
           <span>{section}</span>
-          <span>
-            {openSections[section] ? (
-              <MdOutlineKeyboardArrowUp />
-            ) : (
-              <MdOutlineKeyboardArrowDown />
-            )}
-          </span>
+          {openSections[section] ? <MdOutlineKeyboardArrowUp /> : <MdOutlineKeyboardArrowDown />}
         </button>
         {openSections[section] && (
           <ul className="mt-2 pl-2 space-y-2">
@@ -106,14 +112,10 @@ const ProductListWithFilters = () => {
       </li>
     ));
 
-  // Responsive font sizes
   const titleFontSize = isMobile ? "11px" : "16px";
   const descriptionFontSize = isMobile ? "12px" : "14px";
   const priceFontSize = isMobile ? "14px" : "16px";
   const offerFontSize = isMobile ? "12px" : "14px";
-
-  const dispatch = useDispatch();
-
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 px-4 md:px-12 py-8">
@@ -130,9 +132,7 @@ const ProductListWithFilters = () => {
         anchor="bottom"
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        PaperProps={{
-          className: "rounded-t-2xl bg-white",
-        }}
+        PaperProps={{ className: "rounded-t-2xl bg-white" }}
       >
         <div className="p-4 max-h-[80vh] overflow-y-auto">
           <h2 className="text-xl font-bold mb-4">Filters</h2>
@@ -148,9 +148,8 @@ const ProductListWithFilters = () => {
       {/* Products Section */}
       <main className="flex-1">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">Moisturizers</h2>
+          <h2 className="text-2xl font-bold">Products</h2>
 
-          {/* Filter + Sort icons */}
           <div className="flex items-center gap-1">
             {/* Mobile Filter Icon */}
             <button
@@ -191,24 +190,21 @@ const ProductListWithFilters = () => {
           </div>
         </div>
 
+        {/* Product Cards */}
         <div className="grid gap-2 sm:gap-4 lg:gap-4 grid-cols-2 sm:grid-cols-2 lg:grid-cols-3">
           {getSortedProducts().map((item) => (
             <div
-              key={item.id}
-              className="bg-white hover:shadow-xl overflow-hidden"
+              key={item._id}
+              className="bg-white hover:shadow-xl overflow-hidden cursor-pointer"
               style={{ border: "1px solid #e6e8ec", borderRadius: "18px" }}
+              onClick={() => navigate(`/product/${item._id}`, { state: { product: item } })}
             >
               <div className="relative rounded-lg overflow-hidden">
                 <img
-                  src={item.image}
-                  alt={item.name}
+                  src={item.imageUrls?.[0]}
+                  alt={item.heading}
                   className="w-full h-auto object-cover rounded-lg"
                 />
-                {item.isNewLaunch && (
-                  <span className="absolute top-2 left-2 bg-pink-600 text-white text-xs font-bold px-2 py-1 rounded">
-                    NEW LAUNCH
-                  </span>
-                )}
                 <span className="absolute bottom-2 left-2 bg-white text-xs px-2 py-1 rounded flex items-center gap-1 font-semibold shadow">
                   ⭐ {item.rating}
                 </span>
@@ -239,51 +235,43 @@ const ProductListWithFilters = () => {
                       letterSpacing: "0.3px",
                       lineHeight: "16px",
                       marginBottom: "7px",
-                      minHeight: "initial",
                     }}
                   >
-                    {item.name}
+                    {item.heading}
                   </h3>
                   <p
                     className="text-sm text-gray-600 mt-1 mb-3"
                     style={{
                       fontWeight: "400",
                       lineHeight: "20px",
-                      marginBottom: "0px",
                       color: "#777e90",
                       fontSize: descriptionFontSize,
                     }}
                   >
-                    {item.description?.slice(0, 50)}...
+                    {item.subDescription?.slice(0, 50)}...
                   </p>
                 </div>
 
-                <div
-                  className="mt-4 flex justify-between items-start gap-4"
-                  style={{ padding: "9px 0 0" }}
-                >
+                <div className="mt-4 flex justify-between items-start gap-4">
                   <div>
-                    <p
-                      className="text-black"
-                      style={{
-                        fontSize: priceFontSize,
-                        fontWeight: "600",
-                        lineHeight: "16px",
-                        paddingBottom: "4px",
-                      }}
-                    >
-                      { item.price}
+                    <p className="text-black" style={{ fontSize: priceFontSize, fontWeight: "600" }}>
+                      ₹{item.price}
                     </p>
-                    <p
-                      className="flex items-center gap-1 text-gray-600"
-                      style={{ fontSize: offerFontSize, color: "#878787" }}
-                    >
-                      <FaTag size={12} /> {item.availableOffers?.[0]}
+                    <p className="flex items-center gap-1 text-gray-600" style={{ fontSize: offerFontSize }}>
+
+                      <FaTag size={12} /> {item.offers?.couponType || "No Offers"}
                     </p>
                   </div>
 
                   <div>
-                    <CustomButton onClick={() => dispatch(addToCart(item))}>Add</CustomButton>
+                    <CustomButton
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        dispatch(addToCart(item));
+                      }}
+                    >
+                      Add
+                    </CustomButton>
                   </div>
                 </div>
               </div>
