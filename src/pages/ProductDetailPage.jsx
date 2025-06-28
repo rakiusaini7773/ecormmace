@@ -13,6 +13,9 @@ import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
 
 const ProductDetailsPage = () => {
+  const videoRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+
   const { state } = useLocation();
   const navigate = useNavigate();
   const product = state?.product;
@@ -31,11 +34,10 @@ const ProductDetailsPage = () => {
       if (!showStickyVideo) setShowStickyVideo(true);
     };
 
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [showStickyVideo]);
-  // Scroll to top when the component mounts
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
@@ -109,7 +111,6 @@ const ProductDetailsPage = () => {
                 </svg>
               </button>
 
-              {/* Share Menu */}
               {showShareMenu && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border z-40">
                   <div className="flex flex-col text-sm">
@@ -279,7 +280,7 @@ const ProductDetailsPage = () => {
       </div>
 
       {/* Full Product Description */}
-      <div className="pt-6   px-4 md:px-8 py-10 max-w-7xl mx-auto relative">
+      <div className="pt-6 px-4 md:px-8 py-10 max-w-7xl mx-auto relative">
         <h3 className="text-lg font-semibold text-gray-900 mb-3">Description</h3>
         <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
           {product.description}
@@ -288,6 +289,7 @@ const ProductDetailsPage = () => {
 
       {product.videoUrl && showStickyVideo && showVideo && (
         <div className="fixed bottom-4 right-4 w-44 z-50 shadow-lg rounded-lg overflow-hidden bg-white border border-gray-200">
+          {/* Close Button */}
           <div className="absolute top-1 right-1">
             <button
               onClick={() => setShowVideo(false)}
@@ -296,14 +298,24 @@ const ProductDetailsPage = () => {
               ×
             </button>
           </div>
-          <video
-            src={product.videoUrl}
-            autoPlay
-            muted
-            controls
-            loop
-            className="w-full h-auto"
-          />
+
+          {/* Non-Interruptible Video Player */}
+          <div className="relative w-full">
+            <video
+              ref={videoRef}
+              src={product.videoUrl}
+              autoPlay
+              muted
+              loop
+              className="w-full h-auto pointer-events-none"
+              onContextMenu={(e) => e.preventDefault()}
+              onPause={() => {
+                videoRef.current?.play();
+                setIsPlaying(true);
+              }}
+            />
+            
+          </div>
         </div>
       )}
 
