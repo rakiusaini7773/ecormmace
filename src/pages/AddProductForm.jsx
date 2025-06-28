@@ -139,58 +139,69 @@ const AddProductForm = () => {
     });
 
     const handleSubmit = async (values, { resetForm }) => {
-        setloading(true)
+        setloading(true);
         const formData = new FormData();
 
         // ✅ Append product images
         if (Array.isArray(values.productImages)) {
             values.productImages.forEach((file) => {
                 if (file instanceof File) {
-                    formData.append("productImages", file);
+                    formData.append('productImages', file);
                 }
             });
         }
 
-        // ✅ Append video file
+        // ✅ Append product video
         if (values.videoUrl instanceof File) {
-            formData.append("videoUrl", values.videoUrl);
+            formData.append('videoUrl', values.videoUrl);
         }
 
-        // ✅ Copy and clean remaining fields
-        const cleanValues = { ...values };
-
-        cleanValues.helpsWith = cleanValues.helpsWith.map((item) => {
+        // ✅ helpsWith icons and data
+        values.helpsWith.forEach((item, i) => {
+            // Upload icon file under helpsWithIcons{i}
             if (item.icon instanceof File) {
-                formData.append("helpsWithIcons", item.icon);
-                return { ...item, icon: item.icon.name };
+                formData.append(`helpsWithIcons${i}`, item.icon);
             }
-            return item;
         });
 
-        // ✅ Append all non-file fields as JSON strings
-        Object.entries(cleanValues).forEach(([key, value]) => {
-            if (key === "productImages" || key === "videoUrl") return;
-            formData.append(key, typeof value === "object" ? JSON.stringify(value) : value);
+        // Send helpsWith JSON with icon names (Cloudinary will return actual URLs on backend)
+        formData.append('helpsWith', JSON.stringify(
+            values.helpsWith.map(({ text, icon }) => ({
+                text,
+                icon: icon instanceof File ? icon.name : icon
+            }))
+        ));
+
+        // ✅ Append other structured fields
+        const stringifiedFields = ['offers', 'usageRestrictions', 'usageLimits'];
+        Object.entries(values).forEach(([key, value]) => {
+            if (['productImages', 'videoUrl', 'helpsWith'].includes(key)) return;
+
+            if (stringifiedFields.includes(key)) {
+                formData.append(key, JSON.stringify(value));
+            } else {
+                formData.append(key, value ?? '');
+            }
         });
 
         try {
-            const response = await BaseApiManager.post(
-                API_ENDPOINTS.ADD_PRODUCT,
-                formData,
-                { headers: { "Content-Type": "multipart/form-data" } }
-            );
-            toast.success(" Product added successfully");
+            const response = await BaseApiManager.post(API_ENDPOINTS.ADD_PRODUCT, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
 
+            toast.success('✅ Product added successfully');
             console.log("🟢 Server response:", response);
-            // ✅ Reset the form after successful submission
             resetForm();
         } catch (err) {
-            console.error("❌ Upload failed", err);
-            toast.error("❌ Failed to add product");
+            console.error('❌ Upload failed', err);
+            toast.error('❌ Failed to add product');
         } finally {
-            setloading(false)
+            setloading(false);
         }
     };
+
+
+
 
     const handleImageUploadClick = () => imageInputRef.current?.click();
     const handleVideoUploadClick = () => videoInputRef.current?.click();
@@ -219,6 +230,7 @@ const AddProductForm = () => {
         },
     ];
 
+    const allowedImageTypes = ["image/png", "image/jpg", "image/jpeg"];
 
     return (
         <>
@@ -237,27 +249,37 @@ const AddProductForm = () => {
                             <div className="grid grid-cols-2 gap-4">
                                 {/* Image Upload */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Product Images</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Product Images <span className="text-red-500">*</span>
+                                    </label>
                                     <div className="flex items-center space-x-2">
                                         <input
                                             type="file"
-                                            accept="image/*"
+                                            accept=".png, .jpg, .jpeg"
                                             multiple
                                             ref={imageInputRef}
                                             onChange={(e) => {
                                                 const files = Array.from(e.target.files || []);
-                                                setImageFile(files);
-                                                setFieldValue('productImages', files);
+                                                const validFiles = files.filter(file => allowedImageTypes.includes(file.type));
+
+                                                if (validFiles.length !== files.length) {
+                                                    alert("Only .png, .jpg, .jpeg files are allowed.");
+                                                }
+
+                                                setImageFile(validFiles);
+                                                setFieldValue("productImages", validFiles);
                                             }}
                                             className="hidden"
                                         />
+
                                         <input
                                             type="text"
                                             readOnly
-                                            value={imageFile?.map((file) => file.name).join(', ') || ''}
+                                            value={imageFile?.map(file => file.name).join(", ") || ""}
                                             placeholder="No files chosen"
                                             className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 cursor-not-allowed"
                                         />
+
                                         <button
                                             type="button"
                                             onClick={handleImageUploadClick}
@@ -268,7 +290,11 @@ const AddProductForm = () => {
                                         </button>
                                     </div>
 
-                                    {/* 👇 Error message for productImages */}
+                                    <p className="mt-1 text-xs text-gray-500">
+                                        Only .png, .jpg, .jpeg formats are allowed.
+                                    </p>
+
+                                    {/* Error message for productImages */}
                                     <ErrorMessage
                                         name="productImages"
                                         component="div"
@@ -280,28 +306,40 @@ const AddProductForm = () => {
 
                                 {/* Video Upload */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Product Video</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Product Video <span className="text-red-500">*</span>
+                                    </label>
                                     <div className="flex items-center space-x-2">
                                         <input
                                             type="file"
-                                            accept="video/*"
+                                            accept="video/mp4"
                                             ref={videoInputRef}
                                             onChange={(e) => {
                                                 const file = e.target.files?.[0];
                                                 if (file) {
+                                                    if (file.type !== "video/mp4") {
+                                                        alert("Only .mp4 video format is allowed.");
+                                                        e.target.value = ""; // clear the input
+                                                        setVideoFile(null);
+                                                        setFieldValue("videoUrl", null);
+                                                        return;
+                                                    }
+
                                                     setVideoFile(file);
-                                                    setFieldValue('videoUrl', file);
+                                                    setFieldValue("videoUrl", file);
                                                 }
                                             }}
                                             className="hidden"
                                         />
+
                                         <input
                                             type="text"
                                             readOnly
-                                            value={videoFile?.name || ''}
+                                            value={videoFile?.name || ""}
                                             placeholder="No file chosen"
                                             className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 cursor-not-allowed"
                                         />
+
                                         <button
                                             type="button"
                                             onClick={() => videoInputRef.current?.click()}
@@ -312,12 +350,15 @@ const AddProductForm = () => {
                                         </button>
                                     </div>
 
+                                    <p className="mt-1 text-xs text-gray-500">Only .mp4 video format is allowed.</p>
+
                                     <ErrorMessage
                                         name="videoUrl"
                                         component="div"
                                         className="text-red-500 text-sm mt-1"
                                     />
                                 </div>
+
 
 
 
@@ -415,31 +456,28 @@ const AddProductForm = () => {
                                 <FieldArray name="helpsWith">
                                     {({ push, remove }) => (
                                         <div className="mb-6">
-                                            <h3 className="text-xl font-semibold mb-4 text-black">Product Details</h3>
-                                            <label className="block text-lg font-medium mb-2">Helps with</label>
-
-                                            <div className="flex justify-end">
+                                            <h3 className="text-xl font-semibold mb-4 text-black">Helps With</h3>
+                                            <div className="flex justify-end mb-2">
                                                 <button
                                                     type="button"
                                                     onClick={() => push({ icon: '', text: '' })}
-                                                    className="w-8 h-8 bg-[#333] text-white rounded-md flex items-center justify-center hover:bg-gray-700 transition"
-                                                    title="Add More"
+                                                    className="w-8 h-8 bg-[#333] text-white rounded-md flex items-center justify-center hover:bg-gray-700"
                                                 >
                                                     <FiPlus size={16} />
                                                 </button>
                                             </div>
 
                                             {values.helpsWith.map((_, i) => (
-                                                <div key={i} className="grid grid-cols-12 gap-3 mb-4 items-end bg-white rounded-md">
+                                                <div key={i} className="grid grid-cols-12 gap-3 items-end mb-4 bg-white p-2 rounded-md">
                                                     <div className="col-span-5">
-                                                        <label htmlFor={`helpsWith[${i}].icon`} className="block text-sm text-gray-800 mb-1">Icon Upload</label>
+                                                        <label className="block text-sm font-medium text-gray-700 mb-1">Icon</label>
                                                         <div className="flex">
                                                             <input
                                                                 type="text"
-                                                                placeholder="e.g. icon"
                                                                 value={values.helpsWith[i].icon?.name || ''}
                                                                 readOnly
-                                                                className="w-full bg-gray-200 text-sm px-4 py-2 rounded-l-md border border-gray-300"
+                                                                placeholder="No file chosen"
+                                                                className="w-full px-3 py-2 bg-gray-100 text-sm border border-gray-300 rounded-l-md"
                                                             />
                                                             <button
                                                                 type="button"
@@ -448,39 +486,44 @@ const AddProductForm = () => {
                                                             >
                                                                 <MdOutlineFileOpen className="text-lg" />
                                                             </button>
-                                                            <input
-                                                                id={`iconInput-${i}`}
-                                                                type="file"
-                                                                accept="image/*"
-                                                                hidden
-                                                                onChange={(e) => {
-                                                                    const file = e.target.files?.[0];
-                                                                    if (file) setFieldValue(`helpsWith[${i}].icon`, file);
-                                                                }}
-                                                            />
                                                         </div>
+                                                        <input
+                                                            id={`iconInput-${i}`}
+                                                            type="file"
+                                                            accept="image/png, image/jpeg, image/jpg"
+                                                            hidden
+                                                            onChange={(e) => {
+                                                                const file = e.target.files?.[0];
+                                                                if (file) {
+                                                                    setFieldValue(`helpsWith[${i}].icon`, file);
+                                                                }
+                                                            }}
+                                                        />
                                                         {errors.helpsWith?.[i]?.icon && touched.helpsWith?.[i]?.icon && (
                                                             <div className="text-red-500 text-sm mt-1">{errors.helpsWith[i].icon}</div>
                                                         )}
                                                     </div>
 
                                                     <div className="col-span-6">
-                                                        <label htmlFor={`helpsWith[${i}].text`} className="block text-sm text-gray-800 mb-1">Text</label>
+                                                        <label className="block text-sm font-medium text-gray-700 mb-1">Text</label>
                                                         <Field
                                                             name={`helpsWith[${i}].text`}
-                                                            placeholder="e.g. Energy Boost"
-                                                            className="w-full bg-gray-200 text-sm px-4 py-2 rounded-md border border-gray-300"
+                                                            placeholder="e.g. Boosts Immunity"
+                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm bg-gray-100"
                                                         />
-                                                        <ErrorMessage name={`helpsWith[${i}].text`} component="div" className="text-red-500 text-sm mt-1" />
+                                                        <ErrorMessage
+                                                            name={`helpsWith[${i}].text`}
+                                                            component="div"
+                                                            className="text-red-500 text-sm mt-1"
+                                                        />
                                                     </div>
 
-                                                    <div className="col-span-1 flex items-end justify-end">
-                                                        {values.helpsWith.length > 1 && i === values.helpsWith.length - 1 && (
+                                                    <div className="col-span-1 flex justify-end">
+                                                        {values.helpsWith.length > 1 && (
                                                             <button
                                                                 type="button"
                                                                 onClick={() => remove(i)}
                                                                 className="w-8 h-8 bg-red-600 text-white rounded-md flex items-center justify-center hover:bg-red-700"
-                                                                title="Remove"
                                                             >
                                                                 <FiX size={16} />
                                                             </button>
@@ -491,6 +534,8 @@ const AddProductForm = () => {
                                         </div>
                                     )}
                                 </FieldArray>
+
+
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -617,14 +662,14 @@ const AddProductForm = () => {
             <div className="mt-8">
                 <Table columns={columns} data={products} title="All Banners" />
             </div>
-              {showModal && selectedProduct && (
-        <BannerViewModal
-          showModal={showModal}
-          setShowModal={setShowModal}
-          selectedProduct={selectedProduct}
-        refreshProducts={fetchProducts} 
-        />
-      )}
+            {showModal && selectedProduct && (
+                <BannerViewModal
+                    showModal={showModal}
+                    setShowModal={setShowModal}
+                    selectedProduct={selectedProduct}
+                    refreshProducts={fetchProducts}
+                />
+            )}
             {loading && <Loader />}
 
 
