@@ -11,7 +11,7 @@ const Navbar = () => {
   const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
 
   const cartCount = useSelector((state) => state.cart.items.length);
-  const likeCount = useSelector((state) => state.like.likedItems.length);
+  
 
   const navItems = [
     { label: "Product", path: "/product" },

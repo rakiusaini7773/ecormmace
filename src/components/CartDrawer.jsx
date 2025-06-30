@@ -1,104 +1,90 @@
-import React, { useEffect, useState } from "react";
-import { FaTrashAlt } from "react-icons/fa";
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import {
+  incrementQuantity,
+  decrementQuantity,
+  removeById,
+  clearCart,
+} from '../redux/slices/cartSlice';
 
 const CartDrawer = () => {
-  const [groupedItems, setGroupedItems] = useState([]);
-
-  const fetchCart = () => {
-    const storedItems = JSON.parse(localStorage.getItem("cart")) || [];
-
-    const grouped = storedItems.reduce((acc, item) => {
-      const existing = acc.find((i) => i.id === item.id);
-      if (existing) {
-        existing.quantity += 1;
-        existing.totalPrice += item.price;
-      } else {
-        acc.push({ ...item, quantity: 1, totalPrice: item.price });
-      }
-      return acc;
-    }, []);
-
-    setGroupedItems(grouped);
-  };
-
-  const removeItem = (id) => {
-    const storedItems = JSON.parse(localStorage.getItem("cart")) || [];
-    const indexToRemove = storedItems.findIndex((item) => item.id === id);
-
-    if (indexToRemove !== -1) {
-      storedItems.splice(indexToRemove, 1);
-      localStorage.setItem("cart", JSON.stringify(storedItems));
-      fetchCart();
-    }
-  };
-
-  const clearCart = () => {
-    localStorage.removeItem("cart");
-    setGroupedItems([]);
-  };
-
-  useEffect(() => {
-    fetchCart();
-
-    const handleStorageChange = () => {
-      fetchCart();
-    };
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
-
-  const totalCartPrice = groupedItems.reduce(
-    (sum, item) => sum + item.quantity * item.price,
-    0
-  );
+  const items = useSelector((state) => state.cart.items);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   return (
-    <div className="w-80 p-4 bg-white shadow-lg h-screen overflow-y-auto">
-      <h2 className="text-xl font-bold mb-5 border-b pb-2">🛒 Your Cart</h2>
-
-      {groupedItems.length === 0 ? (
-        <p className="text-gray-500">Your cart is empty.</p>
+    <div className="p-4 w-[300px] space-y-4">
+      <h2 className="text-xl font-bold mb-2">Your Cart</h2>
+      {items.length === 0 ? (
+        <div className="flex flex-col items-center justify-center text-center space-y-4">
+          <img
+            src="https://shop.foxtale.in/Images/empty-cart-foxtale.avif?w=256&q=75"
+            alt="Empty cart"
+            className="w-32 h-32"
+          />
+          <p className="text-sm text-gray-600">Your cart is empty</p>
+          <button
+            onClick={() => navigate('/product')}
+            className="bg-black text-white px-6 py-2 rounded font-semibold"
+          >
+            Shop Now
+          </button>
+        </div>
       ) : (
         <>
-          {groupedItems.map((item) => (
-            <div
-              key={item.id}
-              className="flex gap-3 border-b pb-4 mb-4 last:border-none"
-            >
-              <img
-                src={item.image}
-                alt={item.name}
-                className="w-16 h-16 object-cover rounded"
-              />
-              <div className="flex flex-col justify-between w-full">
-                <p className="font-semibold text-gray-800">{item.name}</p>
-                <div className="text-sm text-gray-600 flex justify-between">
-                  <span>Qty: {item.quantity}</span>
-                  <span>₹{item.quantity * item.price}</span>
+          <ul className="space-y-4 ">
+            {items.map((item) => (
+              <li key={item._id} className="flex items-center gap-3 border-b pb-3">
+                <img
+                  src={item.imageUrls?.[0]}
+                  alt={item.heading}
+                  className="w-12 h-12 object-cover rounded"
+                />
+
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-gray-800">{item.heading}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <button
+                      onClick={() => {
+                        console.log('Decrementing item with ID:', item._id);
+                        dispatch(decrementQuantity(item._id));
+                      }}
+                      className="text-sm bg-gray-200 px-2 rounded"
+                    >
+                      -
+                    </button>
+                    <span className="text-xs text-gray-700">Qty: {item.quantity}</span>
+                    <button
+                      onClick={() => {
+                        console.log('Incrementing item with ID:', item._id);
+                        dispatch(incrementQuantity(item._id));
+                      }}
+                      className="text-sm bg-gray-200 px-2 rounded"
+                    >
+                      +
+                    </button>
+
+                  </div>
                 </div>
                 <button
-                  className="text-red-500 text-sm mt-1 flex items-center gap-1 hover:underline"
-                  onClick={() => removeItem(item.id)}
+                  onClick={() => {
+                    console.log('Removing item with ID:', item._id);
+                    dispatch(removeById(item._id));
+                  }}
+                  className="text-red-500 text-xs font-medium hover:underline"
                 >
-                  <FaTrashAlt className="text-red-500" />
-                  <span>Remove One</span>
-                </button>
-              </div>
-            </div>
-          ))}
+                  Remove
+                </button>                     
 
-          <div className="mt-4 text-lg font-semibold text-right border-t pt-4">
-            Total: ₹{totalCartPrice}
-          </div>
+              </li>
+            ))}
+          </ul>
 
           <button
-            onClick={clearCart}
-            className="w-full bg-red-500 hover:bg-red-600 text-white py-2 mt-4 rounded font-semibold"
+            onClick={() => dispatch(clearCart())}
+            className="bg-red-500 text-white px-4 py-2 w-full mt-4 rounded"
           >
-            <div className="flex items-center justify-center gap-2">
-              <FaTrashAlt className="text-white" />
-              <span>Clear Cart</span>
-            </div>
+            Clear Cart
           </button>
         </>
       )}

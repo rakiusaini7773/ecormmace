@@ -51,8 +51,6 @@ const ProductListWithFilters = () => {
     const fetchProducts = async () => {
       try {
         const res = await BaseApiManager.get(API_ENDPOINTS.GET_ALL_PRODUCTS);
-        console.log('res', res)
-
         setProducts(res);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -272,6 +270,7 @@ const ProductListWithFilters = () => {
                     >
                       Add
                     </CustomButton>
+
                   </div>
                 </div>
               </div>

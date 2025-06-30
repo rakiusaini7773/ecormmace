@@ -55,7 +55,7 @@ const LoginPage = ({ mode = "user" }) => {
         setTimeout(() => {
           const routes = {
             admin: "/admin/banner",
-            user: "/user/profile",
+            user: "/",
           };
           navigate(routes[userRole] || "/");
           window.location.reload();
