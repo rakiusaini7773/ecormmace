@@ -10,28 +10,28 @@ import {
 } from '../redux/slices/cartSlice';
 
 const CartDrawer = () => {
-  const { items: rawItems, loading } = useSelector((state) => state.cart);
+  const { items, loading } = useSelector((state) => state.cart);
+console.log('items',items)
+  // const items = Object.values(
+  //   rawItems.reduce((acc, item) => {
+  //     const product = item.productId;
+  //     if (!product || typeof product !== 'object') return acc;
 
-  const items = Object.values(
-    rawItems.reduce((acc, item) => {
-      const product = item.productId;
-      if (!product || typeof product !== 'object') return acc;
+  //     const productId = product._id;
+  //     if (!productId) return acc;
 
-      const productId = product._id;
-      if (!productId) return acc;
+  //     if (!acc[productId]) {
+  //       acc[productId] = {
+  //         ...product,
+  //         quantity: item.quantity || 1,
+  //       };
+  //     } else {
+  //       acc[productId].quantity += item.quantity || 1;
+  //     }
 
-      if (!acc[productId]) {
-        acc[productId] = {
-          ...product,
-          quantity: item.quantity || 1,
-        };
-      } else {
-        acc[productId].quantity += item.quantity || 1;
-      }
-
-      return acc;
-    }, {})
-  );
+  //     return acc;
+  //   }, {})
+  // );
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
