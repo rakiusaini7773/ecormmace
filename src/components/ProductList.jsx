@@ -3,7 +3,6 @@ import { MdOutlineKeyboardArrowDown, MdOutlineKeyboardArrowUp } from "react-icon
 import { LuArrowDownUp } from "react-icons/lu";
 import { CiFilter } from "react-icons/ci";
 import { Drawer } from "@mui/material";
-import CustomButton from "./common/CustomButton";
 import { FaTag } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/slices/cartSlice";
@@ -11,6 +10,7 @@ import BaseApiManager from "../networking/baseAPIManager";
 import { API_ENDPOINTS } from "../networking/apiConfig";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import CustomButton from "./common/CustomButton";
 
 const filters = {
   "Product Type": ["Moisturiser"],
@@ -193,11 +193,13 @@ const ProductListWithFilters = () => {
           {getSortedProducts().map((item) => (
             <div
               key={item._id}
-              className="bg-white hover:shadow-xl overflow-hidden cursor-pointer"
+              className="bg-white hover:shadow-xl overflow-hidden"
               style={{ border: "1px solid #e6e8ec", borderRadius: "18px" }}
-              onClick={() => navigate(`/product/${item._id}`, { state: { product: item } })}
             >
-              <div className="relative rounded-lg overflow-hidden">
+              <div
+                className="relative rounded-lg overflow-hidden cursor-pointer"
+                onClick={() => navigate(`/product/${item._id}`, { state: { product: item } })}
+              >
                 <img
                   src={item.imageUrls?.[0]}
                   alt={item.heading}
@@ -256,12 +258,12 @@ const ProductListWithFilters = () => {
                       ₹{item.price}
                     </p>
                     <p className="flex items-center gap-1 text-gray-600" style={{ fontSize: offerFontSize }}>
-
                       <FaTag size={12} /> {item.offers?.couponType || "No Offers"}
                     </p>
                   </div>
 
                   <div>
+
                     <CustomButton
                       onClick={(e) => {
                         e.stopPropagation();
@@ -270,7 +272,6 @@ const ProductListWithFilters = () => {
                     >
                       Add
                     </CustomButton>
-
                   </div>
                 </div>
               </div>
