@@ -1,117 +1,71 @@
-// import React from "react";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import BaseApiManager from "../networking/baseAPIManager";
+import { API_ENDPOINTS } from "../networking/apiConfig";
 
-// const skinConcerns = [
-//   {
-//     label: "Detan",
-//     image: "https://foxtale.in/cdn/shop/files/DETAN.png?v=1746191818&width=300",
-//   },
-//   {
-//     label: "Hydration",
-//     image: "https://foxtale.in/cdn/shop/files/Homepage_-_Concerns-08.png?v=1721905699&width=300",
-//   },
-//   {
-//     label: "Hyperpigmentation",
-//     image: "https://foxtale.in/cdn/shop/files/Homepage_-_Concerns-10.png?v=1721905700&width=300",
-//   },
-//   {
-//     label: "Anti Ageing",
-//     image: "https://foxtale.in/cdn/shop/files/Homepage_-_Concerns-09.png?v=1721905699&width=300",
-//   },
-//   {
-//     label: "Acne",
-//     image: "https://foxtale.in/cdn/shop/files/Homepage_-_Concerns-07.png?v=1721905699&width=300",
-//   },
-// ];
-
-
-
-// const SkinHelpSection = () => {
-//   return (
-//     <section className="px-4 py-10 md:px-12 lg:px-20 ">
-//       <h2 className="text-4xl md:text-5xl  text-gray-900 mb-14 ">
-//         What does your skin need help with?
-//       </h2>
-//       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 justify-items-center ">
-//         {skinConcerns.map((item, index) => (
-//           <div key={index} className="flex flex-col items-center">
-//             <img
-//               src={item.image}
-//               alt={item.label}
-//               className="w-96 h-48  object-contain mb-2"
-//             />
-//             <p className="font-semibold text-gray-800 text-sm md:text-base">
-//               {item.label}
-//             </p>
-//           </div>
-//         ))}
-//       </div>
-//     </section>
-//   );
-// };
-
-// export default SkinHelpSection;
-
-
-import React from "react";
-
-const skinConcerns = [
-  {
-    label: "Detan",
-    image: "https://foxtale.in/cdn/shop/files/DETAN.png?v=1746191818&width=300",
-  },
-  {
-    label: "Hydration",
-    image: "https://foxtale.in/cdn/shop/files/Homepage_-_Concerns-08.png?v=1721905699&width=300",
-  },
-  {
-    label: "Hyperpigmentation",
-    image: "https://foxtale.in/cdn/shop/files/Homepage_-_Concerns-10.png?v=1721905700&width=300",
-  },
-  {
-    label: "Anti Ageing",
-    image: "https://foxtale.in/cdn/shop/files/Homepage_-_Concerns-09.png?v=1721905699&width=300",
-  },
-  {
-    label: "Acne",
-    image: "https://foxtale.in/cdn/shop/files/Homepage_-_Concerns-07.png?v=1721905699&width=300",
-  },
-];
+// Optional: add this style globally or in Tailwind config for scrollbar hiding
+// import "../styles/scrollbarHide.css"; // if you create the scrollbar-hide class
 
 const SkinHelpSection = () => {
+  const [categories, setCategories] = useState([]);
+
+  const fetchCategories = async () => {
+    try {
+      const data = await BaseApiManager.get(API_ENDPOINTS.GET_ALL_CATEGORIES);
+      setCategories(data || []);
+    } catch (error) {
+      toast.error("Failed to load categories");
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
   return (
-    <section className="py-5 m-6">
-      <h2 className="text-xl md:text-5xl text-gray-900 mb-14">
+    
+    <section className="py-5 m-6 max-w-7xl mx-auto">
+      <h2 className="text-xl md:text-5xl text-gray-900 mb-14 ">
         What does your skin need help with?
       </h2>
 
-      {/* Grid layout for large screens */}
-      <div className="hidden lg:grid gap-8 grid-cols-5">
-        {skinConcerns.map((item, index) => (
+      {/* 🖥 Desktop View: Grid with 6 items */}
+      <div className="hidden lg:grid gap-6 grid-cols-6">
+        {categories.slice(0, 6).map((category, index) => (
           <div key={index} className="flex flex-col items-center">
             <img
-              src={item.image}
-              alt={item.label}
-              className="w-[200px] h-[150px] object-contain mb-2"
+              src={
+                category.imageUrl ||
+                "https://via.placeholder.com/200x150?text=No+Image"
+              }
+              alt={category.name}
+              className="w-[180px] h-[130px] object-contain mb-2"
             />
             <p className="font-semibold text-gray-800 text-sm md:text-base text-center">
-              {item.label}
+              {category.name}
             </p>
           </div>
         ))}
       </div>
 
-      {/* Horizontal scroll for mobile/tablet */}
-      <div className="lg:hidden overflow-x-auto hidden-scrollbar">
-        <div className="flex gap-6 w-max px-4">
-          {skinConcerns.map((item, index) => (
-            <div key={index} className="min-w-[160px] flex flex-col items-center">
+      {/* 📱 Mobile/Tablet View: Horizontal scroll with 6 items */}
+      <div className="lg:hidden overflow-x-auto scrollbar-hide">
+        <div className="flex gap-4 px-4 min-w-[960px]">
+          {categories.slice(0, 6).map((category, index) => (
+            <div
+              key={index}
+              className="min-w-[150px] flex flex-col items-center"
+            >
               <img
-                src={item.image}
-                alt={item.label}
+                src={
+                  category.imageUrl ||
+                  "https://via.placeholder.com/140x120?text=No+Image"
+                }
+                alt={category.name}
                 className="w-[140px] h-[120px] object-contain mb-2"
               />
               <p className="font-semibold text-gray-800 text-sm text-center">
-                {item.label}
+                {category.name}
               </p>
             </div>
           ))}

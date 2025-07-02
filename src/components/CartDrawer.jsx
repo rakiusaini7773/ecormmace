@@ -6,33 +6,10 @@ import {
   incrementQuantity,
   decrementQuantity,
   removeById,
-  clearCart,
 } from '../redux/slices/cartSlice';
 
 const CartDrawer = () => {
   const { items, loading } = useSelector((state) => state.cart);
-console.log('items',items)
-  // const items = Object.values(
-  //   rawItems.reduce((acc, item) => {
-  //     const product = item.productId;
-  //     if (!product || typeof product !== 'object') return acc;
-
-  //     const productId = product._id;
-  //     if (!productId) return acc;
-
-  //     if (!acc[productId]) {
-  //       acc[productId] = {
-  //         ...product,
-  //         quantity: item.quantity || 1,
-  //       };
-  //     } else {
-  //       acc[productId].quantity += item.quantity || 1;
-  //     }
-
-  //     return acc;
-  //   }, {})
-  // );
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -40,17 +17,21 @@ console.log('items',items)
     dispatch(fetchCart());
   }, [dispatch]);
 
-  const total = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const total = items.reduce((acc, item) => {
+    const price = item?.productId?.price || 0;
+    const quantity = item?.quantity || 0;
+    return acc + price * quantity;
+  }, 0);
 
   const formatPrice = (value) =>
     new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
       maximumFractionDigits: 0,
-    }).format(value);
+    }).format(value || 0);
 
   return (
-    <div className="p-4 w-[400px] space-y-4">
+    <div className="relative p-4 w-[400px] space-y-4">
       <h2 className="text-xl font-bold mb-2">Your Cart</h2>
 
       {items.length === 0 ? (
@@ -74,19 +55,22 @@ console.log('items',items)
             {items.map((item) => (
               <li key={item._id} className="flex items-center gap-3 border-b pb-3">
                 <img
-                  src={item.imageUrls?.[0]}
-                  alt={item.heading}
+                  src={item.productId?.imageUrls?.[0] || 'https://via.placeholder.com/48'}
+                  alt={item.productId?.heading || 'Product'}
                   className="w-12 h-12 object-cover rounded"
                 />
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-gray-800">{item.heading}</p>
+                  <p className="text-sm font-semibold text-gray-800">
+                    {item.productId?.heading || 'No Title'}
+                  </p>
                   <p className="text-xs text-gray-500">
-                    {formatPrice(item.price)} x {item.quantity}
+                    {formatPrice(item.productId?.price)} x {item.quantity}
                   </p>
                   <div className="flex items-center gap-2 mt-1">
                     <button
                       onClick={() =>
-                        item.quantity > 1 && dispatch(decrementQuantity(item._id))
+                        item.quantity > 1 &&
+                        dispatch(decrementQuantity(item.productId?._id))
                       }
                       className="text-sm bg-gray-200 px-2 rounded"
                     >
@@ -96,7 +80,9 @@ console.log('items',items)
                       Qty: {item.quantity}
                     </span>
                     <button
-                      onClick={() => dispatch(incrementQuantity(item._id))}
+                      onClick={() =>
+                        dispatch(incrementQuantity(item.productId?._id))
+                      }
                       className="text-sm bg-gray-200 px-2 rounded"
                     >
                       +
@@ -104,7 +90,9 @@ console.log('items',items)
                   </div>
                 </div>
                 <button
-                  onClick={() => dispatch(removeById(item._id))}
+                  onClick={() =>
+                    dispatch(removeById(item.productId?._id))
+                  }
                   className="text-red-500 text-xs font-medium hover:underline"
                 >
                   Remove
@@ -119,12 +107,6 @@ console.log('items',items)
             </p>
           </div>
 
-          <button
-            onClick={() => dispatch(clearCart())}
-            className="bg-red-500 text-white px-4 py-2 w-full mt-4 rounded"
-          >
-            Clear Cart
-          </button>
 
           <button
             onClick={() => navigate('/checkout')}
@@ -133,6 +115,13 @@ console.log('items',items)
             Checkout
           </button>
         </>
+      )}
+
+      {/* ✅ Loader Overlay */}
+      {loading && (
+        <div className="absolute inset-0 bg-white bg-opacity-70 flex justify-center items-center z-50">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-b-4 border-black"></div>
+        </div>
       )}
     </div>
   );

@@ -23,7 +23,7 @@ export const Landing = () => {
     const fetchProducts = async () => {
       try {
         const res = await BaseApiManager.get(API_ENDPOINTS.GET_ALL_PRODUCTS);
-       
+       console.log('res',res);
         const activeProducts = res.filter((p) => p.status === "Active");
         setProducts(activeProducts);
       } catch (error) {
@@ -48,8 +48,8 @@ export const Landing = () => {
   }, []);
 
  
-  const bodycareProducts = products.filter((p) => p.category?.name === "BodyVocations");
-
+  const bodycareProducts = products.filter((p) => p.category?.name === "hyperpigmentation");
+   
 
   const latestLaunchProducts = products.filter(
   (p) => p.status === "Active" && p.videoUrl

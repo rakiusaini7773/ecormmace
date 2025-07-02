@@ -15,12 +15,12 @@ const Blog = () => {
 
   const navigate = useNavigate();
 
-  const stripHtmlTags = (html) => {
-    const div = document.createElement('div');
-    div.innerHTML = html;
-    return div.textContent || div.innerText || '';
-  };
+  // ✅ Scroll to top smoothly on component mount
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
+  // ✅ Fetch blogs and categories on load
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -49,6 +49,7 @@ const Blog = () => {
     fetchBlogs();
   }, []);
 
+  // ✅ Filter blogs when category or search changes
   useEffect(() => {
     let filtered = [...blogs];
 
@@ -64,6 +65,13 @@ const Blog = () => {
 
     setFilteredBlogs(filtered);
   }, [search, selectedCategory, blogs]);
+
+  // ✅ Helper to strip HTML tags from blog description
+  const stripHtmlTags = (html) => {
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    return div.textContent || div.innerText || '';
+  };
 
   return (
     <>
@@ -93,7 +101,7 @@ const Blog = () => {
           ))}
         </div>
 
-        {/* Search */}
+        {/* Search Input */}
         <div className="mb-6">
           <input
             type="text"
@@ -104,7 +112,7 @@ const Blog = () => {
           />
         </div>
 
-        {/* Blog Cards */}
+        {/* Blog Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {filteredBlogs.length > 0 ? (
             filteredBlogs.map(blog => (
@@ -136,7 +144,7 @@ const Blog = () => {
           )}
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 };

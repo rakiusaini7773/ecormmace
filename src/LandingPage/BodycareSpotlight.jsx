@@ -4,8 +4,12 @@ import CustomButton from "../components/common/CustomButton";
 import { addToCart } from "../redux/slices/cartSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
+const getUserId = () => sessionStorage.getItem("userId");
 
 const BodycareSpotlight = ({ products }) => {
+  console.log('products',products)
   const dispatch = useDispatch();
 
   return (
@@ -47,6 +51,15 @@ const BodycareSpotlight = ({ products }) => {
 // ✅ FIXED: useNavigate inside a proper component body
 const ProductCard = ({ product, dispatch }) => {
   const navigate = useNavigate();
+    const handleAddToCart = (e) => {
+        e.stopPropagation();
+        const userId = getUserId();
+        if (!userId) {
+          toast.warning("Please login to add items to your cart.");
+          return;
+        }
+        dispatch(addToCart(product));
+      };
 
   return (
     <div className="rounded-2xl overflow-hidden flex flex-col w-full">
@@ -98,9 +111,7 @@ const ProductCard = ({ product, dispatch }) => {
             )}
           </div>
 
-          <CustomButton onClick={() => dispatch(addToCart(product))}>
-            Add
-          </CustomButton>
+          <CustomButton onClick={handleAddToCart}>Add</CustomButton>
         </div>
       </div>
     </div>

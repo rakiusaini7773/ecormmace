@@ -38,6 +38,8 @@ const ProductListWithFilters = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const getUserId = () => sessionStorage.getItem('userId');
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 640);
@@ -267,6 +269,13 @@ const ProductListWithFilters = () => {
                     <CustomButton
                       onClick={(e) => {
                         e.stopPropagation();
+
+                        const userId = getUserId();
+                        if (!userId) {
+                          toast.warning('Please login to add items to your cart.');
+                          return;
+                        }
+
                         dispatch(addToCart(item));
                       }}
                     >

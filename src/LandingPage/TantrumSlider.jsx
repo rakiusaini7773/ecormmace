@@ -1,19 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
-import slider1 from "../images/slider1.jpg";
-import slider2 from "../images/slider2.jpg";
-import slider3 from "../images/slider3.jpg";
+import { toast } from "react-toastify";
+import BaseApiManager from "../networking/baseAPIManager";
+import { API_ENDPOINTS, API_BASE_URL } from "../networking/apiConfig";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-const slides = [
-  { id: 1, image: 'https://foxtale.in/cdn/shop/files/DESKTOP_-_2025-06-04T144359.034.jpg?v=1749028501&width=2200' },
-  { id: 2, image: 'https://foxtale.in/cdn/shop/files/DEKSTOP_1.jpg?v=1748713368&width=2200' },
-  { id: 3, image: 'https://foxtale.in/cdn/shop/files/DEKSTOP_3.jpg?v=1749020193&width=2000' },
-];
-
 const TantrumSlider = () => {
+  const [bannerData, setBannerData] = useState([]);
+
+  const fetchBanners = async () => {
+    try {
+      const response = await BaseApiManager.get(
+        `${API_BASE_URL}${API_ENDPOINTS.GET_ALL_BANNERS}`
+      );
+      console.log('response',response)
+      const formatted = response.map((banner) => ({
+        ...banner,
+        imageUrl: banner.imageUrl,
+        status:
+          banner.status?.charAt(0).toUpperCase() +
+          banner.status?.slice(1).toLowerCase(),
+      }));
+
+      // Only keep banners with "Active" status
+      const activeBanners = formatted.filter(b => b.status === "Active");
+
+      setBannerData(activeBanners);
+    } catch (error) {
+      console.error("Failed to fetch banners:", error);
+      toast.error("Failed to load banners");
+    }
+  };
+
+  useEffect(() => {
+    fetchBanners();
+  }, []);
+
   const settings = {
     dots: true,
     infinite: true,
@@ -28,18 +52,16 @@ const TantrumSlider = () => {
   return (
     <div className="relative w-full h-full overflow-hidden">
       <Slider {...settings}>
-        {slides.map((slide, index) => (
-          <div key={slide.id}>
+        {bannerData.map((banner, index) => (
+          <div key={banner._id || index}>
             <img
-              src={slide.image}
-              alt={`Slide ${index + 1}`}
+              src={banner.imageUrl}
+              alt={banner.title || `Slide ${index + 1}`}
               className="w-full h-[600px] lg:w-full lg:h-full flex-shrink-0 object-cover"
             />
           </div>
         ))}
       </Slider>
-
-  
     </div>
   );
 };

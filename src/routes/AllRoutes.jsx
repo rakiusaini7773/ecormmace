@@ -22,6 +22,7 @@ import RegisterPage from '../pages/RegisterPage';
 import BlogDetail from '../pages/BlogDetail';
 import User from '../pages/User';
 import Offers from '../pages/Offers';
+import Account from '../pages/Account';
 
 export const AllRoutes = () => {
   return (
@@ -35,6 +36,7 @@ export const AllRoutes = () => {
        <Route path="/blogs/:id" element={<BlogDetail />} /> 
       <Route path="/login" element={<LoginPage mode="user" />} />
       <Route path="/register" element={<RegisterPage />} />
+       <Route path="/account" element={<Account />} />
 
       {/* 🔑 Admin Login */}
       <Route path="/admin/login" element={<LoginPage mode="admin" />} />

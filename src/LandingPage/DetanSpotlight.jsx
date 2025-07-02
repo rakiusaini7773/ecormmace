@@ -3,49 +3,48 @@ import { FaTag } from "react-icons/fa";
 import CustomButton from "../components/common/CustomButton";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/slices/cartSlice";
-import BaseApiManager from "../networking/baseAPIManager";
-import { API_ENDPOINTS } from "../networking/apiConfig";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
+const getUserId = () => sessionStorage.getItem("userId");
+
 const DetanSpotlight = ({ products }) => {
   const dispatch = useDispatch();
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
 
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 640);
     };
-    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
     <section className="py-10 px-4 xl:px-20">
-      {/* Grid for desktop */}
+      {/* Desktop Grid */}
       <div className="hidden xl:grid gap-8 grid-cols-4 justify-items-center">
         {products.map((product) => (
           <ProductCard
             key={product._id}
             product={product}
-            isMobile={isMobile}
+            isMobile={false}
             dispatch={dispatch}
           />
         ))}
       </div>
 
-      {/* Horizontal scroll for mobile */}
+      {/* Mobile Horizontal Scroll */}
       <div className="xl:hidden overflow-x-auto hidden-scrollbar">
         <div className="flex gap-4">
           {products.map((product) => (
             <div
               key={product._id}
-              className="min-w-[55%] max-w-[30%] flex-shrink-0"
+              className="min-w-[55%] max-w-[70%] flex-shrink-0"
             >
               <ProductCard
                 product={product}
-                isMobile={isMobile}
+                isMobile={true}
                 dispatch={dispatch}
               />
             </div>
@@ -56,16 +55,27 @@ const DetanSpotlight = ({ products }) => {
   );
 };
 
-// ✅ Fixed definition with block so we can use useNavigate
 const ProductCard = ({ product, isMobile, dispatch }) => {
   const navigate = useNavigate();
 
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
+    const userId = getUserId();
+    if (!userId) {
+      toast.warning("Please login to add items to your cart.");
+      return;
+    }
+    dispatch(addToCart(product));
+  };
+
   return (
     <div className="rounded-2xl overflow-hidden flex flex-col w-full">
-      {/* Image + Label + Rating */}
+      {/* Image */}
       <div
         className="relative w-full cursor-pointer"
-        onClick={() => navigate(`/product/${product._id}`, { state: { product } })}
+        onClick={() =>
+          navigate(`/product/${product._id}`, { state: { product } })
+        }
       >
         {product.tag && (
           <div className="absolute top-2 left-2 text-[11px] font-bold text-[#d83c6e] px-2 py-1 rounded bg-white z-10">
@@ -82,11 +92,11 @@ const ProductCard = ({ product, isMobile, dispatch }) => {
           src={product.imageUrls?.[0]}
           alt={product.heading}
           className="w-full h-auto object-cover"
-          style={isMobile ? { width: "100%", borderRadius: "21px" } : {}}
+          style={isMobile ? { borderRadius: "21px" } : {}}
         />
       </div>
 
-      {/* Product Info */}
+      {/* Info Section */}
       <div
         className="flex flex-col pt-4 pb-5 text-[#4b4b4b] font-[Poppins]"
         style={isMobile ? { paddingLeft: "5px" } : {}}
@@ -109,8 +119,7 @@ const ProductCard = ({ product, isMobile, dispatch }) => {
               </p>
             )}
           </div>
-
-          <CustomButton onClick={() => dispatch(addToCart(product))}>Add</CustomButton>
+          <CustomButton onClick={handleAddToCart}>Add</CustomButton>
         </div>
       </div>
     </div>

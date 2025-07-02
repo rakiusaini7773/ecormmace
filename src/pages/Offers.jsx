@@ -169,8 +169,8 @@ const Offers = () => {
               <label className="text-sm mb-1">Status</label>
               <Field as="select" name="status" className="w-full px-4 py-2 border rounded-md bg-gray-50">
                 <option value="">Select</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
               </Field>
             </div>
 

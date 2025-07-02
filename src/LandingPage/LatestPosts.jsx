@@ -11,21 +11,22 @@ const LatestPosts = ({ blogs }) => {
   return (
     <section className="py-2 px-4 md:px-8 lg:px-3 max-w-7xl mx-auto">
       {/* Heading + Button */}
-      <div
-        className="flex justify-between items-center mb-5 px-4 lg:px-0 w-full"
-        style={{ margin: '20px auto' }}
-      >
+      <div className="flex justify-between items-center mb-5 px-4 lg:px-0 w-full" style={{ margin: '20px auto' }}>
         <h2 className="text-xl md:text-xl lg:text-xl font-bold text-gray-900 text-start w-full lg:w-auto">
           Latest Posts
         </h2>
-        <button className="bg-pink-100 text-pink-600 px-6 py-3 rounded-md text-base font-semibold hover:bg-pink-200 w-36 lg:w-auto">
+        <button
+          onClick={() => navigate('/blogs')}
+          className="bg-pink-100 text-pink-600 px-6 py-3 rounded-md text-base font-semibold hover:bg-pink-200 w-36 lg:w-auto"
+        >
           View All
         </button>
       </div>
 
+
       {/* Desktop grid layout */}
       <div className="hidden lg:grid grid-cols-3 gap-8">
-        {blogs.map((blog, index) => (
+        {blogs.slice(0, 3).map((blog, index) => (
           <article
             key={index}
             onClick={() => handleBlogClick(blog)}
@@ -44,9 +45,7 @@ const LatestPosts = ({ blogs }) => {
                   day: 'numeric',
                 })}
               </p>
-              <h3 className="font-semibold text-lg text-gray-900 mb-2">
-                {blog.title}
-              </h3>
+              <h3 className="font-semibold text-lg text-gray-900 mb-2">{blog.title}</h3>
               <p className="text-sm text-gray-500 mb-2">By {blog.author}</p>
               <p className="text-sm text-gray-600 mb-4">
                 {blog.description?.replace(/<[^>]*>?/gm, '').slice(0, 100)}...
@@ -62,7 +61,7 @@ const LatestPosts = ({ blogs }) => {
       {/* Mobile + tablet horizontal scroll layout */}
       <div className="lg:hidden overflow-x-auto hidden-scrollbar">
         <div className="flex gap-6 w-min px-1">
-          {blogs.map((blog, index) => (
+          {blogs.slice(0, 3).map((blog, index) => (
             <div
               key={index}
               onClick={() => handleBlogClick(blog)}
@@ -81,9 +80,7 @@ const LatestPosts = ({ blogs }) => {
                     day: 'numeric',
                   })}
                 </p>
-                <h3 className="font-semibold text-base text-gray-900 mb-1">
-                  {blog.title}
-                </h3>
+                <h3 className="font-semibold text-base text-gray-900 mb-1">{blog.title}</h3>
                 <p className="text-sm text-gray-500 mb-1">By {blog.author}</p>
                 <p className="text-sm text-gray-600 mb-3">
                   {blog.description?.replace(/<[^>]*>?/gm, '').slice(0, 100)}...

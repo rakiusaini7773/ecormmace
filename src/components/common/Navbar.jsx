@@ -1,33 +1,29 @@
 import { useEffect, useState } from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import { Menu, X, Search, User, Heart, ShoppingCart } from "lucide-react";
 import { Drawer, IconButton } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCart } from "../../redux/slices/cartSlice"; // ✅ import fetchCart
+import { fetchCart } from "../../redux/slices/cartSlice";
 import CartDrawer from "../CartDrawer";
 import LogoImage from "../../images/logo1.png";
 
 const Navbar = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [isMenuDrawerOpen, setIsMenuDrawerOpen] = useState(false);
   const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
 
-  // ✅ Fetch cart globally when Navbar loads
   useEffect(() => {
     dispatch(fetchCart());
   }, [dispatch]);
-  
-const cartItems = useSelector((state) => state.cart.items);
-console.log("🟣 Navbar cartItems from Redux:", cartItems);
-  // ✅ Select cart count from Redux
-  const cartCount = useSelector((state) => {
 
+  const cartItems = useSelector((state) => state.cart.items);
+
+  const cartCount = useSelector((state) => {
     const items = state.cart.items || [];
-    console.log('items', items)
     return items.reduce((acc, item) => acc + (item.quantity || 1), 0);
   });
-
-  console.log('cartCount',cartCount)
 
   const navItems = [
     { label: "Product", path: "/product" },
@@ -38,6 +34,17 @@ console.log("🟣 Navbar cartItems from Redux:", cartItems);
   const toggleMenuDrawer = () => setIsMenuDrawerOpen(!isMenuDrawerOpen);
   const openCartDrawer = () => setIsCartDrawerOpen(true);
   const closeCartDrawer = () => setIsCartDrawerOpen(false);
+
+  const getUserRole = () => sessionStorage.getItem("userRole");
+
+  const handleUserIconClick = () => {
+    const userRole = getUserRole();
+    if (userRole === "user") {
+      navigate("/account");
+    } else {
+      navigate("/login");
+    }
+  };
 
   return (
     <nav className="bg-white border-b shadow-sm px-4 py-3 sticky top-0 z-50">
@@ -75,9 +82,10 @@ console.log("🟣 Navbar cartItems from Redux:", cartItems);
         {/* Right Icons */}
         <div className="flex items-center space-x-2 ml-auto">
           <Search className="w-5 h-5 cursor-pointer" />
-          <Link to="/login">
-            <User className="w-5 h-5 cursor-pointer" />
-          </Link>
+          
+          {/* 🔁 Updated User Icon with conditional redirect */}
+          <User className="w-5 h-5 cursor-pointer" onClick={handleUserIconClick} />
+
           <div className="relative cursor-pointer" onClick={openCartDrawer}>
             <ShoppingCart className="w-5 h-5" />
             {cartCount > 0 && (
