@@ -11,8 +11,14 @@ import {
 } from "react-icons/fa";
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
+import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../redux/slices/cartSlice";
 
 const ProductDetailsPage = () => {
+  
+  
+    const dispatch = useDispatch();
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(true);
 
@@ -81,6 +87,7 @@ const ProductDetailsPage = () => {
   const handlePrev = () => {
     setImageIndex((prev) => (prev - 1 + product.imageUrls.length) % product.imageUrls.length);
   };
+const getUserId = () => sessionStorage.getItem('userId');
 
   return (
     <>
@@ -268,12 +275,24 @@ const ProductDetailsPage = () => {
             )}
 
             <div className="flex gap-4 mt-8">
-              <button className="bg-black text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-900">
+              <button className="bg-black text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-900"
+                onClick={(e) => {
+                  e.stopPropagation();
+
+                  const userId = getUserId();
+                  if (!userId) {
+                    toast.warning('Please login to add items to your cart.');
+                    return;
+                  }
+
+                  dispatch(addToCart(product));
+                }}
+              >
                 ADD TO CART
               </button>
-              <button className="border border-black text-black px-6 py-3 rounded-full font-semibold hover:bg-black hover:text-white">
+              {/* <button className="border border-black text-black px-6 py-3 rounded-full font-semibold hover:bg-black hover:text-white">
                 BUY NOW
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
@@ -314,7 +333,7 @@ const ProductDetailsPage = () => {
                 setIsPlaying(true);
               }}
             />
-            
+
           </div>
         </div>
       )}

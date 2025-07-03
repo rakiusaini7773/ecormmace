@@ -42,11 +42,11 @@ const isUser = () => getUserRole() === 'user';
 export const fetchCart = () => async (dispatch) => {
   const userId = getUserId();
 
-  if (!userId || !isUser()) {
-    dispatch(setCartItems([]));
-    toast.error('Please login as a user to view your cart');
-    return;
-  }
+  // if (!userId || !isUser()) {
+  //   dispatch(setCartItems([]));
+  //   toast.error('Please login as a user to view your cart');
+  //   return;
+  // }
 
   try {
     dispatch(setLoading(true));
@@ -54,7 +54,7 @@ export const fetchCart = () => async (dispatch) => {
     dispatch(setCartItems(response?.items || []));
   } catch (err) {
     console.error('Error fetching cart:', err);
-    toast.error('Failed to load cart');
+    // toast.error('Failed to load cart');
     dispatch(setCartItems([]));
   } finally {
     dispatch(setLoading(false));

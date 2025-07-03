@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 const getUserId = () => sessionStorage.getItem("userId");
 
 const BodycareSpotlight = ({ products }) => {
-  console.log('products',products)
+
   const dispatch = useDispatch();
 
   return (
@@ -51,15 +51,15 @@ const BodycareSpotlight = ({ products }) => {
 // ✅ FIXED: useNavigate inside a proper component body
 const ProductCard = ({ product, dispatch }) => {
   const navigate = useNavigate();
-    const handleAddToCart = (e) => {
-        e.stopPropagation();
-        const userId = getUserId();
-        if (!userId) {
-          toast.warning("Please login to add items to your cart.");
-          return;
-        }
-        dispatch(addToCart(product));
-      };
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
+    const userId = getUserId();
+    if (!userId) {
+      toast.warning("Please login to add items to your cart.");
+      return;
+    }
+    dispatch(addToCart(product));
+  };
 
   return (
     <div className="rounded-2xl overflow-hidden flex flex-col w-full">
@@ -104,9 +104,9 @@ const ProductCard = ({ product, dispatch }) => {
         <div className="border-t border-black pt-4 flex justify-between items-end">
           <div>
             <p className="text-black text-[16px] font-semibold">₹ {product.price}</p>
-            {product.offerCode && (
+            {product.offers?.couponType && (
               <p className="flex items-center gap-1 text-[13px] mt-[2px]">
-                <FaTag size={12} /> {product.offerCode}
+                <FaTag size={12} /> {product.offers.couponType}
               </p>
             )}
           </div>

@@ -85,7 +85,9 @@ const ProductCard = ({ product, isMobile, dispatch }) => {
 
         <div className="absolute bottom-2 left-2 flex items-center bg-white bg-opacity-90 px-2 py-[2px] rounded text-[13px] z-10">
           <span className="text-[#ffd166] text-[14px]">⭐</span>
-          <span className="text-black font-semibold ml-1">{product.rating}</span>
+          <span className="text-black font-semibold ml-1">
+            {product.rating}
+          </span>
         </div>
 
         <img
@@ -112,18 +114,25 @@ const ProductCard = ({ product, isMobile, dispatch }) => {
 
         <div className="border-t border-black pt-4 flex justify-between items-end">
           <div>
-            <p className="text-black text-[16px] font-semibold">₹ {product.price}</p>
-            {product.offerCode && (
-              <p className="flex items-center gap-1 text-[13px] mt-[2px]">
-                <FaTag size={12} /> {product.offerCode}
-              </p>
+            <p className="text-black text-[16px] font-semibold">
+              ₹ {product.price}
+            </p>
+
+            {product.offers?.couponType && (
+              <div className="flex flex-col text-[13px] mt-[2px] text-gray-700">
+                <p className="flex items-center gap-1 font-semibold text-black">
+                  <FaTag size={12} /> {product.offers.couponType}
+                </p>
+              </div>
             )}
           </div>
+
           <CustomButton onClick={handleAddToCart}>Add</CustomButton>
         </div>
       </div>
     </div>
   );
 };
+
 
 export default DetanSpotlight;

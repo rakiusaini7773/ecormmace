@@ -15,7 +15,7 @@ const TantrumSlider = () => {
       const response = await BaseApiManager.get(
         `${API_BASE_URL}${API_ENDPOINTS.GET_ALL_BANNERS}`
       );
-      console.log('response',response)
+      
       const formatted = response.map((banner) => ({
         ...banner,
         imageUrl: banner.imageUrl,

@@ -53,13 +53,23 @@ const LatestLaunches = ({ products = [] }) => {
 
       {selectedIndex !== null && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center px-4 py-6">
+          {/* Mobile Close Button - on video */}
           <button
             onClick={closeModal}
-            className="absolute top-10 right-8 text-white text-xl bg-gray-800 rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-700 z-50"
+            className="absolute top-4 right-4 text-white text-xl bg-gray-800 rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-700 md:hidden z-50"
           >
             ✕
           </button>
 
+          {/* Desktop Close Button - outside main video */}
+          <button
+            onClick={closeModal}
+            className="hidden md:flex absolute top-10 right-8 text-white text-xl bg-gray-800 rounded-full w-8 h-8 items-center justify-center hover:bg-gray-700 z-50"
+          >
+            ✕
+          </button>
+
+          {/* Prev Button */}
           <button
             onClick={showPrev}
             className="absolute left-4 text-white text-3xl bg-gray-800 rounded-full w-10 h-10 flex items-center justify-center hover:bg-gray-700 z-40"
@@ -67,7 +77,8 @@ const LatestLaunches = ({ products = [] }) => {
             ←
           </button>
 
-          <div className="flex items-center justify-center gap-6 w-full max-w-7xl">
+          <div className="flex items-center justify-center gap-6 w-full max-w-7xl relative">
+            {/* Previous preview (Desktop only) */}
             <div className="hidden md:block w-1/5 opacity-50">
               <video
                 src={videoProducts[getPrevIndex()].videoUrl}
@@ -79,17 +90,44 @@ const LatestLaunches = ({ products = [] }) => {
               />
             </div>
 
-            <div className="flex flex-col md:flex-row w-full md:w-3/5 bg-white rounded-2xl shadow-lg overflow-hidden">
-              <video
-                src={videoProducts[selectedIndex].videoUrl}
-                autoPlay
-                loop
-                muted
-                controls
-                className="w-full md:w-1/2 h-auto object-cover"
-              />
+            {/* Main Video and Text */}
+            <div className="relative flex flex-col md:flex-row w-full md:w-3/5 bg-white rounded-2xl shadow-lg overflow-hidden">
+              <div className="relative w-full md:w-1/2">
+                <video
+                  src={videoProducts[selectedIndex].videoUrl}
+                  autoPlay
+                  loop
+                  muted
+                  controls
+                  className="w-full h-full object-cover"
+                />
+                {/* Mobile Text Overlay */}
+                <div className="absolute bottom-0 left-0 right-0 bg-white/95 p-4 flex flex-col gap-3 md:hidden z-10">
+                  <h3 className="text-xl font-semibold text-gray-800">
+                    {videoProducts[selectedIndex].heading}
+                  </h3>
+                  <p className="text-lg font-bold text-gray-900">
+                    ₹{videoProducts[selectedIndex].price}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    {videoProducts[selectedIndex].subDescription
+                      ?.split(" ")
+                      .slice(0, 20)
+                      .join(" ") + "..."}
+                  </p>
+                  <div className="flex gap-3">
+                    <button className="border border-black px-4 py-2 text-sm rounded hover:bg-gray-100">
+                      More info
+                    </button>
+                    <button className="bg-black text-white px-4 py-2 text-sm rounded hover:bg-gray-800">
+                      Add to cart 🛒
+                    </button>
+                  </div>
+                </div>
+              </div>
 
-              <div className="p-4 md:p-6 flex flex-col justify-between w-full md:w-1/2 gap-4">
+              {/* Desktop Text Block */}
+              <div className="hidden md:flex flex-col justify-between w-full md:w-1/2 p-6 gap-4">
                 <div className="space-y-2">
                   <h3 className="text-2xl font-semibold text-gray-800">
                     {videoProducts[selectedIndex].heading}
@@ -105,8 +143,8 @@ const LatestLaunches = ({ products = [] }) => {
                   </p>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <button className="border border-black px-4 py-2 text-sm rounded hover:bg-gray-100 hidden sm:block">
+                <div className="flex gap-3">
+                  <button className="border border-black px-4 py-2 text-sm rounded hover:bg-gray-100">
                     More info
                   </button>
                   <button className="bg-black text-white px-4 py-2 text-sm rounded hover:bg-gray-800">
@@ -116,6 +154,7 @@ const LatestLaunches = ({ products = [] }) => {
               </div>
             </div>
 
+            {/* Next preview (Desktop only) */}
             <div className="hidden md:block w-1/5 opacity-50">
               <video
                 src={videoProducts[getNextIndex()].videoUrl}
@@ -128,6 +167,7 @@ const LatestLaunches = ({ products = [] }) => {
             </div>
           </div>
 
+          {/* Next Button */}
           <button
             onClick={showNext}
             className="absolute right-4 text-white text-3xl bg-gray-800 rounded-full w-10 h-10 flex items-center justify-center hover:bg-gray-700 z-40"
