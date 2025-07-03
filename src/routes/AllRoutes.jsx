@@ -36,7 +36,7 @@ export const AllRoutes = () => {
        <Route path="/blogs/:id" element={<BlogDetail />} /> 
       <Route path="/login" element={<LoginPage mode="user" />} />
       <Route path="/register" element={<RegisterPage />} />
-       <Route path="/account" element={<Account />} />
+      <Route path="/account/*" element={<Account />} />
 
       {/* 🔑 Admin Login */}
       <Route path="/admin/login" element={<LoginPage mode="admin" />} />

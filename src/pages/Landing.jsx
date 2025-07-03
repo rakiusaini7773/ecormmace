@@ -17,13 +17,13 @@ import { toast } from 'react-toastify';
 
 export const Landing = () => {
   const [products, setProducts] = useState([]);
- const [blogs, setBlogs] = useState([]);
- const [filteredBlogs, setFilteredBlogs] = useState([]);
+  const [blogs, setBlogs] = useState([]);
+  const [filteredBlogs, setFilteredBlogs] = useState([]);
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const res = await BaseApiManager.get(API_ENDPOINTS.GET_ALL_PRODUCTS);
-       console.log('res',res);
+        console.log('res', res);
         const activeProducts = res.filter((p) => p.status === "Active");
         setProducts(activeProducts);
       } catch (error) {
@@ -31,11 +31,11 @@ export const Landing = () => {
         toast.error("Failed to fetch products");
       }
     };
-     const fetchBlogs = async () => {
+    const fetchBlogs = async () => {
       try {
         const response = await BaseApiManager.get(API_ENDPOINTS.GET_ALL_BLOGS);
         const activeBlogs = response.filter(blog => blog.status === 'active');
-        
+
         setBlogs(activeBlogs);
         setFilteredBlogs(activeBlogs);
       } catch (error) {
@@ -44,16 +44,16 @@ export const Landing = () => {
       }
     };
     fetchProducts();
-     fetchBlogs();
+    fetchBlogs();
   }, []);
 
- 
+
   const bodycareProducts = products.filter((p) => p.category?.name === "hyperpigmentation");
-   
+
 
   const latestLaunchProducts = products.filter(
-  (p) => p.status === "Active" && p.videoUrl
-);
+    (p) => p.status === "Active" && p.videoUrl
+  );
   return (
     <div>
       <Navbar />
@@ -85,16 +85,15 @@ export const Landing = () => {
           <img src="https://foxtale.in/cdn/shop/files/DESKTOP_-_2025-05-07T193624.258.jpg?v=1746626805&width=1600" alt="Bodycare Spotlight" className='w-full h-auto' />
         </div>
 
-       <LatestLaunches products={latestLaunchProducts} />
+        <LatestLaunches products={latestLaunchProducts} />
       </div>
 
       <SkinHelpSection />
       <FoxtaleHighlight />
       <ProductPlaybook />
-      <LatestPosts blogs={filteredBlogs}  />
+      <LatestPosts blogs={filteredBlogs} />
       <AppPromoBanner />
       <Footer />
     </div>
   );
 };
-  
