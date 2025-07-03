@@ -12,6 +12,8 @@ import axios from 'axios';
 import Loader from '../components/common/Loading';
 import Table from "../components/common/Table";
 import BannerViewModal from './BannerViewModal';
+import { FaEdit } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 const AddProductForm = () => {
     const [loading, setloading] = useState(false)
     const imageInputRef = useRef(null);
@@ -206,26 +208,62 @@ const AddProductForm = () => {
     const handleImageUploadClick = () => imageInputRef.current?.click();
     const handleVideoUploadClick = () => videoInputRef.current?.click();
 
+    const navigate = useNavigate();
+
 
     const columns = [
-        { Header: "Heading", accessor: "heading" },
-        { Header: "Tag", accessor: "tag" },
-        { Header: "Price", accessor: "price" },
-        { Header: "Status", accessor: "status" },
-        { Header: "Rating", accessor: "rating" },
+        {
+            Header: "Heading",
+            accessor: "heading",
+        },
+        {
+            Header: "Tag",
+            accessor: "tag",
+        },
+        {
+            Header: "Price",
+            accessor: "price",
+        },
+        {
+            Header: "Status",
+            accessor: "status",
+            Cell: ({ value }) => (
+                <span className={value === "Active" ? "text-blue-600" : "text-red-500"}>
+                    {value}
+                </span>
+            ),
+        },
+        {
+            Header: "Rating",
+            accessor: "rating",
+        },
         {
             Header: "Action",
-            accessor: "action",
             Cell: ({ row }) => (
-                <button
-                    onClick={() => {
-                        setSelectedProduct(row.original); // row.original contains full row data
-                        setShowModal(true);
-                    }}
-                    className="bg-[#454545] text-white text-sm rounded-full px-6 py-2 w-[125px] h-[45px] flex items-center justify-center"
-                >
-                    View
-                </button>
+                <div className="flex gap-2">
+                    {/* View Button */}
+                    <button
+                        onClick={() => {
+                            setSelectedProduct(row.original); // Show modal with product info
+                            setShowModal(true);
+                        }}
+                        className="bg-[#454545] text-white text-sm rounded-full px-6 py-2 w-[125px] h-[45px] flex items-center justify-center"
+                    >
+                        View
+                    </button>
+
+                    {/* Edit Icon Button */}
+
+                    <button
+                        onClick={() => navigate(`/edit-product/${row.original._id}`)}
+                        className="flex items-center justify-center w-10 h-10 bg-[#454545] text-white rounded-full shadow-md transition duration-200"
+                        title="Edit Product"
+                    >
+                        <FaEdit className="w-4 h-4" />
+                    </button>
+
+
+                </div>
             ),
         },
     ];

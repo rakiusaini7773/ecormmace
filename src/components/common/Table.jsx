@@ -41,7 +41,7 @@ const Table = ({ columns, data, title }) => {
                 className="border-b border-gray-200 hover:bg-gray-50 transition"
               >
                 {columns.map((col, colIndex) => {
-                  const rawValue = col.accessor.split('.').reduce((obj, key) => obj?.[key], row);
+                  const rawValue = col.accessor?.split('.').reduce((obj, key) => obj?.[key], row);
                   const value = col.accessor === "status" ? rawValue || row.sstatus : rawValue;
 
                   return (
@@ -50,7 +50,7 @@ const Table = ({ columns, data, title }) => {
                       className="px-4 py-3 text-gray-800 font-medium align-middle max-w-[200px] whitespace-normal break-words"
                     >
                       {col.Cell ? (
-                        col.Cell({ row: { original: row } })
+                        col.Cell({ row: { original: row }, value })
                       ) : col.accessor === "status" ? (
                         <span className={`${getStatusColor(value)} font-semibold`}>
                           {value}
