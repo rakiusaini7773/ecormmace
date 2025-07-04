@@ -1,28 +1,22 @@
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
 import {
   fetchCart,
   incrementQuantity,
   decrementQuantity,
   removeById,
 } from '../redux/slices/cartSlice';
+import { useNavigate } from 'react-router-dom';
 
 const CartDrawer = () => {
   const { items, loading } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  console.log('items',items)
+  const [copiedCode, setCopiedCode] = useState(null);
 
   useEffect(() => {
     dispatch(fetchCart());
   }, [dispatch]);
-
-  const total = items.reduce((acc, item) => {
-    const price = item?.productId?.price || 0;
-    const quantity = item?.quantity || 0;
-    return acc + price * quantity;
-  }, 0);
 
   const formatPrice = (value) =>
     new Intl.NumberFormat('en-IN', {
@@ -31,97 +25,174 @@ const CartDrawer = () => {
       maximumFractionDigits: 0,
     }).format(value || 0);
 
-  return (
-    <div className="relative p-4 w-[400px] space-y-4">
-      <h2 className="text-xl font-bold mb-2">Your Cart</h2>
+  const nonFreeItems = items.filter(
+    (item) => item.productId?.price && item.productId.price > 0
+  );
 
-      {items.length === 0 ? (
-        <div className="flex flex-col items-center text-center space-y-4">
-          <img
-            src="https://shop.foxtale.in/Images/empty-cart-foxtale.avif?w=256&q=75"
-            alt="Empty cart"
-            className="w-32 h-32"
-          />
-          <p className="text-sm text-gray-600">Your cart is empty</p>
-          <button
-            onClick={() => navigate('/product')}
-            className="bg-black text-white px-6 py-2 rounded font-semibold"
-          >
-            Shop Now
-          </button>
-        </div>
-      ) : (
-        <>
-          <ul className="space-y-4">
-            {items.map((item) => (
-              <li key={item._id} className="flex items-center gap-3 border-b pb-3">
-                <img
-                  src={item.productId?.imageUrls?.[0] || 'https://via.placeholder.com/48'}
-                  alt={item.productId?.heading || 'Product'}
-                  className="w-12 h-12 object-cover rounded"
-                />
-                <div className="flex-1">
-                  <p className="text-sm font-semibold text-gray-800">
-                    {item.productId?.heading || 'No Title'}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {formatPrice(item.productId?.price)} x {item.quantity}
-                  </p>
-                  <div className="flex items-center gap-2 mt-1">
+  const total = nonFreeItems.reduce((acc, item) => {
+    const price = item.productId?.price || 0;
+    return acc + price * item.quantity;
+  }, 0);
+
+  const handleCopy = (code) => {
+    navigator.clipboard.writeText(code);
+    setCopiedCode(code);
+    setTimeout(() => setCopiedCode(null), 2000);
+  };
+
+  // Shared Coupon Logic
+  let sharedCoupon = null;
+
+  const allCouponItems = items.filter(
+    (item) => item.productId?.offers?.couponType
+  );
+
+  const uniqueCouponTypes = [
+    ...new Set(allCouponItems.map((item) => item.productId.offers.couponType)),
+  ];
+
+  if (uniqueCouponTypes.length === 1) {
+    const couponType = uniqueCouponTypes[0];
+    const matchingItems = items.filter(
+      (item) => item.productId?.offers?.couponType === couponType
+    );
+
+    const couponOffers = matchingItems[0]?.productId?.offers;
+    const usageRestrictions = matchingItems[0]?.productId?.usageRestrictions;
+
+    const requiredProductIds = usageRestrictions?.products || [];
+    const minSpend = usageRestrictions?.minSpend || 0;
+    const cartProductIds = items.map((item) => item.productId._id);
+
+    const allRequiredPresent = requiredProductIds.every((id) =>
+      cartProductIds.includes(id)
+    );
+
+    const isMinSpendMet = total >= minSpend;
+
+    const allCartItemsMatchCoupon = matchingItems.every(
+      (item) => item.productId?.offers?.couponType === couponType
+    );
+
+    if (allRequiredPresent && isMinSpendMet && allCartItemsMatchCoupon) {
+      sharedCoupon = couponOffers;
+    }
+  }
+
+  return (
+    <div className="p-4 w-[400px] relative">
+      <h2 className="text-xl font-bold mb-4">Your Cart</h2>
+
+     
+
+      {/* Items */}
+      <ul className="space-y-4">
+        {items.map((item) => {
+          const product = item.productId;
+          const isFree =
+            product?.price === 0 || product?.tag?.toLowerCase() === 'free';
+
+          return (
+            <li key={item._id} className="flex items-start gap-3 border-b pb-3 relative">
+              <img
+                src={product?.imageUrls?.[0] || ''}
+                alt={product?.heading || ''}
+                className="w-12 h-12 object-cover rounded"
+              />
+              <div className="flex-1">
+                <p className="text-sm font-semibold">{product?.heading}</p>
+                <p className="text-xs text-gray-600">
+                  {isFree ? (
+                    <>
+                      <span className="line-through text-gray-400 mr-1">
+                        {formatPrice(product?.oldPrice || 199)}
+                      </span>
+                      <span className="text-green-600 font-bold">FREE</span>
+                    </>
+                  ) : (
+                    formatPrice(product?.price)
+                  )}
+                </p>
+                {!isFree && (
+                  <div className="flex items-center gap-2 mt-2">
                     <button
                       onClick={() =>
                         item.quantity > 1 &&
-                        dispatch(decrementQuantity(item.productId?._id))
+                        dispatch(decrementQuantity(product?._id))
                       }
                       className="text-sm bg-gray-200 px-2 rounded"
                     >
                       -
                     </button>
-                    <span className="text-xs text-gray-700 min-w-[32px] text-center">
-                      Qty: {item.quantity}
-                    </span>
+                    <span className="text-xs">{item.quantity}</span>
                     <button
-                      onClick={() =>
-                        dispatch(incrementQuantity(item.productId?._id))
-                      }
+                      onClick={() => dispatch(incrementQuantity(product?._id))}
                       className="text-sm bg-gray-200 px-2 rounded"
                     >
                       +
                     </button>
                   </div>
-                </div>
-                <button
-                  onClick={() =>
-                    dispatch(removeById(item.productId?._id))
-                  }
-                  className="text-red-500 text-xs font-medium hover:underline"
-                >
-                  Remove
-                </button>
-              </li>
-            ))}
-          </ul>
+                )}
+              </div>
+              <button
+                onClick={() => dispatch(removeById(product?._id))}
+                className="text-red-500 text-xs font-medium hover:underline"
+              >
+                🗑
+              </button>
+              {isFree && (
+                <span className="absolute top-0 right-0 text-green-600 text-[10px] font-bold border border-green-500 px-1 rounded-bl bg-white">
+                  FREE
+                </span>
+              )}
+            </li>
+          );
+        })}
+      </ul>
 
-          <div className="border-t pt-3">
-            <p className="text-md font-semibold text-right">
-              Total: {formatPrice(total)}
-            </p>
-          </div>
-
-
+       {/* Shared Coupon */}
+      {sharedCoupon && (
+        <div className="mb-4 border border-blue-300 bg-blue-50 rounded p-3 text-sm">
+          <p className="font-semibold text-blue-800">
+            Coupon: <span className="ml-1">{sharedCoupon.couponType}</span>
+          </p>
+          <p className="text-blue-600">
+            {sharedCoupon.discountType === 'Flat'
+              ? `Flat ₹${sharedCoupon.discountValue} off`
+              : `${sharedCoupon.discountValue}% off`}
+          </p>
+          <p className="text-gray-500">
+            Valid till:{' '}
+            {new Date(sharedCoupon.expiryDate).toLocaleDateString('en-IN', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric',
+            })}
+          </p>
           <button
-            
-            className="bg-green-600 text-white px-4 py-2 w-full mt-2 rounded"
+            onClick={() => handleCopy(sharedCoupon.couponType)}
+            className="mt-2 text-xs bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
           >
-            Checkout
+            {copiedCode === sharedCoupon.couponType ? 'Copied!' : 'Copy Code'}
           </button>
-        </>
+        </div>
       )}
 
-      {/* ✅ Loader Overlay */}
+      <div className="flex justify-between items-center mt-4 text-lg font-semibold border-t pt-3">
+        <span>Subtotal:</span>
+        <span>{formatPrice(total)}</span>
+      </div>
+
+      <button
+        className="mt-4 w-full bg-black text-white py-3 rounded-md font-bold hover:bg-gray-900"
+        
+      >
+        Checkout Now
+      </button>
+
       {loading && (
-        <div className="absolute inset-0 bg-white bg-opacity-70 flex justify-center items-center z-50">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-b-4 border-black"></div>
+        <div className="absolute inset-0 bg-white/70 flex justify-center items-center z-50">
+          <div className="animate-spin h-8 w-8 border-4 border-black border-t-transparent rounded-full"></div>
         </div>
       )}
     </div>
@@ -129,179 +200,3 @@ const CartDrawer = () => {
 };
 
 export default CartDrawer;
-
-
-// import { useDispatch, useSelector } from 'react-redux';
-// import { useNavigate } from 'react-router-dom';
-// import { useEffect } from 'react';
-// import {
-//   fetchCart,
-//   incrementQuantity,
-//   decrementQuantity,
-//   removeById,
-// } from '../redux/slices/cartSlice';
-
-// const CartDrawer = () => {
-//   const { items, loading } = useSelector((state) => state.cart);
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-// console.log('items',items)
-//   useEffect(() => {
-//     dispatch(fetchCart());
-//   }, [dispatch]);
-
-//   const total = items.reduce((acc, item) => {
-//     const price = item?.productId?.price || 0;
-//     const quantity = item?.quantity || 0;
-//     return acc + price * quantity;
-//   }, 0);
-
-//   const cartItemCount = items.reduce((acc, item) => acc + item.quantity, 0);
-
-//   const formatPrice = (value) =>
-//     new Intl.NumberFormat('en-IN', {
-//       style: 'currency',
-//       currency: 'INR',
-//       maximumFractionDigits: 0,
-//     }).format(value || 0);
-
-//   const tierOffers = [
-//     { quantity: 3, price: 1099, gifts: 3 },
-//     { quantity: 4, price: 1499, gifts: 4 },
-//     { quantity: 5, price: 1899, gifts: 5 },
-//   ];
-
-//   const currentTier = tierOffers.findLast(t => cartItemCount >= t.quantity);
-//   const nextTier = tierOffers.find(t => cartItemCount < t.quantity);
-//   const progressPercent = Math.min(
-//     (cartItemCount / tierOffers[tierOffers.length - 1].quantity) * 100,
-//     100
-//   );
-
-//   return (
-//     <div className="relative p-4 w-[400px] space-y-4">
-//       <h2 className="text-xl font-bold mb-2">Your Cart</h2>
-
-//       {/* 🔥 Offer Card */}
-//       {items.length > 0 && (
-//         <div className="bg-pink-50 border border-pink-300 p-3 rounded mb-4 text-sm">
-//           {nextTier ? (
-//             <>
-//               <p className="text-pink-700 font-medium">
-//                 👉 Add {nextTier.quantity - cartItemCount} more product
-//                 {nextTier.quantity - cartItemCount > 1 ? 's' : ''} to unlock Buy {nextTier.quantity} @ ₹{nextTier.price} — {nextTier.gifts} Free Gifts
-//               </p>
-//               <div className="w-full bg-gray-200 h-2 rounded-full mt-2">
-//                 <div
-//                   className="bg-pink-500 h-2 rounded-full transition-all duration-300"
-//                   style={{ width: `${progressPercent}%` }}
-//                 />
-//               </div>
-//             </>
-//           ) : (
-//             <p className="text-green-600 font-semibold">
-//               🎉 You've unlocked the maximum offer — {currentTier?.gifts} Free Gifts!
-//             </p>
-//           )}
-//         </div>
-//       )}
-
-//       {items.length === 0 ? (
-//         <div className="flex flex-col items-center text-center space-y-4">
-//           <img
-//             src="https://shop.foxtale.in/Images/empty-cart-foxtale.avif?w=256&q=75"
-//             alt="Empty cart"
-//             className="w-32 h-32"
-//           />
-//           <p className="text-sm text-gray-600">Your cart is empty</p>
-//           <button
-//             onClick={() => navigate('/product')}
-//             className="bg-black text-white px-6 py-2 rounded font-semibold"
-//           >
-//             Shop Now
-//           </button>
-//         </div>
-//       ) : (
-//         <>
-//           <ul className="space-y-4">
-//             {items.map((item) => (
-//               <li key={item._id} className="flex items-center gap-3 border-b pb-3">
-//                 <img
-//                   src={item.productId?.imageUrls?.[0] || 'https://via.placeholder.com/48'}
-//                   alt={item.productId?.heading || 'Product'}
-//                   className="w-12 h-12 object-cover rounded"
-//                 />
-//                 <div className="flex-1">
-//                   <p className="text-sm font-semibold text-gray-800">
-//                     {item.productId?.heading || 'No Title'}
-//                   </p>
-//                   <p className="text-xs text-gray-500">
-//                     {formatPrice(item.productId?.price)} x {item.quantity}
-//                   </p>
-//                   <div className="flex items-center gap-2 mt-1">
-//                     <button
-//                       onClick={() =>
-//                         item.quantity > 1 &&
-//                         dispatch(decrementQuantity(item.productId?._id))
-//                       }
-//                       className="text-sm bg-gray-200 px-2 rounded"
-//                     >
-//                       -
-//                     </button>
-//                     <span className="text-xs text-gray-700 min-w-[32px] text-center">
-//                       Qty: {item.quantity}
-//                     </span>
-//                     <button
-//                       onClick={() =>
-//                         dispatch(incrementQuantity(item.productId?._id))
-//                       }
-//                       className="text-sm bg-gray-200 px-2 rounded"
-//                     >
-//                       +
-//                     </button>
-//                   </div>
-//                 </div>
-//                 <button
-//                   onClick={() =>
-//                     dispatch(removeById(item.productId?._id))
-//                   }
-//                   className="text-red-500 text-xs font-medium hover:underline"
-//                 >
-//                   Remove
-//                 </button>
-//               </li>
-//             ))}
-//           </ul>
-
-//           {/* Gift Unlock Message */}
-//           {cartItemCount === 3 && (
-//             <div className="border border-dashed border-pink-300 p-3 rounded bg-pink-100 text-sm text-gray-800">
-//               🎁 Add 1 more product to unlock <strong>Free Nail Cuticle Oil</strong>
-//             </div>
-//           )}
-
-//           <div className="border-t pt-3">
-//             <p className="text-md font-semibold text-right">
-//               Total: {formatPrice(total)}
-//             </p>
-//           </div>
-
-//           <button
-//             className="bg-green-600 text-white px-4 py-2 w-full mt-2 rounded"
-//           >
-//             Checkout
-//           </button>
-//         </>
-//       )}
-
-//       {/* ✅ Loader Overlay */}
-//       {loading && (
-//         <div className="absolute inset-0 bg-white bg-opacity-70 flex justify-center items-center z-50">
-//           <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-b-4 border-black"></div>
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default CartDrawer;
