@@ -23,7 +23,7 @@ import BlogDetail from '../pages/BlogDetail';
 import User from '../pages/User';
 import Offers from '../pages/Offers';
 import Account from '../pages/Account';
-import EditProductPage from '../pages/EditProductPage';
+
 
 export const AllRoutes = () => {
   return (
@@ -48,7 +48,6 @@ export const AllRoutes = () => {
           <Route path="/admin/banner" element={<AddBannerForm />} />
           <Route path="/admin/categories" element={<AddCategoryForm />} />
           <Route path="/admin/products" element={<AddProductForm />} />
-          <Route path="/edit-product/:id" element={<EditProductPage />} />
           <Route path="/admin/blogs" element={<AddBlogForm />} />
            <Route path="/admin/user" element={<User />} />
            <Route path="/admin/offers" element={<Offers />} />

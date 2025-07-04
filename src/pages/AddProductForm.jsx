@@ -25,10 +25,12 @@ const AddProductForm = () => {
     const [products, setProducts] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [showModal, setShowModal] = useState(false);
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [editProductId, setEditProductId] = useState(null);
     const fetchProducts = async () => {
         try {
             const data = await BaseApiManager.get(API_ENDPOINTS.GET_ALL_PRODUCTS);
-            console.log('data', data)
+
             setProducts(data);
         } catch (error) {
             toast.error("Failed to fetch products");
@@ -64,7 +66,7 @@ const AddProductForm = () => {
         fetchProducts();
     }, []);
 
-    const initialValues = {
+    const defaultInitialValues = {
         heading: '',
         subHeading: '',
         subDescription: '',
@@ -96,6 +98,7 @@ const AddProductForm = () => {
             perUser: ''
         }
     };
+    const [initialValues, setInitialValues] = useState(defaultInitialValues);
 
     const validationSchema = Yup.object().shape({
         heading: Yup.string().required('Heading is required'),
@@ -139,12 +142,12 @@ const AddProductForm = () => {
         //     perUser: Yup.string().required('Per User limit is required')
         // })
     });
-
     const handleSubmit = async (values, { resetForm }) => {
         setloading(true);
+
         const formData = new FormData();
 
-        // ✅ Append product images
+        // 🖼️ Product Images
         if (Array.isArray(values.productImages)) {
             values.productImages.forEach((file) => {
                 if (file instanceof File) {
@@ -153,28 +156,30 @@ const AddProductForm = () => {
             });
         }
 
-        // ✅ Append product video
+        // 📹 Video Upload
         if (values.videoUrl instanceof File) {
             formData.append('videoUrl', values.videoUrl);
         }
 
-        // ✅ helpsWith icons and data
+        // 📍 HelpsWith Icons
         values.helpsWith.forEach((item, i) => {
-            // Upload icon file under helpsWithIcons{i}
             if (item.icon instanceof File) {
                 formData.append(`helpsWithIcons${i}`, item.icon);
             }
         });
 
-        // Send helpsWith JSON with icon names (Cloudinary will return actual URLs on backend)
-        formData.append('helpsWith', JSON.stringify(
-            values.helpsWith.map(({ text, icon }) => ({
-                text,
-                icon: icon instanceof File ? icon.name : icon
-            }))
-        ));
+        // 📍 HelpsWith JSON
+        formData.append(
+            'helpsWith',
+            JSON.stringify(
+                values.helpsWith.map(({ text, icon }) => ({
+                    text,
+                    icon: icon instanceof File ? icon.name : icon
+                }))
+            )
+        );
 
-        // ✅ Append other structured fields
+        // 🧾 Other fields
         const stringifiedFields = ['offers', 'usageRestrictions', 'usageLimits'];
         Object.entries(values).forEach(([key, value]) => {
             if (['productImages', 'videoUrl', 'helpsWith'].includes(key)) return;
@@ -187,21 +192,42 @@ const AddProductForm = () => {
         });
 
         try {
-            const response = await BaseApiManager.post(API_ENDPOINTS.ADD_PRODUCT, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            });
+            let response;
 
-            toast.success('✅ Product added successfully');
-            console.log("🟢 Server response:", response);
+            if (isEditMode && editProductId) {
+                response = await BaseApiManager.put(
+                    API_ENDPOINTS.UPDATE_PRODUCT(editProductId),
+                    formData,
+                    {
+                        headers: { 'Content-Type': 'multipart/form-data' }
+                    }
+                );
+                toast.success("✅ Product updated successfully");
+            } else {
+                response = await BaseApiManager.post(
+                    API_ENDPOINTS.ADD_PRODUCT,
+                    formData,
+                    {
+                        headers: { 'Content-Type': 'multipart/form-data' }
+                    }
+                );
+                toast.success("✅ Product added successfully");
+            }
+
+            console.log("🟢 Server Response:", response);
             resetForm();
+            setInitialValues(defaultInitialValues); // ✅ resets form state
+            setIsEditMode(false);
+            setEditProductId(null);
+            setShowModal(false);
         } catch (err) {
-            console.error('❌ Upload failed', err);
-            toast.error('❌ Failed to add product');
+            console.error("❌ API error:", err);
+            toast.error(`❌ Failed to ${isEditMode ? 'update' : 'add'} product`);
         } finally {
             setloading(false);
         }
-    };
 
+    };
 
 
 
@@ -238,37 +264,108 @@ const AddProductForm = () => {
             accessor: "rating",
         },
         {
-            Header: "Action",
+            Header: "View",
             Cell: ({ row }) => (
-                <div className="flex gap-2">
-                    {/* View Button */}
-                    <button
-                        onClick={() => {
-                            setSelectedProduct(row.original); // Show modal with product info
-                            setShowModal(true);
-                        }}
-                        className="bg-[#454545] text-white text-sm rounded-full px-6 py-2 w-[125px] h-[45px] flex items-center justify-center"
-                    >
-                        View
-                    </button>
-
-                    {/* Edit Icon Button */}
-
-                    <button
-                        onClick={() => navigate(`/edit-product/${row.original._id}`)}
-                        className="flex items-center justify-center w-10 h-10 bg-[#454545] text-white rounded-full shadow-md transition duration-200"
-                        title="Edit Product"
-                    >
-                        <FaEdit className="w-4 h-4" />
-                    </button>
-
-
-                </div>
+                <button
+                    onClick={() => {
+                        setSelectedProduct(row.original);
+                        setShowModal(true);
+                    }}
+                    className="bg-[#454545] text-white text-sm rounded-full px-6 py-2 w-[125px] h-[45px] flex items-center justify-center"
+                >
+                    View
+                </button>
+            ),
+        },
+        {
+            Header: "Edit",
+            Cell: ({ row }) => (
+                <button
+                    onClick={() => handleEditClick(row.original)}
+                    className="flex items-center justify-center w-10 h-10 bg-[#454545] text-white rounded-full shadow-md transition duration-200"
+                    title="Edit Product"
+                >
+                    <FaEdit className="w-4 h-4" />
+                </button>
             ),
         },
     ];
 
     const allowedImageTypes = ["image/png", "image/jpg", "image/jpeg"];
+
+    const handleEditClick = async (product) => {
+        try {
+            const response = await BaseApiManager.get(API_ENDPOINTS.GET_SINGLE_PRODUCT(product._id));
+            console.log('✅ API Response:', response);
+
+            const productData = response;
+
+            if (!productData || typeof productData !== 'object') {
+                throw new Error("Invalid product data");
+            }
+
+            // Helper to clean strings safely
+            const cleanString = (val) => (typeof val === 'string' ? val.trim() : '');
+
+            setInitialValues({
+                heading: cleanString(productData.heading),
+                subHeading: cleanString(productData.subHeading),
+                subDescription: cleanString(productData.subDescription),
+                description: cleanString(productData.description),
+                price: productData.price || '',
+                videoUrl: cleanString(productData.videoUrl),
+                tag: cleanString(productData.tag),
+                offerCode: cleanString(productData.offerCode),
+                rating: productData.rating || '',
+                status: productData.status || 'Inactive',
+
+                // ✅ Ensure category is just the _id string
+                category: productData.category?._id || '',
+
+                // ✅ Product images
+                productImages: Array.isArray(productData.imageUrls) ? productData.imageUrls : [],
+
+                // ✅ HelpsWith list
+                helpsWith: Array.isArray(productData.helpsWith) && productData.helpsWith.length
+                    ? productData.helpsWith
+                    : [{ icon: '', text: '' }],
+
+                ingredientText: cleanString(productData.ingredientText),
+                for: cleanString(productData.for),
+
+                // ✅ Offers with fallback
+                offers: productData.offers || {
+                    discountType: '',
+                    discountValue: '',
+                    couponType: '',
+                    expiryDate: '',
+                    source: ''
+                },
+
+                // ✅ Usage Restrictions
+                usageRestrictions: productData.usageRestrictions || {
+                    minSpend: '',
+                    products: []
+                },
+
+                // ✅ Usage Limits
+                usageLimits: productData.usageLimits || {
+                    perCoupon: '',
+                    perUser: ''
+                }
+            });
+
+            setEditProductId(product._id);  // ✅ track for submit
+            setIsEditMode(true);
+            setShowModal(true);
+        } catch (error) {
+            console.error("❌ Failed to fetch product data", error);
+        }
+    };
+
+
+
+
 
     return (
         <>
@@ -276,8 +373,8 @@ const AddProductForm = () => {
                 <h2 className="text-xl font-semibold mb-4">Add New Product</h2>
                 <Formik
                     initialValues={initialValues}
-                    validationSchema={validationSchema}
-                    //  validationSchema={null}
+                    enableReinitialize={true}
+                    validationSchema={isEditMode ? null : validationSchema}
                     onSubmit={handleSubmit}
                     validateOnBlur={false}
                     validateOnChange={false}
@@ -687,8 +784,10 @@ const AddProductForm = () => {
                             </div>
 
 
-                            <div className='flex justify-end items-end '>
-                                <button type="submit" className="bg-[#454545] text-white px-4 py-2 rounded hover:bg-[#454545]">Add Product</button>
+                            <div className='flex justify-end items-end'>
+                                <button type="submit" className="bg-[#454545] text-white px-4 py-2 rounded hover:bg-[#454545]">
+                                    {isEditMode ? 'Update Product' : 'Add Product'}
+                                </button>
                             </div>
 
                         </Form>
