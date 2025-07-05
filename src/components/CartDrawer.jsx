@@ -7,6 +7,8 @@ import {
   removeById,
 } from '../redux/slices/cartSlice';
 import { useNavigate } from 'react-router-dom';
+import { AiTwotoneDelete } from "react-icons/ai";
+import { Loader } from 'lucide-react';
 
 const CartDrawer = () => {
   const { items, loading } = useSelector((state) => state.cart);
@@ -83,7 +85,7 @@ const CartDrawer = () => {
     <div className="p-4 w-[400px] relative">
       <h2 className="text-xl font-bold mb-4">Your Cart</h2>
 
-     
+
 
       {/* Items */}
       <ul className="space-y-4">
@@ -136,10 +138,12 @@ const CartDrawer = () => {
               </div>
               <button
                 onClick={() => dispatch(removeById(product?._id))}
-                className="text-red-500 text-xs font-medium hover:underline"
+                className="text-red-500 hover:text-red-600 p-2 rounded-full hover:bg-red-100 transition"
+                aria-label="Delete product"
               >
-                🗑
+                <AiTwotoneDelete className="w-5 h-5" />
               </button>
+
               {isFree && (
                 <span className="absolute top-0 right-0 text-green-600 text-[10px] font-bold border border-green-500 px-1 rounded-bl bg-white">
                   FREE
@@ -150,7 +154,7 @@ const CartDrawer = () => {
         })}
       </ul>
 
-       {/* Shared Coupon */}
+      {/* Shared Coupon */}
       {sharedCoupon && (
         <div className="mb-4 border border-blue-300 bg-blue-50 rounded p-3 text-sm">
           <p className="font-semibold text-blue-800">
@@ -185,16 +189,17 @@ const CartDrawer = () => {
 
       <button
         className="mt-4 w-full bg-black text-white py-3 rounded-md font-bold hover:bg-gray-900"
-        
+
       >
         Checkout Now
       </button>
 
-      {loading && (
+       {loading && (
         <div className="absolute inset-0 bg-white/70 flex justify-center items-center z-50">
           <div className="animate-spin h-8 w-8 border-4 border-black border-t-transparent rounded-full"></div>
         </div>
-      )}
+      )} 
+      
     </div>
   );
 };
