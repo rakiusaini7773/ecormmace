@@ -79,7 +79,7 @@ export const Landing = () => {
         </div>
 
         <BodycareSpotlight products={bodycareProducts} />
-        <SunscreenSelector />
+        {/* <SunscreenSelector /> */}
 
         <div className='flex justify-center items-center p-0 lg:p-12'>
           <img src="https://foxtale.in/cdn/shop/files/DESKTOP_-_2025-05-07T193624.258.jpg?v=1746626805&width=1600" alt="Bodycare Spotlight" className='w-full h-auto' />
