@@ -49,8 +49,8 @@ const DashboardContent = () => {
           <div className="md:col-span-2 text-gray-900">
             {defaultAddress ? (
               <>
-                {defaultAddress.addressLine1}{defaultAddress.addressLine2}{defaultAddress.city}{defaultAddress.province}{" "}
-                {defaultAddress.zipCode}{defaultAddress.country}
+                {defaultAddress.addressLine1} {defaultAddress.addressLine2} {defaultAddress.city}{defaultAddress.province}{" "}
+                {defaultAddress.zipCode} {defaultAddress.country}
               </>
             ) : (
               "No address provided"
@@ -177,8 +177,8 @@ const AddressesContent = () => {
             <div key={addr._id} className="border p-4 rounded text-sm bg-gray-50">
               <div className="font-semibold">{addr.firstName} {addr.lastName}</div>
               <div>{addr.company}</div>
-              <div>{addr.addressLine1}{addr.addressLine2}</div>
-              <div>{addr.city}{addr.province} {addr.zipCode}</div>
+              <div>{addr.addressLine1} {addr.addressLine2}</div>
+              <div>{addr.city}, {addr.province} {addr.zipCode}</div>
               <div>{addr.country}</div>
               <div>Phone: {addr.phone}</div>
               {addr.isDefault && <div className="text-green-600 font-semibold mt-1">Default</div>}
@@ -206,31 +206,26 @@ const AddressesContent = () => {
   );
 };
 
-// Logout Tab
-const LogoutContent = () => {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    sessionStorage.removeItem("token");
-    sessionStorage.removeItem("userRole");
-    sessionStorage.removeItem("userId");
-    toast.success("You have been logged out.");
-    setTimeout(() => navigate("/"), 1000);
-  }, [navigate]);
-
-  return <div className="p-6 text-red-600 font-semibold">Logging out...</div>;
-};
-
 // Main Account Component
 const Account = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const tabPath = location.pathname.split("/")[2] || "dashboard";
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const tabLabels = {
     dashboard: "Dashboard",
     orders: "Order History",
     addresses: "Addresses",
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("userRole");
+    sessionStorage.removeItem("userId");
+    toast.success("You have been logged out.");
+    setShowLogoutModal(false);
+    setTimeout(() => navigate("/"), 1000);
   };
 
   return (
@@ -255,22 +250,48 @@ const Account = () => {
                 {tabLabels[tab]}
               </div>
             ))}
-            <div className="p-4 cursor-pointer hover:bg-gray-100 text-red-600" onClick={() => navigate("/account/logout")}>
+            <div
+              className="p-4 cursor-pointer hover:bg-gray-100 text-red-600"
+              onClick={() => setShowLogoutModal(true)}
+            >
               Logout
             </div>
           </div>
+
           <div className="md:col-span-2 border rounded-sm bg-white">
             <Routes>
               <Route path="dashboard" element={<DashboardContent />} />
               <Route path="orders" element={<OrdersContent />} />
               <Route path="addresses" element={<AddressesContent />} />
-              <Route path="logout" element={<LogoutContent />} />
               <Route path="" element={<Navigate to="dashboard" replace />} />
             </Routes>
           </div>
         </div>
       </div>
       <Footer />
+
+      {showLogoutModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-sm">
+            <h2 className="text-lg font-semibold text-center mb-4">Confirm Logout</h2>
+            <p className="text-center text-gray-600 mb-6">Are you sure you want to logout?</p>
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="px-4 py-2 text-sm rounded bg-gray-200 text-gray-600 hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 text-sm rounded bg-pink-500 text-white hover:bg-pink-600"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
