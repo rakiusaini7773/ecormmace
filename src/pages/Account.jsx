@@ -231,7 +231,7 @@ const Account = () => {
   return (
     <>
       <Navbar />
-      <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="max-w-7xl mx-auto px-4 py-6 mt-10">
         <div className="flex items-center space-x-2 text-sm mb-6">
           <Home className="w-4 h-4" />
           <span className="text-gray-600">/</span>
@@ -268,7 +268,10 @@ const Account = () => {
           </div>
         </div>
       </div>
-      <Footer />
+      <div className="mt-56">
+        <Footer />
+      </div>
+
 
       {showLogoutModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
