@@ -8,22 +8,25 @@ const SkinHelpSection = () => {
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
 
-  const fetchCategories = async () => {
-    try {
-      const data = await BaseApiManager.get(API_ENDPOINTS.GET_ALL_CATEGORIES);
-      setCategories(data || []);
-    } catch (error) {
-      toast.error("Failed to load categories");
-    }
-  };
-
+ const fetchCategories = async () => {
+  try {
+    const data = await BaseApiManager.get(API_ENDPOINTS.GET_ALL_CATEGORIES);
+    // ✅ Filter only categories where active is true
+    const activeCategories = (data || []).filter(
+      (category) => category.active === true
+    );
+    setCategories(activeCategories);
+  } catch (error) {
+    toast.error("Failed to load categories");
+  }
+};
   useEffect(() => {
     fetchCategories();
   }, []);
 
   const handleCategoryClick = (categoryName) => {
     navigate("/product", {
-      state: { selectedCategory: categoryName }, // ✅ Pass state
+      state: { selectedCategory: categoryName }, 
     });
   };
 

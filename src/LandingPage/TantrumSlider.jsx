@@ -26,7 +26,6 @@ const TantrumSlider = () => {
 
       // Only keep banners with "Active" status
       const activeBanners = formatted.filter(b => b.status === "Active");
-
       setBannerData(activeBanners);
     } catch (error) {
       console.error("Failed to fetch banners:", error);
