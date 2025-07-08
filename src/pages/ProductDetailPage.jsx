@@ -306,37 +306,39 @@ const getUserId = () => sessionStorage.getItem('userId');
         </p>
       </div>
 
-      {product.videoUrl && showStickyVideo && showVideo && (
-        <div className="fixed bottom-4 right-4 w-44 z-50 shadow-lg rounded-lg overflow-hidden bg-white border border-gray-200">
-          {/* Close Button */}
-          <div className="absolute top-1 right-1">
-            <button
-              onClick={() => setShowVideo(false)}
-              className="text-black bg-white rounded-full w-6 h-6 text-sm font-bold shadow"
-            >
-              ×
-            </button>
-          </div>
+    {product.videoUrl && showStickyVideo && showVideo && (
+  <div className="fixed bottom-4 right-4 w-44 z-50 shadow-lg rounded-lg overflow-hidden bg-white border border-gray-200">
+    
+    {/* Close Button */}
+    <div className="absolute top-1 right-1 z-10">
+      <button
+        onClick={() => setShowVideo(false)}
+        className="text-white bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full w-6 h-6 text-sm font-bold flex items-center justify-center shadow"
+        title="Close"
+      >
+        ×
+      </button>
+    </div>
 
-          {/* Non-Interruptible Video Player */}
-          <div className="relative w-full">
-            <video
-              ref={videoRef}
-              src={product.videoUrl}
-              autoPlay
-              muted
-              loop
-              className="w-full h-auto pointer-events-none"
-              onContextMenu={(e) => e.preventDefault()}
-              onPause={() => {
-                videoRef.current?.play();
-                setIsPlaying(true);
-              }}
-            />
+    {/* Non-Interruptible Video Player */}
+    <div className="relative w-full">
+      <video
+        ref={videoRef}
+        src={product.videoUrl}
+        autoPlay
+        muted
+        loop
+        className="w-full h-auto pointer-events-none"
+        onContextMenu={(e) => e.preventDefault()}
+        onPause={() => {
+          videoRef.current?.play();
+          setIsPlaying(true);
+        }}
+      />
+    </div>
+  </div>
+)}
 
-          </div>
-        </div>
-      )}
 
       <Footer />
     </>

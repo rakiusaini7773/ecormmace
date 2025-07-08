@@ -28,12 +28,12 @@ const SkinHelpSection = () => {
   };
 
   return (
-    <section className="py-5 m-6 max-w-7xl mx-auto">
+    <section className="py-5 m-6 max-w-7xl mx-auto hidden-scrollbar">
       <h2 className="text-xl md:text-5xl text-gray-900 mb-14">
         What does your skin need help with?
       </h2>
 
-      <div className="hidden lg:grid gap-6 grid-cols-6">
+      <div className="hidden lg:grid gap-6 grid-cols-6 hidden-scrollbar">
         {categories.slice(0, 6).map((category, index) => (
           <div
             key={index}
@@ -52,7 +52,7 @@ const SkinHelpSection = () => {
         ))}
       </div>
 
-      <div className="lg:hidden overflow-x-auto scrollbar-hide">
+      <div className="lg:hidden overflow-x-auto hidden-scrollbar">
         <div className="flex gap-4 px-4 min-w-[960px]">
           {categories.slice(0, 6).map((category, index) => (
             <div

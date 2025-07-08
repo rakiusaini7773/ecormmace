@@ -244,14 +244,6 @@ const ProductListWithFilters = () => {
           <ul className="space-y-4 text-gray-800 font-medium">
             {renderFilterSections("drawer-")}
           </ul>
-          <div className="mt-6 flex justify-end">
-            <button
-              className="bg-black text-white px-4 py-2 rounded"
-              onClick={() => setDrawerOpen(false)}
-            >
-              Apply Filters
-            </button>
-          </div>
         </div>
       </Drawer>
 
