@@ -164,9 +164,9 @@ const LoginPage = ({ mode = "user" }) => {
           </div>
 
           {/* Forgot Password */}
-          <div className="text-right text-sm text-pink-600 cursor-pointer hover:underline w-full max-w-sm">
+          {/* <div className="text-right text-sm text-pink-600 cursor-pointer hover:underline w-full max-w-sm">
             Forgot Password?
-          </div>
+          </div> */}
 
           {/* Submit */}
           <button
