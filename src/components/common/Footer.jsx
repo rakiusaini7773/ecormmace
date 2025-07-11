@@ -6,7 +6,21 @@ import {
 
 export default function Footer() {
   const [openSection, setOpenSection] = useState(null);
+  const [email, setEmail] = useState("");
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const phoneNumber = "918708304434";
+    const message = encodeURIComponent(
+      `Hi, I am interested in your product. My email is: ${email}`
+    );
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
+    window.open(whatsappUrl, "_blank");
+
+    // Clear input after submit
+    setEmail("");
+  };
   const toggleSection = (section) => {
     setOpenSection(openSection === section ? null : section);
   };
@@ -19,11 +33,17 @@ export default function Footer() {
           Stay up to date with our latest offers and product launches & be the
           first to get exclusive offers and sale information
         </p>
-        <form className="flex flex-col sm:flex-row max-w-md mx-auto bg-white border border-black rounded-md overflow-hidden">
+        <form
+          className="flex flex-col sm:flex-row max-w-md mx-auto bg-white border border-black rounded-md overflow-hidden"
+          onSubmit={handleSubmit}
+        >
           <input
             type="email"
             placeholder="Your email address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="flex-1 p-2 text-black outline-none"
+            required
           />
           <button
             type="submit"
@@ -32,6 +52,7 @@ export default function Footer() {
             Subscribe
           </button>
         </form>
+
       </div>
 
       {/* Grid layout on md+ screens */}
