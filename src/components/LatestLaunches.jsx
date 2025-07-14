@@ -1,6 +1,11 @@
 import React, { useRef, useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import { addToCart } from "../redux/slices/cartSlice";
 
 const LatestLaunches = ({ products = [] }) => {
+  const dispatch = useDispatch(); // ✅ HOOK MUST BE AT TOP LEVEL
+
   const videoProducts = products.filter((p) => p.videoUrl);
   const videoRefs = useRef([]);
   const [selectedIndex, setSelectedIndex] = useState(null);
@@ -16,6 +21,18 @@ const LatestLaunches = ({ products = [] }) => {
     selectedIndex === 0 ? videoProducts.length - 1 : selectedIndex - 1;
   const getNextIndex = () =>
     selectedIndex === videoProducts.length - 1 ? 0 : selectedIndex + 1;
+
+  const getUserId = () => sessionStorage.getItem("userId");
+
+  const handleAddToCart = (e, product) => {
+    e.stopPropagation();
+    const userId = getUserId();
+    if (!userId) {
+      toast.warning("Please login to add items to your cart.");
+      return;
+    }
+    dispatch(addToCart(product));
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -118,7 +135,10 @@ const LatestLaunches = ({ products = [] }) => {
                 <button className="border border-white px-4 py-2 text-sm rounded hover:bg-white hover:text-black w-1/2">
                   More info
                 </button>
-                <button className="bg-white text-black px-4 py-2 text-sm rounded hover:bg-gray-200 w-1/2">
+                <button
+                  onClick={(e) => handleAddToCart(e, product)}
+                  className="bg-white text-black px-4 py-2 text-sm rounded hover:bg-gray-200 w-1/2"
+                >
                   Add to cart 🛒
                 </button>
               </div>
@@ -139,7 +159,6 @@ const LatestLaunches = ({ products = [] }) => {
 
           {/* 🖥️ Desktop Modal */}
           <div className="hidden md:flex items-center justify-center gap-6 w-full max-w-7xl relative">
-            {/* ← Prev Arrow */}
             <button
               onClick={showPrev}
               className="absolute left-0 top-1/2 -translate-y-1/2 text-white text-3xl font-bold px-4 py-2 bg-black bg-opacity-50 rounded-full hover:bg-opacity-70 z-50"
@@ -147,7 +166,6 @@ const LatestLaunches = ({ products = [] }) => {
               ←
             </button>
 
-            {/* Preview Video (Left) */}
             <div className="hidden md:block w-1/5 opacity-50">
               <video
                 src={videoProducts[getPrevIndex()].videoUrl}
@@ -159,7 +177,6 @@ const LatestLaunches = ({ products = [] }) => {
               />
             </div>
 
-            {/* Current Video + Info */}
             <div className="relative flex flex-col md:flex-row w-full md:w-3/5 bg-white rounded-2xl shadow-lg overflow-hidden">
               <div className="relative w-full md:w-1/2">
                 <video
@@ -192,14 +209,18 @@ const LatestLaunches = ({ products = [] }) => {
                   <button className="border border-black px-4 py-2 text-sm rounded hover:bg-gray-100">
                     More info
                   </button>
-                  <button className="bg-black text-white px-4 py-2 text-sm rounded hover:bg-gray-800">
+                  <button
+                    onClick={(e) =>
+                      handleAddToCart(e, videoProducts[selectedIndex])
+                    }
+                    className="bg-black text-white px-4 py-2 text-sm rounded hover:bg-gray-800"
+                  >
                     Add to cart 🛒
                   </button>
                 </div>
               </div>
             </div>
 
-            {/* Preview Video (Right) */}
             <div className="hidden md:block w-1/5 opacity-50">
               <video
                 src={videoProducts[getNextIndex()].videoUrl}
@@ -211,7 +232,6 @@ const LatestLaunches = ({ products = [] }) => {
               />
             </div>
 
-            {/* → Next Arrow */}
             <button
               onClick={showNext}
               className="absolute right-0 top-1/2 -translate-y-1/2 text-white text-3xl font-bold px-4 py-2 bg-black bg-opacity-50 rounded-full hover:bg-opacity-70 z-50"
@@ -248,7 +268,12 @@ const LatestLaunches = ({ products = [] }) => {
                   <button className="border border-black px-4 py-2 text-sm rounded hover:bg-gray-100 w-1/2">
                     More info
                   </button>
-                  <button className="bg-black text-white px-4 py-2 text-sm rounded hover:bg-gray-800 w-1/2">
+                  <button
+                    onClick={(e) =>
+                      handleAddToCart(e, videoProducts[selectedIndex])
+                    }
+                    className="bg-black text-white px-4 py-2 text-sm rounded hover:bg-gray-800 w-1/2"
+                  >
                     Add to cart 🛒
                   </button>
                 </div>
