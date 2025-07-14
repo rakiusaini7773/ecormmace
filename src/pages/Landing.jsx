@@ -23,8 +23,9 @@ export const Landing = () => {
     const fetchProducts = async () => {
       try {
         const res = await BaseApiManager.get(API_ENDPOINTS.GET_ALL_PRODUCTS);
-        
+        console.log('res',res)
         const activeProducts = res.filter((p) => p.status === "Active");
+        console.log('activeProducts',activeProducts)
         setProducts(activeProducts);
       } catch (error) {
         console.error("Error fetching products:", error);

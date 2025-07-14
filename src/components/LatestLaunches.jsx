@@ -4,14 +4,12 @@ import { toast } from "react-toastify";
 import { addToCart } from "../redux/slices/cartSlice";
 
 const LatestLaunches = ({ products = [] }) => {
-  const dispatch = useDispatch(); // ✅ HOOK MUST BE AT TOP LEVEL
-
+  const dispatch = useDispatch();
   const videoProducts = products.filter((p) => p.videoUrl);
   const videoRefs = useRef([]);
   const [selectedIndex, setSelectedIndex] = useState(null);
 
   const closeModal = () => setSelectedIndex(null);
-
   const showPrev = () =>
     setSelectedIndex((prev) => (prev > 0 ? prev - 1 : videoProducts.length - 1));
   const showNext = () =>
@@ -34,19 +32,23 @@ const LatestLaunches = ({ products = [] }) => {
     dispatch(addToCart(product));
   };
 
+  // ✅ Reels-like autoplay observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           const video = entry.target;
           if (entry.isIntersecting) {
+            videoRefs.current.forEach((v) => {
+              if (v && v !== video) v.pause();
+            });
             video.play().catch(() => {});
           } else {
             video.pause();
           }
         });
       },
-      { threshold: 0.7 }
+      { threshold: 0.75 }
     );
 
     videoRefs.current.forEach((video) => {
@@ -58,16 +60,15 @@ const LatestLaunches = ({ products = [] }) => {
         if (video) observer.unobserve(video);
       });
     };
-  }, []);
+  }, [videoProducts]);
 
   useEffect(() => {
-    if (selectedIndex !== null) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
+    document.body.style.overflow = selectedIndex !== null ? "hidden" : "auto";
     return () => (document.body.style.overflow = "auto");
   }, [selectedIndex]);
+
+  // ✅ Reset refs on rerender
+  videoRefs.current = new Array(videoProducts.length).fill(null);
 
   if (videoProducts.length === 0) return null;
 
@@ -120,17 +121,15 @@ const LatestLaunches = ({ products = [] }) => {
               muted
               playsInline
               className="w-full h-full object-cover"
-              onClick={() => setSelectedIndex(index)}
               onContextMenu={(e) => e.preventDefault()}
               controls={false}
+              preload="auto"
             />
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent p-4">
               <h3 className="text-lg font-semibold text-white mb-1">
                 {product.heading}
               </h3>
-              <p className="text-md font-bold text-white mb-3">
-                ₹{product.price}
-              </p>
+              <p className="text-md font-bold text-white mb-3">₹{product.price}</p>
               <div className="flex gap-3">
                 <button className="border border-white px-4 py-2 text-sm rounded hover:bg-white hover:text-black w-1/2">
                   More info
@@ -147,7 +146,7 @@ const LatestLaunches = ({ products = [] }) => {
         ))}
       </div>
 
-      {/* ✅ Modal (shared for desktop and mobile) */}
+      {/* ✅ Modal (Shared for Mobile + Desktop) */}
       {selectedIndex !== null && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-90 flex items-center justify-center px-4 py-6">
           <button
